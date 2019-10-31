@@ -1,4 +1,4 @@
-# Code Snippet / Boba: Database'
+# Code Snippet / Boba: Database
 
 ### What is it
 
