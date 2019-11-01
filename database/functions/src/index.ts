@@ -20,12 +20,13 @@ app.get("/warmup", (req, res) => {
 });
 
 /**
- * SIDEBAR
- * GET the left sidebar from a User document
- * Query requires user ID
- * Returns:
- * 1. Profile picture
- * 2. Team names associated with user (string array)
+ * Page: SIDEBAR
+ * Purpose: GET the left sidebar
+ * Requirement: User ID
+ * Returns: user document
+ * Access document by:
+ * 1. data.picture
+ * 2. data.teams
  */
 app.get("/sidebar/:userId", async (req, res) => {
   try {
@@ -44,8 +45,8 @@ app.get("/sidebar/:userId", async (req, res) => {
     }
 
     res.json({
-      picture: user.get("profilePic"),
-      teams: user.get("teams")
+      id: user.id,
+      data: user.data()
     });
   } catch (error) {
     res.status(500).send(error);
@@ -53,11 +54,12 @@ app.get("/sidebar/:userId", async (req, res) => {
 });
 
 /**
- * NEW SNIPPET
- * GET a list of available teams to populate the form's 'Team' dropdown menu
- * Query requires nothing explicit
- * Returns:
- * 1. Team names available (string array)
+ * Page: NEW SNIPPET
+ * Purpose: GET team names to populate the form's 'Team' dropdown menu
+ * Requirement: Nothing explicit
+ * Returns: teams/overview document
+ * Access response by:
+ * 1. data.teams
  */
 app.get("/snippets/new", async (req, res) => {
   try {
@@ -72,7 +74,8 @@ app.get("/snippets/new", async (req, res) => {
     }
 
     res.json({
-      teams: teams.get("teams")
+      id: teams.id,
+      data: teams.data()
     });
   } catch (error) {
     res.status(500).send(error);
@@ -80,16 +83,17 @@ app.get("/snippets/new", async (req, res) => {
 });
 
 /**
- * TEAM SETTING
- * GET a list of members in this team, their roles, & subscription times
- * Query requires team ID
- * Returns:
- * 1. Team member names
- * 2. Team member roles (also pending)
- * 3. Reminder time
- * 4. Subscription time
+ * Page: TEAM SETTINGS
+ * Purpose: GET a list of members in this team, their roles, & subscription times
+ * Requirement: Team ID
+ * Returns: team document
+ * Access response by:
+ * 1. data.members
+ * 2. data.roles
+ * 3. data.subscription.digest
+ * 4. data.subscription.reminder
  */
-app.get("/teams/:teamId", async (req, res) => {
+app.get("/teams/settings/:teamId", async (req, res) => {
   try {
     const teamId = req.params.teamId;
 
@@ -105,13 +109,9 @@ app.get("/teams/:teamId", async (req, res) => {
       throw new Error("Team doesn't exist!");
     }
 
-    // Would it be better to just pass in teams.data()
-    // Less wordy here but you get all the data back to client/server
     res.json({
-      members: teams.get("members"),
-      roles: teams.get("roles"),
-      digest: teams.get("subscription.digest"),
-      reminder: teams.get("subscription.reminder")
+      id: teams.id,
+      data: teams.data()
     });
   } catch (error) {
     res.status(500).send(error);
@@ -119,17 +119,64 @@ app.get("/teams/:teamId", async (req, res) => {
 });
 
 /**
- * RECENT SNIPPETS
- * GET all relevant snippet data, the last 20 from everybody
- * Query requires nothing explicit
- * Returns:
- * 1. Snippet status
- * 2. Snippet title
- * 3. Snippet comment (how much to clip? done server-side?)
- * 4. Owner's profile picture
- * 5. Snippet total like count
- * 6. Snippet total comment count
- * 7. Snippet time created
+ * Page: TEAM PAGE
+ * Purpose: GET all relevant snippet data, the last 20 from this team
+ * Requirement: Team ID
+ * Returns: An array of snippet documents
+ * Access response by (for each):
+ * 1. data.status
+ * 2. data.title
+ * 3. data.description
+ * 4. data.content
+ * 5. data.ownerPic
+ * 6. data.ownerName
+ * 7. data.totalLikes
+ * 8. data.totalComments
+ * 9. data.timeCreated
+ */
+app.get("/teams/page/:teamId", async (req, res) => {
+  try {
+    const teamId = req.params.teamId;
+
+    if (!teamId) throw new Error("Team ID is required");
+
+    // Firestore query
+    const teamSnippets = await db
+      .collection("snippets")
+      .where("teams", "array-contains", teamId)
+      .orderBy("timeCreated", "desc")
+      .limit(20)
+      .get();
+
+    const snippets: any = [];
+    teamSnippets.forEach(doc => {
+      snippets.push({
+        id: doc.id,
+        data: doc.data()
+      });
+    });
+
+    res.json(snippets);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+/**
+ * Page: RECENT SNIPPETS
+ * Purpose: GET all relevant snippet data, the last 20 from everybody
+ * Requirement: Nothing explicit
+ * Returns: An array of snippet documents
+ * Access response by (for each):
+ * 1. data.status
+ * 2. data.title
+ * 3. data.description
+ * 4. data.content
+ * 5. data.ownerPic
+ * 6. data.ownerName
+ * 7. data.totalLikes
+ * 8. data.totalComments
+ * 9. data.timeCreated
  */
 app.get("/snippets/recent", async (req, res) => {
   try {
