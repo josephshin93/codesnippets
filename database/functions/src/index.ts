@@ -19,27 +19,6 @@ app.get("/warmup", (req, res) => {
   res.send("Warming up friendooo");
 });
 
-// Add fight
-app.post("/fights", async (request, response) => {
-  try {
-    const { winner, loser, title } = request.body;
-    const data = {
-      winner,
-      loser,
-      title
-    };
-    const fightRef = await db.collection("fights").add(data);
-    const fight = await fightRef.get();
-
-    response.json({
-      id: fightRef.id,
-      data: fight.data()
-    });
-  } catch (error) {
-    response.status(500).send(error);
-  }
-});
-
 /**
  * SIDEBAR
  * GET the left sidebar from a User document
