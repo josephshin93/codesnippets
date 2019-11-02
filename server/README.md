@@ -5,7 +5,7 @@
 - A simple log tracking the significant changes made to the server
 
 
-### Commit XXX - Setting up OAuth
+### Commit 4483abf - Setting up OAuth
 Updated index.ts with routes for Google Auth
 
 Added keys.js file for Google Auth API
