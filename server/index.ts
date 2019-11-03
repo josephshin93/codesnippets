@@ -1,5 +1,5 @@
 const express = require('express');
-
+const keys = require('./config/keys');
 const app = express();
 const passport = require('passport');
 
@@ -8,8 +8,21 @@ const admin = require('firebase-admin');
 let serviceAccount = require('./config/service-account.json');
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert({
+    type: keys.type,
+    project_id: keys.project_id,
+    private_key_id: keys.private_key_id,
+    private_key: keys.private_key,
+    client_email: keys.client_email,
+    client_id: keys.client_id,
+    auth_uri: keys.auth_uri,
+    token_uri: keys.token_uri,
+    auth_provider_x509_cert_url: keys.auth_provider_x509_cert_url,
+    client_x509_cert_url: keys.client_x509_cert_url,
+  }),
+  databaseURL: keys.databaseURL
 });
+
 
 let firebase = admin.firestore();
 
