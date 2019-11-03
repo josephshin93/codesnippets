@@ -32,9 +32,9 @@ module.exports = (app: any) => {
         }
     );
 
-    app.get(
-        '/', 
-        (req: Request, res: Response) => {
-            res.send({ helloworld: 'test' });
-    });
+    // app.get(
+    //     '/', 
+    //     (req: Request, res: Response) => {
+    //         res.send({ helloworld: 'test' });
+    // });
 }

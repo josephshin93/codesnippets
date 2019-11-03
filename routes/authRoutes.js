@@ -1,5 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var passport = require('passport');
 module.exports = function (app) {
     app.get('/auth/google', passport.authenticate('google', {
@@ -15,7 +15,9 @@ module.exports = function (app) {
     app.get('/api/current_user', function (req, res) {
         res.send(req.user);
     });
-    app.get('/', function (req, res) {
-        res.send({ helloworld: 'test' });
-    });
+    // app.get(
+    //     '/', 
+    //     (req: Request, res: Response) => {
+    //         res.send({ helloworld: 'test' });
+    // });
 };
