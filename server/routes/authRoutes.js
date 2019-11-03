@@ -7,7 +7,6 @@ module.exports = function (app) {
     }));
     app.get('/auth/google/callback', passport.authenticate('google'));
     app.get('/', function (req, res) {
-        res.send({ helloworld: 'test'
-        });
+        res.send({ helloworld: 'test' });
     });
 };

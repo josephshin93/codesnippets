@@ -2,25 +2,20 @@ import passport from 'passport';
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const keys = require('../config/keys');
 
-
 module.exports = (firebase: any) => {
     
-    var ref = firebase.database().ref().child('users');
+    var ref = firebase.collection('users');
 
     // TODO
     passport.serializeUser((user: any, done) => {
-        done(null, user.googleId);
+        console.log("serial", user);
+        done(null, user);
     });
 
     // TODO
     passport.deserializeUser((id, done) => {
-        ref.orderByChild("googleId").equalTo(id).once("value", function(snapshot: any) {
-            // TODO: There's gotta be a better way to access property
-            for (var id in snapshot.val()) { 
-                console.log(snapshot.val()[id]);
-                done(null, snapshot.val()[id]);
-            }
-        }, function (err: any) { console.log(err.code); });
+        console.log("deserial", id);
+        done(null, id);
     })
 
     passport.use(           
@@ -31,23 +26,23 @@ module.exports = (firebase: any) => {
             proxy: true,
         }, (accessToken: any, refreshToken: any, profile: any, done: any) => {
             
-            console.log(profile);
-
-            ref.on('child_added', function(snapshot: any) { done(null, snapshot.val()); });
-
-            // TODO: 
-            // Consider adding ".indexOn": "googleId" at /users to your security rules for better performance.
-            ref.orderByChild("googleId").equalTo(profile.id).once("value", function(snapshot: any) {
-
-                if ( !snapshot.exists() ) {
-                    ref.push().set({ googleId: profile.id });
-                } else {                   
-                    // TODO: There's gotta be a better way to access property
-                    for (var id in snapshot.val()) { 
-                        done(null, snapshot.val()[id]);
+            ref.where("googleId", "==", profile.id).get()
+                .then((snapshot: any) => {
+                    if (snapshot.empty) {
+                        ref.add({ googleId: profile.id }).then((newUser: any) => {
+                            console.log("NEWUSER =>", newUser.id);
+                            done(null, newUser);
+                        });
+                    } else {
+                        snapshot.forEach((doc: any) => {
+                            console.log("EXISTINGUSER: ", doc.id, '=>', doc.data());
+                            done(null, doc.id);
+                        });
                     }
-                }
-            }, function (err: any) { console.log(err.code); });
+                })
+                .catch((err: any) => {
+                    console.log('Error getting document', err);
+                });
         })
     );
 }

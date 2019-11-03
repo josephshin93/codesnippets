@@ -7,20 +7,16 @@ var passport_1 = __importDefault(require("passport"));
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var keys = require('../config/keys');
 module.exports = function (firebase) {
-    var ref = firebase.database().ref().child('users');
+    var ref = firebase.collection('users');
     // TODO
     passport_1.default.serializeUser(function (user, done) {
-        done(null, user.googleId);
+        console.log("serial", user);
+        done(null, user);
     });
     // TODO
     passport_1.default.deserializeUser(function (id, done) {
-        ref.orderByChild("googleId").equalTo(id).once("value", function (snapshot) {
-            // TODO: There's gotta be a better way to access property
-            for (var id in snapshot.val()) {
-                console.log(snapshot.val()[id]);
-                done(null, snapshot.val()[id]);
-            }
-        }, function (err) { console.log(err.code); });
+        console.log("deserial", id);
+        done(null, id);
     });
     passport_1.default.use(new GoogleStrategy({
         clientID: keys.googleClientID,
@@ -28,20 +24,23 @@ module.exports = function (firebase) {
         callbackURL: '/auth/google/callback',
         proxy: true,
     }, function (accessToken, refreshToken, profile, done) {
-        console.log(profile);
-        ref.on('child_added', function (snapshot) { done(null, snapshot.val()); });
-        // TODO: 
-        // Consider adding ".indexOn": "googleId" at /users to your security rules for better performance.
-        ref.orderByChild("googleId").equalTo(profile.id).once("value", function (snapshot) {
-            if (!snapshot.exists()) {
-                ref.push().set({ googleId: profile.id });
+        ref.where("googleId", "==", profile.id).get()
+            .then(function (snapshot) {
+            if (snapshot.empty) {
+                ref.add({ googleId: profile.id }).then(function (newUser) {
+                    console.log("NEWUSER =>", newUser.id);
+                    done(null, newUser);
+                });
             }
             else {
-                // TODO: There's gotta be a better way to access property
-                for (var id in snapshot.val()) {
-                    done(null, snapshot.val()[id]);
-                }
+                snapshot.forEach(function (doc) {
+                    console.log("EXISTINGUSER: ", doc.id, '=>', doc.data());
+                    done(null, doc.id);
+                });
             }
-        }, function (err) { console.log(err.code); });
+        })
+            .catch(function (err) {
+            console.log('Error getting document', err);
+        });
     }));
 };
