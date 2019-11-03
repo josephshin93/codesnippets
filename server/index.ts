@@ -1,11 +1,16 @@
 const express = require('express');
 const keys = require('./config/keys');
+const cookieSession = require('cookie-session');
 const app = express();
 const passport = require('passport');
-
 const admin = require('firebase-admin');
 
-let serviceAccount = require('./config/service-account.json');
+app.use(
+  cookieSession({
+      maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
+      keys: [keys.cookieKey]
+  })
+);
 
 admin.initializeApp({
   credential: admin.credential.cert({
@@ -22,7 +27,6 @@ admin.initializeApp({
   }),
   databaseURL: keys.databaseURL
 });
-
 
 let firebase = admin.firestore();
 

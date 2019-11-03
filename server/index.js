@@ -1,20 +1,14 @@
 "use strict";
 var express = require('express');
 var keys = require('./config/keys');
+var cookieSession = require('cookie-session');
 var app = express();
 var passport = require('passport');
 var admin = require('firebase-admin');
-var serviceAccount = require('./config/service-account.json');
-console.log("type: ", keys.type);
-console.log("project_id: ", keys.project_id);
-console.log("private_key_id: ", keys.private_key_id);
-console.log("private_key: ", keys.private_key);
-console.log("client_email: ", keys.client_email);
-console.log("client_id: ", keys.client_id);
-console.log("auth_uri: ", keys.auth_uri);
-console.log("token_uri: ", keys.token_uri);
-console.log("auth_provider_x509_cert_url: ", keys.auth_provider_x509_cert_url);
-console.log("client_x509_cert_url: ", keys.client_x509_cert_url);
+app.use(cookieSession({
+    maxAge: 15 * 24 * 60 * 60 * 1000,
+    keys: [keys.cookieKey]
+}));
 admin.initializeApp({
     credential: admin.credential.cert({
         type: keys.type,

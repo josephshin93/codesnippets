@@ -15,6 +15,21 @@ module.exports = (app: any) => {
     );
     
     app.get(
+        '/api/logout', 
+        (req: Request, res: Response) => {
+            req.logout();
+            res.send("LOGGED OUT");
+        }
+    );    
+
+    app.get(
+        '/api/current_user', 
+        (req: Request, res: Response) => {
+            res.send(req.user);
+        }
+    );
+
+    app.get(
         '/', 
         (req: Request, res: Response) => {
             res.send({ helloworld: 'test' });
