@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var express = require('express');
 var keys = require('./config/keys');
 var cookieSession = require('cookie-session');
@@ -29,5 +30,12 @@ require('./services/passport')(firebase);
 app.use(passport.initialize());
 app.use(passport.session());
 require('./routes/authRoutes')(app);
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static('client/build'));
+    var path_1 = require('path');
+    app.get('*', function (req, res) {
+        res.sendFile(path_1.resolve(__dirname, 'client', 'build', 'index.html'));
+    });
+}
 var PORT = process.env.PORT || 5000;
 app.listen(PORT);
