@@ -5,6 +5,22 @@
 - A simple log tracking the significant changes made to the server
 
 
+### Commit 9850292 - Added Cookie Session
+
+Added cookies to our app to remember our users, so that they do not need to sign into the app every time they navigate to our site. Cookies are set to last for 15 days at the moment.
+
+### Commit 16f37c3 - Change from Firestore JSON creds to variables in key file
+
+In order to deploy from Heroku we are going to have to have Heroku pass keys to our app because we don't want to store a JSON file with sensitive information on our repo. 
+
+### Commit 5d30e54 - Change from Firebase DB to Firestore
+
+Updated the server to use Firestore instead of the Firebase DB. 
+
+### Commit 54db7de - User Auth Flow
+
+Implemented user flow, so that when a new user signs in, we create a new user account. Otherwise, we sign the user back in with their previously assigned account. 
+
 ### Commit 4483abf - Setting up OAuth
 Updated index.ts with routes for Google Auth
 
