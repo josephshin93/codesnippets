@@ -5,6 +5,10 @@
 - A simple log tracking the significant changes made to the server
 
 
+### Commit ca4e9a7 - Hooked up server with client
+Added new routes to handle user login and logging out. Also added production build logic for when the app is deployed to Heroku.
+
+
 ### Commit 9850292 - Added Cookie Session
 
 Added cookies to our app to remember our users, so that they do not need to sign into the app every time they navigate to our site. Cookies are set to last for 15 days at the moment.
