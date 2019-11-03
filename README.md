@@ -1,19 +1,58 @@
-# Code Snippets
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-Code Snippets is a web application that assists software development teams communicate their progress. Each member on a team can create posts containing a snippet of code and/or task and Code Snippets will keep these posts organized for your team. You can search and sort all relevant posts. With weekly submissions and updates, everyone in the team can be on the same page as they advance through their project goals.
+# Code Snippet / Boba: Server
 
 
-## Contributing
-We appreciate and welcome contributions to the Code Snippets project. We are currently still in the planning stages of the project, so if you have any comments or concerns please submit an [issue](https://github.com/josephshin93/codesnippets/issues) so that our team can take them into consideration.
+## Commit History and Notes
+- A simple log tracking the significant changes made to the server
 
 
-## Authors
-* Wan Ashraf Wan Ahmad Ezani
-* Joseph Shin
-* Marc Tibbs
+### Commit 5be5788  - Hooked up server with client
+Added new routes to handle user login and logging out. Also added production build logic for when the app is deployed to Heroku.
 
 
-## License
-Licensed under the [MIT](LICENSE) license.
+### Commit 9850292 - Added Cookie Session
+
+Added cookies to our app to remember our users, so that they do not need to sign into the app every time they navigate to our site. Cookies are set to last for 15 days at the moment.
+
+### Commit 16f37c3 - Change from Firestore JSON creds to variables in key file
+
+In order to deploy from Heroku we are going to have to have Heroku pass keys to our app because we don't want to store a JSON file with sensitive information on our repo. 
+
+### Commit 5d30e54 - Change from Firebase DB to Firestore
+
+Updated the server to use Firestore instead of the Firebase DB. 
+
+### Commit 54db7de - User Auth Flow
+
+Implemented user flow, so that when a new user signs in, we create a new user account. Otherwise, we sign the user back in with their previously assigned account. 
+
+### Commit 4483abf - Setting up OAuth
+Updated index.ts with routes for Google Auth
+
+Added keys.js file for Google Auth API
+
+Added node modules:
+    - nodemon
+    - passport
+
+Comments:
+I enabled the Google API by creating a new project under the Google developer console. Using the id and secret from this new project, we can now use Google Authentication on our project. Also installed the 'passport' node module that will help make authenticating with Google easier. Navigating to `localhost:5000/auth/google` will bring up the Google Auth screen.
+
+Also, installed the "nodemon" package to make developing the server easier. Added a script to start the server with nodemon: `npm run dev`.
+
+
+### Commit 03e598c - Init
+10/31/2019 @ 15:03
+
+Added Server directory
+
+Added index.ts file & compiled to index.js
+
+Added node modules:
+    - express
+    - node
+    - types/express (typescript)
+    - types/node (typescript)
+    - typescript
+
+Comments:
+At this point I'm just setting up a basic server to get started from. I'm following the same steps I used to create a test app for this project. However, I am adding the use of typescript this time around. You can run `node index.js` to run the test server which will run on `localhost:5000` and display a simple message. 
