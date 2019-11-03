@@ -143,7 +143,7 @@ app.get("/teams/page/:teamId", async (req, res) => {
     // Firestore query
     const teamSnippets = await db
       .collection("snippets")
-      .where("teams", "array-contains", teamId)
+      .where("team", "array-contains", teamId)
       .orderBy("timeCreated", "desc")
       .limit(20)
       .get();
@@ -201,10 +201,61 @@ app.get("/snippets/recent", async (req, res) => {
   }
 });
 
+/**
+ * Page: NEW SNIPPET
+ * Purpose: POST a new snippet
+ * Requirement: Owner ID, name, & picture path. Snippet content.
+ * Assumption: Axios library in front end
+ * Returns: Console log of status
+ */
+app.post("/snippets/new", async (req, res) => {
+  try {
+    // Grab from front end
+    const {
+      ownerID,
+      ownerName,
+      ownerPic,
+      title,
+      description,
+      content,
+      status,
+      team
+    } = req.body;
+
+    // Package data
+    const data = {
+      ownerID,
+      ownerName,
+      ownerPic,
+      title,
+      description,
+      content,
+      status,
+      team,
+      timeCreated: admin.firestore.FieldValue.serverTimestamp(),
+      totalComments: 0,
+      totalLikes: 0
+    };
+
+    // Get reference of Snippet collection then add data
+    const snippetRef = await db.collection("snippets").add(data);
+
+    // Retrieve data and verify response for test. This may be omitted
+    const snippet = await snippetRef.get();
+    res.json({
+      snippetID: snippet.id,
+      data: snippet.data()
+    });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
 // Add new user
-app.post("/users", async (req, res) => {
+app.post("/users/new", async (req, res) => {
   try {
     const { firstName, lastName, email } = req.body;
+    // Firestore can add the team field later, this is schema-less
     const data = {
       firstName,
       lastName,
