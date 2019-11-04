@@ -1,5 +1,23 @@
 # Code Snippet / Boba: Server
 
+## Dev Setup 
+
+### Step 1
+Clone repo and switch to dev-server branch
+```
+git clone https://github.com/josephshin93/codesnippets.git
+git checkout -b dev-server origin/dev-server
+```
+
+### Step 2
+Change into the codesnippets directory and run `npm install`.
+
+### Step 3
+Change into the client directory and run `npm install`.
+
+### Step 4 
+Change back to the codesnippets directory. Run `npm run dev`. This will run the server on localhost:5000 and the React app on localhost:3000.
+
 
 ## Commit History and Notes
 - A simple log tracking the significant changes made to the server
