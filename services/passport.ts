@@ -17,7 +17,7 @@ module.exports = (firebase: any) => {
             callbackURL: '/auth/google/callback',
             proxy: true,
         }, (accessToken: any, refreshToken: any, profile: any, done: any) => {
-
+            console.log(profile);
             ref.where("googleId", "==", profile.id).get()
                 .then((snapshot: any) => {
                     var user = { 
@@ -29,7 +29,7 @@ module.exports = (firebase: any) => {
                     };
 
                     if (snapshot.empty) {
-                        ref.add({user}).then( (newUser: any) => { done(null, user) });
+                        ref.add(user).then( (newUser: any) => { done(null, user) });
                     } else {
                         snapshot.forEach( (doc: any) => { 
                             done(null, doc.data()); 

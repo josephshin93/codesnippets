@@ -11,6 +11,7 @@ module.exports = function (firebase) {
         callbackURL: '/auth/google/callback',
         proxy: true
     }, function (accessToken, refreshToken, profile, done) {
+        console.log(profile);
         ref.where("googleId", "==", profile.id).get()
             .then(function (snapshot) {
             var user = {
@@ -21,7 +22,7 @@ module.exports = function (firebase) {
                 picture: profile.photos[0].value
             };
             if (snapshot.empty) {
-                ref.add({ user: user }).then(function (newUser) { done(null, user); });
+                ref.add(user).then(function (newUser) { done(null, user); });
             }
             else {
                 snapshot.forEach(function (doc) {
