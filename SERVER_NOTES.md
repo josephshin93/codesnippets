@@ -15,8 +15,12 @@ Change into the codesnippets directory and run `npm install`.
 ### Step 3
 Change into the client directory and run `npm install`.
 
-### Step 4 
+### Step 4
+Change into the `codesnippets/config` folder and make a copy of the `keys_template.js` file as `dev.js`. Copy the keys from our TeamGoogleDrive/server/Credentials document into the dev file. 
+
+### Step 5
 Change back to the codesnippets directory. Run `npm run dev`. This will run the server on localhost:5000 and the React app on localhost:3000.
+
 
 
 ## Commit History and Notes
