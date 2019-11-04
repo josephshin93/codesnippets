@@ -13,7 +13,7 @@ class Header extends Component<Props> {
             case false:
                 return <div><a href="auth/google">Log In</a></div>;
             default:
-                return <div>Welcome to Boba!<div><a href="api/logout">Log Out</a></div></div>;
+                return <div>Sign in as: <b>{this.props.auth.firstName}</b> – <a href="api/logout">Log Out</a></div>;
         }
     }
 

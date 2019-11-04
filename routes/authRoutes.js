@@ -15,6 +15,9 @@ module.exports = function (app) {
     app.get('/api/current_user', function (req, res) {
         res.send(req.user);
     });
+    app.get('/api/get_snippets', function (req, res) {
+        res.send({ user: "snippets" });
+    });
     // app.get(
     //     '/', 
     //     (req: Request, res: Response) => {

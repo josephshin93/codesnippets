@@ -1,4 +1,4 @@
-import passport from 'passport';
+const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const keys = require('../config/keys');
 
@@ -6,17 +6,9 @@ module.exports = (firebase: any) => {
     
     var ref = firebase.collection('users');
 
-    // TODO
-    passport.serializeUser((user: any, done) => {
-        console.log("serial", user);
-        done(null, user);
-    });
+    passport.serializeUser((user: any, done) => { done(null, user);});
 
-    // TODO
-    passport.deserializeUser((id, done) => {
-        console.log("deserial", id);
-        done(null, id);
-    })
+    passport.deserializeUser((id, done) => { done(null, id);});
 
     passport.use(           
         new GoogleStrategy({
@@ -25,23 +17,27 @@ module.exports = (firebase: any) => {
             callbackURL: '/auth/google/callback',
             proxy: true,
         }, (accessToken: any, refreshToken: any, profile: any, done: any) => {
-            
+
             ref.where("googleId", "==", profile.id).get()
                 .then((snapshot: any) => {
+                    var user = { 
+                        googleId: profile.id,
+                        email: profile.emails[0].value,
+                        firstName: profile.name.givenName,
+                        lastName: profile.name.familyName,
+                        picture: profile.photos[0].value
+                    };
+
                     if (snapshot.empty) {
-                        ref.add({ googleId: profile.id }).then((newUser: any) => {
-                            console.log("NEWUSER =>", newUser.id);
-                            done(null, newUser);
-                        });
+                        ref.add({user}).then( (newUser: any) => { done(null, user) });
                     } else {
-                        snapshot.forEach((doc: any) => {
-                            console.log("EXISTINGUSER: ", doc.id, '=>', doc.data());
-                            done(null, doc.id);
+                        snapshot.forEach( (doc: any) => { 
+                            done(null, doc.data()); 
                         });
                     }
                 })
                 .catch((err: any) => {
-                    console.log('Error getting document', err);
+                    console.log('Error getting user document.', err);
                 });
         })
     );

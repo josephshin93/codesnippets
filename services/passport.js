@@ -1,46 +1,35 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var passport_1 = __importDefault(require("passport"));
+var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var keys = require('../config/keys');
 module.exports = function (firebase) {
     var ref = firebase.collection('users');
-    // TODO
-    passport_1.default.serializeUser(function (user, done) {
-        console.log("serial", user);
-        done(null, user);
-    });
-    // TODO
-    passport_1.default.deserializeUser(function (id, done) {
-        console.log("deserial", id);
-        done(null, id);
-    });
-    passport_1.default.use(new GoogleStrategy({
+    passport.serializeUser(function (user, done) { done(null, user); });
+    passport.deserializeUser(function (id, done) { done(null, id); });
+    passport.use(new GoogleStrategy({
         clientID: keys.googleClientID,
         clientSecret: keys.googleClientSecret,
         callbackURL: '/auth/google/callback',
-        proxy: true,
+        proxy: true
     }, function (accessToken, refreshToken, profile, done) {
         ref.where("googleId", "==", profile.id).get()
             .then(function (snapshot) {
+            var user = {
+                googleId: profile.id,
+                email: profile.emails[0].value,
+                firstName: profile.name.givenName,
+                lastName: profile.name.familyName,
+                picture: profile.photos[0].value
+            };
             if (snapshot.empty) {
-                ref.add({ googleId: profile.id }).then(function (newUser) {
-                    console.log("NEWUSER =>", newUser.id);
-                    done(null, newUser);
-                });
+                ref.add({ user: user }).then(function (newUser) { done(null, user); });
             }
             else {
                 snapshot.forEach(function (doc) {
-                    console.log("EXISTINGUSER: ", doc.id, '=>', doc.data());
-                    done(null, doc.id);
+                    done(null, doc.data());
                 });
             }
-        })
-            .catch(function (err) {
-            console.log('Error getting document', err);
+        })["catch"](function (err) {
+            console.log('Error getting user document.', err);
         });
     }));
 };

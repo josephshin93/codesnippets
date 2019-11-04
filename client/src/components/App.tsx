@@ -5,6 +5,7 @@ import * as actions from '../actions';
 
 import Header from './Header';
 import Landing from './Landing';
+import Dashboard from './Dashboard';
 
 interface Props {
     fetchUser: () => void;
@@ -21,7 +22,8 @@ class App extends Component<Props> {
                 <BrowserRouter>
                     <div>
                         <Header/>
-                        <Route exact path="/" component={Landing} />    
+                        <Route exact path="/" component={Landing} />  
+                        <Route exact path="/dashboard" component={Dashboard} />  
                     </div>
                 </BrowserRouter>
             </div>
