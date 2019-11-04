@@ -24,7 +24,7 @@ class SnippetList extends Component<Props> {
                     <div><b>OwnerPic:</b> { snippet.ownerPic }</div>
                     <div><b>Status:</b> { snippet.status }</div>
                     <div><b>Team:</b> { snippet.team }</div>
-                    <div><b>TimeCreated:</b> { snippet.timeCreated._seconds }</div>
+                    <div><b>TimeCreated:</b> {new Date(snippet.timeCreated._seconds * 1000).toLocaleDateString() }</div>
                     <div><b>TotalComments:</b> { snippet.totalComments }</div>
                     <div><b>TotalLikes:</b> { snippet.totalLikes }</div>
                 </div>

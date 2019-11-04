@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import SnippetList from './snippets/SnippetList';
 
@@ -24,6 +25,7 @@ class Dashboard extends Component<Props> {
                     </div>,
                     <div key="2">
                         <h1>[Snippet List]</h1>
+                        <Link to="/newsnippet">New Snippet</Link>
                         <SnippetList key="2"/>
                     </div>
                 ];

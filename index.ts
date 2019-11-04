@@ -2,10 +2,12 @@ const express = require('express');
 const keys = require('./config/keys');
 const cookieSession = require('cookie-session');
 const app = express();
+const bodyParser = require('body-parser');
 const passport = require('passport');
 const admin = require('firebase-admin');
 import { Request, Response } from 'express';
 
+app.use(bodyParser.json());
 app.use(
   cookieSession({
       maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days

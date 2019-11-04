@@ -1,5 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var passport = require('passport');
 module.exports = function (app) {
     app.get('/auth/google', passport.authenticate('google', {

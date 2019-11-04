@@ -1,11 +1,35 @@
 import { Request, Response } from 'express';
 
 module.exports = (app: any, firebase: any) => {
+
+    app.post(
+        '/api/add_snippet',
+        (req: Request, res: Response) => {
+
+            console.log(req.body);
+
+            const { content, description, ownerID, status, team, title } = req.body;
+            
+            const snippet = {
+                title,
+                content,
+                description,
+                ownerID,
+                status,
+                team,
+                timeCreated: new Date(),
+                totalComments: 0,
+                totalLikes: 0
+            }
+            firebase.collection('snippets').add(snippet);
+        }
+    );
+
     app.get(
         '/api/snippets', 
         (req: Request, res: Response) => {
 
-            var ref = firebase.collection('snippets').get().then((snapshot: any) => {
+            firebase.collection('snippets').orderBy('timeCreated', 'desc').get().then((snapshot: any) => {
                 res.send( snapshot.docs.map((doc: any) => doc.data()) );
             }).catch((err: any) => { 
                 console.log('Error getting snippets.', err) 

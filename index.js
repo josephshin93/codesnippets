@@ -1,11 +1,13 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var express = require('express');
 var keys = require('./config/keys');
 var cookieSession = require('cookie-session');
 var app = express();
+var bodyParser = require('body-parser');
 var passport = require('passport');
 var admin = require('firebase-admin');
+app.use(bodyParser.json());
 app.use(cookieSession({
     maxAge: 15 * 24 * 60 * 60 * 1000,
     keys: [keys.cookieKey]
@@ -21,7 +23,7 @@ admin.initializeApp({
         auth_uri: keys.auth_uri,
         token_uri: keys.token_uri,
         auth_provider_x509_cert_url: keys.auth_provider_x509_cert_url,
-        client_x509_cert_url: keys.client_x509_cert_url,
+        client_x509_cert_url: keys.client_x509_cert_url
     }),
     databaseURL: keys.databaseURL
 });
