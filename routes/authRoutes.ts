@@ -31,16 +31,4 @@ module.exports = (app: any) => {
             res.send(req.user);
         }
     );
-
-    app.get(
-        '/api/get_snippets', 
-        (req: Request, res: Response) => {
-            res.send({user: "snippets"});
-        }
-    );
-    // app.get(
-    //     '/', 
-    //     (req: Request, res: Response) => {
-    //         res.send({ helloworld: 'test' });
-    // });
 }

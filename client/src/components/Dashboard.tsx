@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import SnippetList from './snippets/SnippetList';
 
 interface Props {
     auth: any;
@@ -13,14 +14,19 @@ class Dashboard extends Component<Props> {
             case false:
                 return '';                
             default:
-                return <div>
-                    <h1>User: </h1>
-                    <p>Name: <b>{this.props.auth.firstName} {this.props.auth.lastName}</b></p>
-                    <p>Email: <b>{this.props.auth.email}</b></p>
-                    <p>Google ID: <b>{this.props.auth.googleId}</b></p>
-                    <p>Picture:</p>
-                    <a href={this.props.auth.picture}><img alt='' src={this.props.auth.picture} title="" width="600" height="400" /></a>
-                </div>;
+                return [
+                    <div key="1">
+                        <h1>[User]</h1>
+                        <a href={this.props.auth.picture}><img alt='User' src={this.props.auth.picture} width="100" height="100" /></a>
+                        <p>Name: <b>{this.props.auth.firstName} {this.props.auth.lastName}</b></p>
+                        <p>Email: <b>{this.props.auth.email}</b></p>
+                        <p>Google ID: <b>{this.props.auth.googleId}</b></p>
+                    </div>,
+                    <div key="2">
+                        <h1>[Snippet List]</h1>
+                        <SnippetList key="2"/>
+                    </div>
+                ];
         }
     }
 
