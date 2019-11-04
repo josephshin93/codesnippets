@@ -6,9 +6,9 @@ module.exports = (firebase: any) => {
     
     var ref = firebase.collection('users');
 
-    passport.serializeUser((user: any, done) => { done(null, user);});
+    passport.serializeUser((user: any, done: any) => { done(null, user);});
 
-    passport.deserializeUser((id, done) => { done(null, id);});
+    passport.deserializeUser((id: any, done: any) => { done(null, id);});
 
     passport.use(           
         new GoogleStrategy({
@@ -17,7 +17,6 @@ module.exports = (firebase: any) => {
             callbackURL: '/auth/google/callback',
             proxy: true,
         }, (accessToken: any, refreshToken: any, profile: any, done: any) => {
-            console.log(profile);
             ref.where("googleId", "==", profile.id).get()
                 .then((snapshot: any) => {
                     var user = { 
@@ -29,11 +28,9 @@ module.exports = (firebase: any) => {
                     };
 
                     if (snapshot.empty) {
-                        ref.add(user).then( (newUser: any) => { done(null, user) });
+                        ref.add(user).then( () => { done(null, user) });
                     } else {
-                        snapshot.forEach( (doc: any) => { 
-                            done(null, doc.data()); 
-                        });
+                        snapshot.forEach( (doc: any) => { done(null, doc.data()) });
                     }
                 })
                 .catch((err: any) => {

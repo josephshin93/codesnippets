@@ -6,7 +6,7 @@ module.exports = (app: any, firebase: any) => {
         (req: Request, res: Response) => {
 
             var ref = firebase.collection('snippets').get().then((snapshot: any) => {
-                res.send( snapshot.docs.map(doc => doc.data()) );
+                res.send( snapshot.docs.map((doc: any) => doc.data()) );
             }).catch((err: any) => { 
                 console.log('Error getting snippets.', err) 
             });

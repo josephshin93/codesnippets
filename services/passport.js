@@ -1,3 +1,4 @@
+"use strict";
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var keys = require('../config/keys');
@@ -9,9 +10,8 @@ module.exports = function (firebase) {
         clientID: keys.googleClientID,
         clientSecret: keys.googleClientSecret,
         callbackURL: '/auth/google/callback',
-        proxy: true
+        proxy: true,
     }, function (accessToken, refreshToken, profile, done) {
-        console.log(profile);
         ref.where("googleId", "==", profile.id).get()
             .then(function (snapshot) {
             var user = {
@@ -22,14 +22,13 @@ module.exports = function (firebase) {
                 picture: profile.photos[0].value
             };
             if (snapshot.empty) {
-                ref.add(user).then(function (newUser) { done(null, user); });
+                ref.add(user).then(function () { done(null, user); });
             }
             else {
-                snapshot.forEach(function (doc) {
-                    done(null, doc.data());
-                });
+                snapshot.forEach(function (doc) { done(null, doc.data()); });
             }
-        })["catch"](function (err) {
+        })
+            .catch(function (err) {
             console.log('Error getting user document.', err);
         });
     }));
