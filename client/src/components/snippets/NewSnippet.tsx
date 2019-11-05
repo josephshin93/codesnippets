@@ -28,33 +28,52 @@ class NewSnippet extends Component<Props> {
     }, 500);
   };
 
+  // TODO FIX THIS...
+  handleClick = () => {
+    this.props.history.push("/dashboard");
+  };
+
   render() {
     return (
-      <div>
-        <h1>New Snippet</h1>
-        <form onSubmit={this.handleSubmit}>
-          Title:
-          <br />
-          <input type="text" name="title"></input>
-          <br />
-          Content:
-          <br />
-          <input type="text" name="content"></input>
-          <br />
-          Description:
-          <br />
-          <input type="text" name="description"></input>
-          <br />
-          Status:
-          <br />
-          <input type="text" name="status"></input>
-          <br />
-          Team:
-          <br />
-          <input type="text" name="team"></input>
-          <br />
-          <button>Submit</button>
-        </form>
+      <div className="container">
+        <div className="row">
+            <div className="col s12">
+              <h1>New Snippet</h1>
+              <form onSubmit={this.handleSubmit}>
+                Title:
+                <br />
+                <input type="text" name="title"></input>
+                <br />
+                Content:
+                <br />
+                <input type="text" name="content"></input>
+                <br />
+                Description:
+                <br />
+                <input type="text" name="description"></input>
+                <br />
+                Status:
+                <br />
+                <input type="text" name="status"></input>
+                <br />
+                Team:
+                <br />
+                <input type="text" name="team"></input>
+                <br />
+                <br />
+                <button className="btn waves-effect waves-light red" 
+                  onClick={this.handleClick}
+                  style={{marginRight:"10px"}}>
+                  Cancel
+                  <i className="material-icons right">cancel</i>
+                </button>
+                <button className="btn waves-effect waves-light blue">
+                  Submit
+                  <i className="material-icons right">send</i>
+                </button>
+              </form>
+            </div>
+        </div>    
       </div>
     );
   }
