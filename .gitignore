@@ -3,3 +3,7 @@
 
 # node
 **/node_modules
+
+# server
+dev.js
+service-account.json

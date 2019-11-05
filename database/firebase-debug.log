@@ -1,0 +1,58 @@
+[debug] [2019-10-21T04:44:56.679Z] ----------------------------------------------------------------------
+[debug] [2019-10-21T04:44:56.683Z] Command:       /Users/ashrafezani/.nvm/versions/node/v11.14.0/bin/node /Users/ashrafezani/.nvm/versions/node/v11.14.0/bin/firebase emulators:start
+[debug] [2019-10-21T04:44:56.683Z] CLI Version:   7.6.1
+[debug] [2019-10-21T04:44:56.683Z] Platform:      darwin
+[debug] [2019-10-21T04:44:56.683Z] Node Version:  v11.14.0
+[debug] [2019-10-21T04:44:56.696Z] Time:          Sun Oct 20 2019 21:44:56 GMT-0700 (Pacific Daylight Time)
+[debug] [2019-10-21T04:44:56.696Z] ----------------------------------------------------------------------
+[debug] [2019-10-21T04:44:56.696Z] 
+[debug] [2019-10-21T04:44:56.713Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-10-21T04:44:56.714Z] > authorizing via signed-in user
+[info] i  Starting emulators: ["functions","hosting"]
+[warn] ⚠  Your requested "node" version "8" doesn't match your global version "11"
+[info] ✔  functions: Emulator started at http://localhost:5001
+[debug] [2019-10-21T04:44:57.157Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2019-10-21T04:44:57.157Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2019-10-21T04:44:57.329Z] <<< HTTP RESPONSE 200
+[debug] [2019-10-21T04:44:57.348Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/boba-codesnippets/webApps/-/config  
+ 
+[debug] [2019-10-21T04:44:57.691Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: public
+[info] ✔  hosting: Local server: http://localhost:5000
+[info] ✔  hosting: Emulator started at http://localhost:5000
+[info] i  functions: Watching "/Users/ashrafezani/Documents/CS467/database/functions" for Cloud Functions...
+[debug] [2019-10-21T04:44:58.472Z] [runtime-status] Functions runtime initialized. {"cwd":"/Users/ashrafezani/Documents/CS467/database/functions","node_version":"11.14.0"}
+[debug] [2019-10-21T04:44:58.472Z] [runtime-status] Disabled runtime features: undefined {}
+[debug] [2019-10-21T04:44:58.478Z] [runtime-status] Resolved module firebase-admin {"declared":true,"installed":true,"version":"8.6.1","resolution":"/Users/ashrafezani/Documents/CS467/database/functions/node_modules/firebase-admin/lib/index.js"}
+[debug] [2019-10-21T04:44:58.481Z] [runtime-status] Resolved module firebase-functions {"declared":true,"installed":true,"version":"3.3.0","resolution":"/Users/ashrafezani/Documents/CS467/database/functions/node_modules/firebase-functions/lib/index.js"}
+[debug] [2019-10-21T04:44:59.116Z] [runtime-status] Found google-gax at /Users/ashrafezani/Documents/CS467/database/functions/node_modules/google-gax/build/src/index.js {}
+[debug] [2019-10-21T04:44:59.116Z] [runtime-status] Outgoing network have been stubbed. [{"name":"http","status":"mocked"},{"name":"http","status":"mocked"},{"name":"https","status":"mocked"},{"name":"https","status":"mocked"},{"name":"net","status":"mocked"},{"name":"google-gax","status":"mocked"}]
+[debug] [2019-10-21T04:44:59.209Z] [runtime-status] Checked functions.config() {"config":{}}
+[debug] [2019-10-21T04:44:59.210Z] [runtime-status] Resolved module firebase-functions {"declared":true,"installed":true,"version":"3.3.0","resolution":"/Users/ashrafezani/Documents/CS467/database/functions/node_modules/firebase-functions/lib/index.js"}
+[debug] [2019-10-21T04:44:59.212Z] [runtime-status] Resolved module firebase-admin {"declared":true,"installed":true,"version":"8.6.1","resolution":"/Users/ashrafezani/Documents/CS467/database/functions/node_modules/firebase-admin/lib/index.js"}
+[debug] [2019-10-21T04:44:59.213Z] [runtime-status] Resolved module firebase-functions {"declared":true,"installed":true,"version":"3.3.0","resolution":"/Users/ashrafezani/Documents/CS467/database/functions/node_modules/firebase-functions/lib/index.js"}
+[debug] [2019-10-21T04:44:59.285Z] [runtime-status] firebase-admin has been stubbed. {"adminResolution":{"declared":true,"installed":true,"version":"8.6.1","resolution":"/Users/ashrafezani/Documents/CS467/database/functions/node_modules/firebase-admin/lib/index.js"}}
+[debug] [2019-10-21T04:44:59.455Z] [runtime-status] config() parent accessed! {"parentKey":"firebase","parentConfig":{}}
+[debug] [2019-10-21T04:44:59.458Z] [runtime-status] initializeApp(DEFAULT) {"databaseURL":"https://boba-codesnippets.firebaseio.com","storageBucket":"boba-codesnippets.appspot.com","projectId":"boba-codesnippets"}
+[warn] ⚠  functions: The Cloud Firestore emulator is not running, so calls to Firestore will affect production.
+[info] ✔  functions[webApi]: http function initialized (http://localhost:5001/boba-codesnippets/us-central1/webApi).
+[info] ✔  All emulators started, it is now safe to connect.
+[debug] [2019-10-21T19:01:25.475Z] Accepted request GET /api/v1/warmup --> warmup
+[debug] [2019-10-21T19:01:27.212Z] [runtime-status] Functions runtime initialized. {"cwd":"/Users/ashrafezani/Documents/CS467/database/functions","node_version":"11.14.0"}
+[info] i  functions: Beginning execution of "warmup"
+[debug] [2019-10-21T19:01:27.215Z] [runtime-status] Disabled runtime features: undefined {}
+[debug] [2019-10-21T19:01:27.225Z] [runtime-status] Resolved module firebase-admin {"declared":true,"installed":true,"version":"8.6.1","resolution":"/Users/ashrafezani/Documents/CS467/database/functions/node_modules/firebase-admin/lib/index.js"}
+[debug] [2019-10-21T19:01:27.229Z] [runtime-status] Resolved module firebase-functions {"declared":true,"installed":true,"version":"3.3.0","resolution":"/Users/ashrafezani/Documents/CS467/database/functions/node_modules/firebase-functions/lib/index.js"}
+[debug] [2019-10-21T19:01:27.856Z] [runtime-status] Found google-gax at /Users/ashrafezani/Documents/CS467/database/functions/node_modules/google-gax/build/src/index.js {}
+[debug] [2019-10-21T19:01:27.856Z] [runtime-status] Outgoing network have been stubbed. [{"name":"http","status":"mocked"},{"name":"http","status":"mocked"},{"name":"https","status":"mocked"},{"name":"https","status":"mocked"},{"name":"net","status":"mocked"},{"name":"google-gax","status":"mocked"}]
+[debug] [2019-10-21T19:01:27.964Z] [runtime-status] Checked functions.config() {"config":{}}
+[debug] [2019-10-21T19:01:27.964Z] [runtime-status] Resolved module firebase-functions {"declared":true,"installed":true,"version":"3.3.0","resolution":"/Users/ashrafezani/Documents/CS467/database/functions/node_modules/firebase-functions/lib/index.js"}
+[debug] [2019-10-21T19:01:27.966Z] [runtime-status] Resolved module firebase-admin {"declared":true,"installed":true,"version":"8.6.1","resolution":"/Users/ashrafezani/Documents/CS467/database/functions/node_modules/firebase-admin/lib/index.js"}
+[debug] [2019-10-21T19:01:27.966Z] [runtime-status] Resolved module firebase-functions {"declared":true,"installed":true,"version":"3.3.0","resolution":"/Users/ashrafezani/Documents/CS467/database/functions/node_modules/firebase-functions/lib/index.js"}
+[debug] [2019-10-21T19:01:28.073Z] [runtime-status] firebase-admin has been stubbed. {"adminResolution":{"declared":true,"installed":true,"version":"8.6.1","resolution":"/Users/ashrafezani/Documents/CS467/database/functions/node_modules/firebase-admin/lib/index.js"}}
+[debug] [2019-10-21T19:01:28.358Z] [runtime-status] config() parent accessed! {"parentKey":"firebase","parentConfig":{}}
+[debug] [2019-10-21T19:01:28.362Z] [runtime-status] initializeApp(DEFAULT) {"databaseURL":"https://boba-codesnippets.firebaseio.com","storageBucket":"boba-codesnippets.appspot.com","projectId":"boba-codesnippets"}
+[warn] ⚠  functions: The Cloud Firestore emulator is not running, so calls to Firestore will affect production.
+[warn] ⚠  functions: Could not find trigger "warmup" in your functions directory.
+[warn] ⚠  Your function was killed because it raised an unhandled error.
