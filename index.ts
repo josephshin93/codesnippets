@@ -40,6 +40,7 @@ app.use(passport.session());
 
 require('./routes/authRoutes')(app);
 require('./routes/snippetRoutes')(app, firebase);
+require('./routes/teamRoutes')(app, firebase);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));

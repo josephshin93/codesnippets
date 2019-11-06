@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import SnippetList from './snippets/SnippetList';
+import TeamList from './teams/TeamList';
 
 interface Props {
     auth: any;
@@ -27,7 +28,13 @@ class Dashboard extends Component<Props> {
                         <h1>[Snippet List]</h1>
                         <Link to="/newsnippet">New Snippet</Link>
                         <SnippetList key="2"/>
+                    </div>,
+                    <div key="3">
+                        <h1>[Team List]</h1>
+                        <Link to="/newsnippet">New Team</Link>
+                        <TeamList key="3"/>
                     </div>
+
                 ];
         }
     }
