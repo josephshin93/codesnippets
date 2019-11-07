@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchSnippets } from '../../actions';
+import { fetchSnippets } from '../../store/actions';
 
 interface Props {
     fetchSnippets: () => void,
@@ -33,7 +33,7 @@ class SnippetList extends Component<Props> {
     }
     
     render() {
-        console.log("snippetlist", this.props);
+        // console.log("snippet list props", this.props);
         return (
             <div>
                 {this.renderSnippets()}
