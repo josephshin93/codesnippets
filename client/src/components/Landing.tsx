@@ -2,12 +2,10 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import queryString from 'query-string';
 
-
+// TODO: define interface for Landing props
 
 const Landing = (props: any) => {
-
-    // console.log('landing props', props);
-
+    
     if (props.location.search) {
         const query = queryString.parse(props.location.search);
         if (query.token) {
@@ -19,8 +17,6 @@ const Landing = (props: any) => {
         }
     }
     
-    
-
     return (
         <div>
             <h1>Boba</h1>

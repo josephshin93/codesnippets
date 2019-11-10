@@ -21,7 +21,6 @@ class App extends Component<AppProps> {
 
     render() {
         this.props.authorizeUser();
-        // console.log('app props', this.props);
         return (
             <BrowserRouter>
                 <div>

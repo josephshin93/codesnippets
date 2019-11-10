@@ -3,14 +3,13 @@ import { connect } from 'react-redux';
 import {
     State,
     User,
-} from '../store/stateTypes';
+} from '../store/types';
 
 interface HeaderProps {
     user: User | null;
 }
 
 class Header extends Component<HeaderProps> {
-    
 
     renderContent() {
         switch (this.props.user) {
@@ -24,14 +23,13 @@ class Header extends Component<HeaderProps> {
     }
 
     render () {
-        // console.log('header props', this.props);
         return (
             this.renderContent() 
         );
     }
 }
 
-function mapStateToProps(state: State) {
+const mapStateToProps = (state: State) => {
     return { user: state.user };
 }
 

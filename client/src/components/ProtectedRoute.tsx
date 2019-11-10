@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import {
     State,
     User
-} from '../store/stateTypes';
+} from '../store/types';
 
 
 export interface ProtectedRouteProps extends RouteProps {

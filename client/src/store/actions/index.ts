@@ -3,7 +3,7 @@ import {
     FETCH_USER,
     FETCH_SNIPPETS,
     AUTHORIZE_USER,
-} from './types';
+} from '../types';
 
 export const authorizeUser = () => {
     const userString = localStorage.getItem('user');
@@ -12,7 +12,7 @@ export const authorizeUser = () => {
         type: AUTHORIZE_USER,
         user,
     };
-}
+};
 
 export const fetchUser = () => async (dispatch: any) => {
     const res = await axios.get('api/current_user')
