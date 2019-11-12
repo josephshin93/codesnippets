@@ -1,32 +1,36 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import {
+    State,
+    User,
+} from '../store/types';
 
-interface Props {
-    auth: any;
+interface HeaderProps {
+    user: User | null;
 }
 
-class Header extends Component<Props> {
+class Header extends Component<HeaderProps> {
+
     renderContent() {
-        switch (this.props.auth) {
+        switch (this.props.user) {
+            // case null:
+            //     return 'Loading...';
             case null:
-                return 'Loading...';
-            case false:
                 return <div><a href="auth/google">Log In</a></div>;
             default:
-                return <div>Signed in as: <b>{this.props.auth.firstName}</b> – <a href="api/logout">Log Out</a></div>;
+                return <div>Signed in as: <b>{this.props.user.firstName}</b> – <a href="api/logout">Log Out</a></div>;
         }
     }
 
     render () {
-        console.log(this.props);
         return (
             this.renderContent() 
         );
     }
 }
 
-function mapStateToProps({ auth }: any) {
-    return { auth };
+const mapStateToProps = (state: State) => {
+    return { user: state.user };
 }
 
 export default connect(mapStateToProps)(Header);
