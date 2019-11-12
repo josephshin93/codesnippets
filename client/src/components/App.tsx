@@ -7,6 +7,7 @@ import Header from './Header';
 import Landing from './Landing';
 import Dashboard from './Dashboard';
 import NewSnippet from './snippets/NewSnippet';
+import NewTeam from './teams/NewTeam';
 
 interface Props {
     fetchUser: () => void;
@@ -26,6 +27,7 @@ class App extends Component<Props> {
                         <Route exact path="/" component={Landing} />  
                         <Route exact path="/dashboard" component={Dashboard} />  
                         <Route exact path="/newsnippet" component={NewSnippet} />  
+                        <Route exact path="/newteam" component={NewTeam} />  
                     </div>
                 </BrowserRouter>
             </div>

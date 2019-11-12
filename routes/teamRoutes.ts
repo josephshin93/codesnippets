@@ -1,33 +1,32 @@
 import { Request, Response } from "express";
 
 module.exports = (app: any, firebase: any) => {
-//   app.post("/api/add_snippet", (req: Request, res: Response) => {
-//     console.log(req.body);
+  app.post("/api/add_team", (req: Request, res: Response) => {
+    console.log(req.body);
 
-//     const {
-//       content,
-//       description,
-//       ownerID,
-//       ownerName,
-//       status,
-//       team,
-//       title
-//     } = req.body;
+    const {
+      name,
+      members,
+      roles
+    } = req.body;
 
-//     const snippet = {
-//       title,
-//       content,
-//       description,
-//       ownerID,
-//       ownerName,
-//       status,
-//       team,
-//       timeCreated: new Date(),
-//       totalComments: 0,
-//       totalLikes: 0
-//     };
-//     firebase.collection("snippets").add(snippet);
-//   });
+    const team = {
+        // title,
+        // content,
+        // description,
+        // ownerID,
+        // ownerName,
+        // status,
+        // team,
+        // timeCreated: new Date(),
+        // totalComments: 0,
+        // totalLikes: 0
+        name,
+        members,
+        roles
+    };
+    firebase.collection("teams").add(team);
+  });
 
   app.get("/api/teams", (req: Request, res: Response) => {
     firebase

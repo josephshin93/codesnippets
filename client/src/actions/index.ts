@@ -20,3 +20,8 @@ export const fetchTeams = () => async (dispatch: any) => {
     const res = await axios.get('api/teams')
     dispatch({ type: FETCH_TEAMS, payload: res.data });
 };
+
+export const addTeam = (values: any) => async (dispatch: any) => {
+    const res = await axios.post('api/add_team', values);
+    dispatch({ type: FETCH_TEAMS, payload: res.data });
+};

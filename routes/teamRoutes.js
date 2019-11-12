@@ -1,31 +1,26 @@
 "use strict";
 exports.__esModule = true;
 module.exports = function (app, firebase) {
-    //   app.post("/api/add_snippet", (req: Request, res: Response) => {
-    //     console.log(req.body);
-    //     const {
-    //       content,
-    //       description,
-    //       ownerID,
-    //       ownerName,
-    //       status,
-    //       team,
-    //       title
-    //     } = req.body;
-    //     const snippet = {
-    //       title,
-    //       content,
-    //       description,
-    //       ownerID,
-    //       ownerName,
-    //       status,
-    //       team,
-    //       timeCreated: new Date(),
-    //       totalComments: 0,
-    //       totalLikes: 0
-    //     };
-    //     firebase.collection("snippets").add(snippet);
-    //   });
+    app.post("/api/add_team", function (req, res) {
+        console.log(req.body);
+        var _a = req.body, name = _a.name, members = _a.members, roles = _a.roles;
+        var team = {
+            // title,
+            // content,
+            // description,
+            // ownerID,
+            // ownerName,
+            // status,
+            // team,
+            // timeCreated: new Date(),
+            // totalComments: 0,
+            // totalLikes: 0
+            name: name,
+            members: members,
+            roles: roles
+        };
+        firebase.collection("teams").add(team);
+    });
     app.get("/api/teams", function (req, res) {
         firebase
             .collection("teams")

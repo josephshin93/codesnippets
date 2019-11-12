@@ -31,7 +31,7 @@ class Dashboard extends Component<Props> {
                     </div>,
                     <div key="3">
                         <h1>[Team List]</h1>
-                        <Link to="/newsnippet">New Team</Link>
+                        <Link to="/newteam">New Team</Link>
                         <TeamList key="3"/>
                     </div>
 

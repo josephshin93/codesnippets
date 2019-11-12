@@ -9,16 +9,24 @@ interface Props {
 
 const Team = ({ team, members }: any ) => {
     console.log( "TEAM:", team, members);
-    return (
-      <div>
-        {Object.keys(members).map((member: any, index: any) => {
-          console.log(team.roles[member], member, index);  
-          return (
-            <div key={index}>{team.members[member]} - {team.roles[member]}</div>
+    if (members !== null) {
+        return (
+            <div>
+              {Object.keys(members).map((member: any, index: any) => {
+                console.log(team.roles[member], member, index);  
+                return (
+                  <div key={index}>{team.members[member]} - {team.roles[member]}</div>
+                )
+              })}
+            </div>
           )
-        })}
-      </div>
-    )
+    } else {
+        return (
+            <div></div>
+        )
+    }
+
+
 }
 
 class TeamList extends Component<Props> {
@@ -31,12 +39,18 @@ class TeamList extends Component<Props> {
             console.log( i, team, team.members);
             return (
                 <div key= { i }>
-                    <h3>Team: { team.name.toUpperCase() }</h3>
+                    <h3>{ team.name.toUpperCase() } Team</h3>
                     <h4>Members:</h4>
-                    <Team key={i} team={team} members={team.members}/>
-                    <h4>Subscriptions:</h4>
-                    <p>Digest: { team.subscription.digest.day } @ { team.subscription.digest.time }</p>
-                    <p>Digest: { team.subscription.reminder.day } @ { team.subscription.reminder.time }</p>
+                    <Team key={i} team={team} members={team.members ? team.members : null}/>
+                    { team.subscription ? 
+                    <div>
+                        <h4>Subscriptions:</h4>
+                        <p>Digest: { team.subscription.digest.day } @ { team.subscription.digest.time }</p>
+                        <p>Digest: { team.subscription.reminder.day } @ { team.subscription.reminder.time }</p>
+                    </div>
+                    : null}
+                    
+                    <p>---</p>
                 </div>
             )
         })

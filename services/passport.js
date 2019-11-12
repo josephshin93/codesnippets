@@ -13,15 +13,17 @@ module.exports = function (firebase) {
     }, function (accessToken, refreshToken, profile, done) {
         ref.where("googleId", "==", profile.id).get()
             .then(function (snapshot) {
+            var id = ref.doc().id;
             var user = {
                 googleId: profile.id,
                 email: profile.emails[0].value,
                 firstName: profile.name.givenName,
                 lastName: profile.name.familyName,
-                picture: profile.photos[0].value
+                picture: profile.photos[0].value,
+                id: id
             };
             if (snapshot.empty) {
-                ref.add(user).then(function () { done(null, user); });
+                ref.doc(id).set(user).then(function () { done(null, user); });
             }
             else {
                 snapshot.forEach(function (doc) { done(null, doc.data()); });
