@@ -1,16 +1,18 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var passport = require('passport');
 module.exports = function (app) {
     app.get('/auth/google', passport.authenticate('google', {
         scope: ['profile', 'email']
     }));
     app.get('/auth/google/callback', passport.authenticate('google'), function (req, res) {
-        res.redirect('/dashboard');
+        // console.log(req.user);
+        // res.redirect('/dashboard');
+        res.redirect('/?token=' + JSON.stringify(req.user));
     });
     app.get('/api/logout', function (req, res) {
         req.logout();
-        res.redirect('/');
+        res.redirect('/?logout=true');
     });
     app.get('/api/current_user', function (req, res) {
         res.send(req.user);

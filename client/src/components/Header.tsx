@@ -1,17 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import {
+    State,
+    User,
+} from '../store/types';
 
-interface Props {
-    auth: any;
+
+interface HeaderProps {
+    user: User | null;
 }
 
-class Header extends Component<Props> {
+class Header extends Component<HeaderProps> {
+
     renderContent() {
-        switch (this.props.auth) {
+        switch (this.props.user) {
+            // case null:
+            //     return 'Loading...';
             case null:
-                return 'Loading...';
-            case false:
                 return <div><a href="auth/google">Log In</a></div>;
             default:
                 return [
@@ -32,7 +38,6 @@ class Header extends Component<Props> {
     }
 
     render () {
-        console.log(this.props);
         return (
             <nav>
                 <div className="nav-wrapper blue">
@@ -50,8 +55,8 @@ class Header extends Component<Props> {
     }
 }
 
-function mapStateToProps({ auth }: any) {
-    return { auth };
+const mapStateToProps = (state: State) => {
+    return { user: state.user };
 }
 
 export default connect(mapStateToProps)(Header);

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchSnippets } from '../../actions';
 import { Link } from 'react-router-dom';
+import { fetchSnippets } from '../../store/actions';
+
 
 interface Props {
     fetchSnippets: () => void,
@@ -39,7 +40,7 @@ class SnippetList extends Component<Props> {
     }
     
     render() {
-        console.log("snippetlist", this.props);
+        // console.log("snippet list props", this.props);
         return (
             <ul className="collection with-header">
                 <li className="collection-header lighten-5 blue">
