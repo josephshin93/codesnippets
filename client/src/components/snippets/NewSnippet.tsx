@@ -2,20 +2,21 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as actions from "../../actions";
 import AddSnippetForm from "./AddSnippetForm";
+import { State, User } from "../store/types";
 
 interface Props {
   // TODO: Typescript format
   addSnippet: (values: any) => void;
   history: any;
-  auth: any;
+  user: any;
   teams: any;
 }
 
 class NewSnippet extends Component<Props> {
   // Create options for Team select dropdown
   createListItems() {
-    if (this.props.auth) {
-      let teams = this.props.auth.teams;
+    if (this.props.user) {
+      let teams = this.props.user.teams;
       return Object.keys(teams).map(k => {
         return (
           <option key={k} value={teams[k]}>
@@ -35,7 +36,7 @@ class NewSnippet extends Component<Props> {
               <AddSnippetForm
                 teams={this.createListItems()}
                 addSnippet={this.props.addSnippet}
-                auth={this.props.auth}
+                user={this.props.user}
                 history={this.props.history}
               />
             }
@@ -46,8 +47,8 @@ class NewSnippet extends Component<Props> {
   }
 }
 
-function mapStatetoProps({ auth }: any) {
-  return { auth };
+function mapStatetoProps(state: State) {
+  return { user: state.user };
 }
 
 export default connect(

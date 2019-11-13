@@ -5,7 +5,7 @@ import * as Yup from "yup";
 interface FormProps {
   // TODO: Typescript format
   teams: any;
-  auth: any;
+  user: any;
   history: any;
   addSnippet(values: any): any;
 }
@@ -41,8 +41,8 @@ const AddSnippetForm = (props: FormProps) => {
           content: values.content,
           status: values.status,
           team: values.team,
-          ownerID: props.auth.googleId,
-          ownerName: props.auth.firstName + " " + props.auth.lastname
+          ownerID: props.user.googleId,
+          ownerName: props.user.firstName + " " + props.user.lastName
         });
         actions.setSubmitting(false);
         actions.resetForm();
