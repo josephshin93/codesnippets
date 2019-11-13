@@ -7,3 +7,4 @@
 # server
 dev.js
 service-account.json
+client/src/components/App.tsx
