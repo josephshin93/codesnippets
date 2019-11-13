@@ -8,7 +8,7 @@ interface Props {
   // TODO: Typescript format
   addSnippet: (values: any) => void;
   history: any;
-  user: any;
+  user: User | null;
   teams: any;
 }
 
