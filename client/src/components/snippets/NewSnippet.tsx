@@ -15,7 +15,7 @@ interface Props {
 class NewSnippet extends Component<Props> {
   // Create options for Team select dropdown
   createListItems() {
-    if (this.props.user) {
+    if (this.props.user && this.props.user.teams) {
       let teams = this.props.user.teams;
       return Object.keys(teams).map(k => {
         return (
@@ -24,7 +24,12 @@ class NewSnippet extends Component<Props> {
           </option>
         );
       });
-    } else return null;
+    } else
+      return (
+        <option key={0} value="Personal">
+          Personal
+        </option>
+      );
   }
   render() {
     return (

@@ -5,7 +5,8 @@ export interface User {
   googleId: string;
   picture: string;
   lastName: string;
-  teams: any; // Fix
+  // / FIX: Plan to use Cloud Functions to add Personal team field on new user, then replace with <[teams: number]: string>
+  teams?: any;
 }
 
 export interface Snippet {
