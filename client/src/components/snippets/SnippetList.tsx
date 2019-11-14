@@ -45,7 +45,7 @@ class SnippetList extends Component<Props> {
             <ul className="collection with-header">
                 <li className="collection-header lighten-5 blue">
                     <h1>Snippets</h1> 
-                    <Link to="/newsnippet"><a className="waves-effect waves-light blue btn" href="/newsnippet">Add Snippet</a></Link>
+                    <Link className="waves-effect waves-light blue btn" to="/newsnippet">Add Snippet</Link>
                 </li>
                 {this.renderSnippets()}
             </ul>
