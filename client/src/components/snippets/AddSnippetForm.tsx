@@ -44,9 +44,11 @@ const AddSnippetForm = (props: FormProps) => {
           ownerID: props.user.googleId,
           ownerName: props.user.firstName + " " + props.user.lastName
         });
+        // FIX logic
         actions.setSubmitting(false);
-        actions.resetForm();
-        props.history.push("/dashboard");
+        actions.resetForm({});
+        actions.setStatus({ success: "Snippet Created !" });
+        //props.history.push("/dashboard");
       }, 1000);
     }
   });
@@ -154,6 +156,9 @@ const AddSnippetForm = (props: FormProps) => {
           Submit
           <i className="material-icons right">send</i>
         </button>
+        <div>
+          <h3>{formik.status ? formik.status.success : ""}</h3>
+        </div>
       </form>
     </div>
   );
