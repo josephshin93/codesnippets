@@ -1,70 +1,59 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import * as actions from "../../store/actions";
+import AddSnippetForm from "./AddSnippetForm";
+import { State, User } from "../../store/types";
 
 interface Props {
+  // TODO: Typescript format
   addSnippet: (values: any) => void;
   history: any;
-  auth: any;
+  user: User | null;
+  teams: any;
 }
 
 class NewSnippet extends Component<Props> {
-  handleSubmit = (event: any) => {
-    event.preventDefault();
-    // console.log(event.target[0].value);
-    this.props.addSnippet({
-      title: event.target[0].value,
-      content: event.target[1].value,
-      description: event.target[2].value,
-      status: event.target[3].value,
-      team: event.target[4].value,
-      ownerID: this.props.auth.googleId,
-      ownerName: this.props.auth.firstName + " " + this.props.auth.lastName
-    });
-
-    // TODO FIX THIS...
-    setTimeout(() => {
-      this.props.history.push("/dashboard");
-    }, 500);
-  };
-
+  // Create options for Team select dropdown
+  createListItems() {
+    if (this.props.user && this.props.user.teams) {
+      let teams = this.props.user.teams;
+      return Object.keys(teams).map(k => {
+        return (
+          <option key={k} value={teams[k]}>
+            {teams[k]}
+          </option>
+        );
+      });
+    } else
+      return (
+        <option key={0} value="Personal">
+          Personal
+        </option>
+      );
+  }
   render() {
     return (
-      <div>
-        <h1>New Snippet</h1>
-        <form onSubmit={this.handleSubmit}>
-          Title:
-          <br />
-          <input type="text" name="title"></input>
-          <br />
-          Content:
-          <br />
-          <input type="text" name="content"></input>
-          <br />
-          Description:
-          <br />
-          <input type="text" name="description"></input>
-          <br />
-          Status:
-          <br />
-          <input type="text" name="status"></input>
-          <br />
-          Team:
-          <br />
-          <input type="text" name="team"></input>
-          <br />
-          <button>Submit</button>
-        </form>
+      <div className="container">
+        <div className="row">
+          <div className="col s12">
+            <h3>New Snippet</h3>
+            {
+              <AddSnippetForm
+                teams={this.createListItems()}
+                addSnippet={this.props.addSnippet}
+                user={this.props.user}
+                history={this.props.history}
+              />
+            }
+          </div>
+        </div>
       </div>
     );
   }
 }
 
-function mapStatetoProps({ auth }: any) {
-  return { auth };
+function mapStatetoProps(state: State) {
+  return { user: state.user };
 }
 
-export default connect(
-  mapStatetoProps,
-  actions
-)(NewSnippet);
+export default connect(mapStatetoProps, actions)(NewSnippet);
