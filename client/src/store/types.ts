@@ -22,11 +22,33 @@ export interface Snippet {
   totalLikes: number;
 }
 
+export interface Subscription {
+  title: string;
+  // FIXME: is there a better way to type issue time and day?
+  issueTime: number;
+  issueDay: number;
+  // FIXME: content to just refers to the message, what about digest info?
+  content?: string;
+}
+
+export interface Team {
+  // FIXME: not sure if this is how firebase ids objects
+  id: number;
+  name: string;
+  // FIXME: how do we mark admins?
+  members: Array<User>;
+  subscriptions: Array<Subscription>;  
+}
+
 export interface State {
   user: User | null;
+  snippets: Array<Snippet> | null;
+  teams: Array<Team> | null;
+  selectedTeam: number;
 }
 
 // actions
-export const FETCH_USER = "fetch_user";
-export const FETCH_SNIPPETS = "fetch_snippets";
-export const AUTHORIZE_USER = "authorize_user";
+export const FETCH_USER = 'fetch_user';
+export const FETCH_SNIPPETS = 'fetch_snippets';
+export const AUTHORIZE_USER = 'authorize_user';
+export const FETCH_TEAMS = 'fetch_teams'

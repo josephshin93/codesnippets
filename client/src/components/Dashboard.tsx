@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { State, User } from "../store/types";
 
 import SnippetList from "./snippets/SnippetList";
+import TeamNavigation from "./teams/TeamNavigation";
 
 interface DashboardProps {
   user: User | null;
@@ -52,6 +53,11 @@ class Dashboard extends Component<DashboardProps> {
           <div className="row">
             <div className="col s12">
               <SnippetList key="2" />
+            </div>
+          </div>
+          <div className='row'>
+            <div className='col s12'>
+              <TeamNavigation />
             </div>
           </div>
         </div>

@@ -28,7 +28,7 @@ const ProtectedRoute = ({component, user, ...rest}:ProtectedRouteProps) => {
     return <Route {...rest} component={routeComponent} />;
 };
 
-const mapStateToProps = ({user}: State, props: ProtectedRouteProps): State => {
+const mapStateToProps = ({user}: State, props: ProtectedRouteProps) => {
     return { ...props, user };
 };
 
