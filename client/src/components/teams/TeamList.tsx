@@ -32,11 +32,11 @@ class TeamList extends Component<TeamListProps> {
   // FIXME: could not implement this as a functional component
   renderTeamListItem(team: Team, selected: boolean) {
     let listItemClasses = 'collection-item';
-    if (selected) listItemClasses += ' selected-team';
+    if (selected) listItemClasses += ' active';
     return (
-      <li className={listItemClasses} key={team.id}>
-        <Link to={'/team/'+team.id}>{team.name}</Link> 
-      </li>
+      <Link className= {listItemClasses} to={'/team/'+team.id}>
+        <li>{team.name}</li>
+      </Link>
     );
   }
 
@@ -45,7 +45,7 @@ class TeamList extends Component<TeamListProps> {
     // FIXME: style team-list area
     if (this.props.teams) {
       return (
-        <ul>
+        <ul className='collection'>
           {this.props.teams.map((team: Team) => 
             this.renderTeamListItem(
               team, 
