@@ -10,6 +10,7 @@ import {
 import {
   fetchTeams,
   mockFetchTeams,
+  selectTeam,
 } from '../../store/actions';
 
 
@@ -18,6 +19,7 @@ interface TeamListProps {
   // FIXME: is this proper type?
   // fetchTeams: () => void;
   mockFetchTeams: () => void;
+  selectTeam: (teamId: string) => void;
   teams: Array<Team> | null;
   // FIXME: if a team is not selected, what is the value?
   selectedTeam: string | null;
@@ -29,29 +31,28 @@ class TeamList extends Component<TeamListProps> {
     this.props.mockFetchTeams();
   }
 
-  // FIXME: could not implement this as a functional component
-  renderTeamListItem(team: Team, selected: boolean) {
-    let listItemClasses = 'collection-item';
-    if (selected) listItemClasses += ' active';
-    return (
-      <Link className= {listItemClasses} to={'/team/'+team.id}>
-        <li>{team.name}</li>
-      </Link>
-    );
+  changeTeam(teamId: string) {
+    this.props.selectTeam(teamId);
   }
 
   render() {
-    // FIXME: create team-nav css class - research materialize first
-    // FIXME: style team-list area
     if (this.props.teams) {
       return (
         <ul className='collection'>
-          {this.props.teams.map((team: Team) => 
-            this.renderTeamListItem(
-              team, 
-              team.id === this.props.selectedTeam
-            )
-          )}
+          {this.props.teams.map((team: Team) => {
+            let liClasses = 'collection-item';
+            if (team.id === this.props.selectedTeam) liClasses += ' active';
+            return (
+              <Link
+                key={team.id} 
+                className= {liClasses} 
+                onClick={() => this.changeTeam(team.id)} 
+                to='#'
+              >
+                <li>{team.name}</li>
+              </Link>
+            );
+          })}
         </ul>
       );
     }
@@ -61,7 +62,6 @@ class TeamList extends Component<TeamListProps> {
 }
 
 const mapStateToProps = (state: State) => {
-  // TODO: include teams and selectedTeam in store
   return {
     teams: state.teams,
     selectedTeam: state.selectedTeam,
@@ -69,4 +69,4 @@ const mapStateToProps = (state: State) => {
 };
 
 // FIXME: is this pattern ok for classic "mapDispatchToProps method"
-export default connect(mapStateToProps, { mockFetchTeams })(TeamList);
+export default connect(mapStateToProps, { mockFetchTeams, selectTeam })(TeamList);

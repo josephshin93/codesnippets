@@ -63,7 +63,7 @@ class Dashboard extends Component<DashboardProps> {
         </div>
       ];
     }
-    return "";
+    return '';
   }
 }
 

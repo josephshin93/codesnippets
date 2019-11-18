@@ -34,22 +34,23 @@ class TeamNavigation extends Component<TeamNavigationProps> {
   }
     
   render() {
-      // FIXME: create team-nav css class - research materialize first
-      // FIXME: style team-list area
-      // TODO: implement user picture display at top of team nav section
-      return (
-          <section className='team-nav'>
-              <TeamList />
-              {this.renderFooter()}
-          </section>
-      );
+    // FIXME: create team-nav css class - research materialize first
+    // FIXME: style team-list area
+    // TODO: implement user picture display at top of team nav section
+    return (
+      <section className='team-nav'>
+        <h6>Team Navigation</h6>
+        <TeamList />
+        {this.renderFooter()}
+      </section>
+    );
   }
 }
 
 const mapStateToProps = (state: State) => {
-    return {
-        user: state.user,
-    };
+  return {
+    user: state.user,
+  };
 };
 
 // FIXME: which/if action creators are needed here
