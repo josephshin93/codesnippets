@@ -11,30 +11,30 @@ import NewSnippet from './snippets/NewSnippet';
 
 
 interface AppProps {
-    authorizeUser: () => void;
+  authorizeUser: () => void;
 }
 
 class App extends Component<AppProps> {
-    componentDidMount() {
-        this.props.authorizeUser();
-    }
+  componentDidMount() {
+    this.props.authorizeUser();
+  }
 
-    render() {
-        this.props.authorizeUser();
-        return (
-            <BrowserRouter>
-                <div>
-                    <Header/>
-                    <Switch>
-                        <Route exact path='/' component={Landing} />
-                        <ProtectedRoute exact path='/dashboard' component={Dashboard} />  
-                        <ProtectedRoute exact path='/newsnippet' component={NewSnippet} /> 
-                        <Route render={() => (<h3>Sorry, this page does not exist.</h3>)} />
-                    </Switch>
-                </div>
-            </BrowserRouter>
-        );
-    }
+  render() {
+    this.props.authorizeUser();
+    return (
+      <BrowserRouter>
+        <div>
+          <Header/>
+          <Switch>
+            <Route exact path='/' component={Landing} />
+            <ProtectedRoute exact path='/dashboard' component={Dashboard} />  
+            <ProtectedRoute exact path='/newsnippet' component={NewSnippet} />
+            <Route render={() => (<h3>Sorry, this page does not exist.</h3>)} />
+          </Switch>
+        </div>
+      </BrowserRouter>
+    );
+  }
 }
 
 

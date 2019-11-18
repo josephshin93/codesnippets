@@ -1,5 +1,6 @@
 // interfaces
 export interface User {
+  id: string;
   email: string;
   firstName: string;
   googleId: string;
@@ -31,12 +32,16 @@ export interface Subscription {
   content?: string;
 }
 
+export interface TeamMemberRoles {
+  [key: string]: string;
+}
+
 export interface Team {
-  // FIXME: not sure if this is how firebase ids objects
-  id: number;
+  id: string;
   name: string;
   // FIXME: how do we mark admins?
   members: Array<User>;
+  roles: TeamMemberRoles;
   subscriptions: Array<Subscription>;  
 }
 
@@ -44,7 +49,7 @@ export interface State {
   user: User | null;
   snippets: Array<Snippet> | null;
   teams: Array<Team> | null;
-  selectedTeam: number;
+  selectedTeam: string;
 }
 
 // actions
