@@ -6,6 +6,7 @@ import {
 import {
   State,
   Team,
+  User,
 } from '../../store/types';
 import {
   fetchTeams,
@@ -15,11 +16,18 @@ import {
 
 
 
+const isEmpty = (obj: Object): boolean => {
+  return Object.entries(obj).length === 0 && obj.constructor === Object;
+};
+
+
 interface TeamListProps {
   // FIXME: is this proper type?
-  // fetchTeams: () => void;
+  fetchTeams: () => void;
   mockFetchTeams: () => void;
   selectTeam: (teamId: string) => void;
+
+  user: User | null;
   teams: Array<Team> | null;
   // FIXME: if a team is not selected, what is the value?
   selectedTeam: string | null;
@@ -27,8 +35,11 @@ interface TeamListProps {
 
 class TeamList extends Component<TeamListProps> {
   componentDidMount() {
-    // this.props.fetchTeams();
-    this.props.mockFetchTeams();
+    console.log('<TeamList /> did mount', this.props.user);
+    if (this.props.user && !isEmpty(this.props.user)) {
+      this.props.fetchTeams();
+    }
+    // this.props.mockFetchTeams();
   }
 
   changeTeam(teamId: string) {
@@ -63,10 +74,18 @@ class TeamList extends Component<TeamListProps> {
 
 const mapStateToProps = (state: State) => {
   return {
+    user: state.user,
     teams: state.teams,
     selectedTeam: state.selectedTeam,
   };
 };
 
-// FIXME: is this pattern ok for classic "mapDispatchToProps method"
-export default connect(mapStateToProps, { mockFetchTeams, selectTeam })(TeamList);
+const mapDispatchToProps = () => {
+  return {
+    mockFetchTeams,
+    fetchTeams,
+    selectTeam,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps())(TeamList);
