@@ -6,7 +6,7 @@ export interface User {
   picture: string;
   lastName: string;
   // / FIX: Plan to use Cloud Functions to add Personal team field on new user, then replace with <[teams: number]: string>
-  teams?: any;
+  teams?: Array<string>;
 }
 
 export interface Snippet {
