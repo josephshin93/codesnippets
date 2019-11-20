@@ -6,19 +6,48 @@ import {
 import {
   State,
   User,
+  Team,
+  Teams,
 } from '../../store/types';
 import TeamList from './TeamList';
 
 
 
-
 interface TeamNavigationProps {
   user: User | null;
+  teams: Teams | null;
+  selectedTeam: string | null;
 }
 
 class TeamNavigation extends Component<TeamNavigationProps> {
 
-  // FIXME: team settings
+  componentDidMount() {
+    console.log('<TeamNavigation /> did mount');
+  }
+
+  // settings for the 'personal' team cannot be accessed
+  renderTeamSettingsLink() {
+    let targetTeam: Team | null = null;
+    if (
+      this.props.teams && 
+      this.props.selectedTeam &&
+      this.props.selectedTeam !== 'personal'
+    ) {
+      targetTeam = this.props.teams[this.props.selectedTeam];
+    }
+    if (targetTeam) {
+      return (
+        <Link 
+          className='collection-item' 
+          to={'/team-settings/'+targetTeam.id}
+        >
+          <li>{targetTeam.name + ' Settings'}</li>
+        </Link>
+      );
+    }
+    return '';
+  }
+
   // FIXME: determine what else needs to be in footer
   renderFooter() {
     return (
@@ -26,15 +55,12 @@ class TeamNavigation extends Component<TeamNavigationProps> {
         <Link className='collection-item' to='/new-team'>
           <li>+ Create a Team</li>
         </Link>
-        <Link className='collection-item' to='/team-settings'>
-          <li>Team Settings</li>
-        </Link>
+        {this.renderTeamSettingsLink()}
       </ul>
     );
   }
     
   render() {
-    // FIXME: create team-nav css class - research materialize first
     // FIXME: style team-list area
     // TODO: implement user picture display at top of team nav section
     return (
@@ -50,9 +76,9 @@ class TeamNavigation extends Component<TeamNavigationProps> {
 const mapStateToProps = (state: State) => {
   return {
     user: state.user,
+    teams: state.teams,
+    selectedTeam: state.selectedTeam,
   };
 };
-
-// FIXME: which/if action creators are needed here
 
 export default connect(mapStateToProps)(TeamNavigation);

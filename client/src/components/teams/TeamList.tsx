@@ -5,7 +5,7 @@ import {
 } from 'react-router-dom';
 import {
   State,
-  Team,
+  Teams,
   User,
 } from '../../store/types';
 import {
@@ -13,33 +13,30 @@ import {
   mockFetchTeams,
   selectTeam,
 } from '../../store/actions';
+import {
+  isEmpty,
+} from '../../lib/lib';
 
-
-
-const isEmpty = (obj: Object): boolean => {
-  return Object.entries(obj).length === 0 && obj.constructor === Object;
-};
 
 
 interface TeamListProps {
-  // FIXME: is this proper type?
-  fetchTeams: () => void;
+  fetchTeams: (teamIds?: Array<string>) => void;
   mockFetchTeams: () => void;
   selectTeam: (teamId: string) => void;
 
   user: User | null;
-  teams: Array<Team> | null;
-  // FIXME: if a team is not selected, what is the value?
+  teams: Teams | null;
+  // TODO: selectedTeam should always be string ('personal' or real team name)
   selectedTeam: string | null;
 }
 
 class TeamList extends Component<TeamListProps> {
+
   componentDidMount() {
-    console.log('<TeamList /> did mount', this.props.user);
-    if (this.props.user && !isEmpty(this.props.user)) {
-      this.props.fetchTeams();
+    console.log('<TeamList /> did mount');
+    if (this.props.user && !isEmpty(this.props.user) && this.props.teams) {
+      this.props.fetchTeams(this.props.user.teams);
     }
-    // this.props.mockFetchTeams();
   }
 
   changeTeam(teamId: string) {
@@ -50,19 +47,23 @@ class TeamList extends Component<TeamListProps> {
     if (this.props.teams) {
       return (
         <ul className='collection'>
-          {this.props.teams.map((team: Team) => {
+          {Object.keys(this.props.teams).map((teamId: string) => {
             let liClasses = 'collection-item';
-            if (team.id === this.props.selectedTeam) liClasses += ' active';
-            return (
-              <Link
-                key={team.id} 
-                className= {liClasses} 
-                onClick={() => this.changeTeam(team.id)} 
-                to='#'
-              >
-                <li>{team.name}</li>
-              </Link>
-            );
+            if (teamId === this.props.selectedTeam) liClasses += ' active';
+            // FIXME: why does this have to be validated again? tslinter problem?
+            if (this.props.teams) {
+              return (
+                <Link
+                  key={teamId} 
+                  className= {liClasses} 
+                  onClick={() => this.changeTeam(teamId)} 
+                  to='#'
+                >
+                  <li>{this.props.teams[teamId].name}</li>
+                </Link>
+              );
+            }
+            return <li>*</li>
           })}
         </ul>
       );

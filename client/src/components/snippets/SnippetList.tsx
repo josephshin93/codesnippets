@@ -7,12 +7,10 @@ import {
   User,
   Snippet,
 } from '../../store/types';
+import {
+  isEmpty,
+} from '../../lib/lib';
 
-
-
-const isEmpty = (obj: Object): boolean => {
-  return Object.entries(obj).length === 0 && obj.constructor === Object;
-};
 
 
 interface Props {
@@ -23,17 +21,19 @@ interface Props {
 
 class SnippetList extends Component<Props> {
   componentDidMount() {
-    console.log('<SnippetList /> did mount', this.props.user);
-    if (this.props.user && !isEmpty(this.props.user)) this.props.fetchSnippets();
+    console.log('<SnippetList /> did mount');
+    if (this.props.user && !isEmpty(this.props.user)) {
+      this.props.fetchSnippets();
+    }
   }
 
   renderSnippets() {
     if (this.props.snippets && this.props.snippets.length > 0) {
       return this.props.snippets.map( (snippet: any) => {
         return (
-          <li key={snippet.title} className="collection-item">
+          <li key={snippet.title} className='collection-item'>
             <div>
-              <h3 className="title">Title: {snippet.title}</h3>
+              <h3 className='title'>Title: {snippet.title}</h3>
               <p>
                 <b>Content:</b> { snippet.content } <br />
                 <b>Description:</b> { snippet.description } <br />
@@ -42,7 +42,9 @@ class SnippetList extends Component<Props> {
                 <b>OwnerPic:</b> { snippet.ownerPic } <br />
                 <b>Status:</b> { snippet.status } <br />
                 <b>Team: </b>{ snippet.team } <br />
-                <b>Snippet:</b> {new Date(snippet.timeCreated._seconds * 1000).toLocaleDateString() } <br />
+                <b>Snippet:</b> {
+                  new Date(snippet.timeCreated._seconds * 1000).toLocaleDateString() 
+                } <br />
                 <b>TotalComments:</b> { snippet.totalComments } <br />
                 <b>TotalLikes:</b> { snippet.totalLikes } <br />
               </p>
@@ -63,10 +65,15 @@ class SnippetList extends Component<Props> {
   render() {
     // console.log("snippet list props", this.props);
     return (
-      <ul className="collection with-header">
-        <li className="collection-header lighten-5 blue">
+      <ul className='collection with-header'>
+        <li className='collection-header lighten-5 blue'>
           <h1>Snippets</h1> 
-          <Link className="waves-effect waves-light blue btn" to="/newsnippet">Add Snippet</Link>
+          <Link 
+            className='waves-effect waves-light blue btn' 
+            to='/newsnippet'
+          >
+            Add Snippet
+          </Link>
         </li>
         {this.renderSnippets()}
       </ul>
