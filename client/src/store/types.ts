@@ -7,7 +7,7 @@ export interface User {
   picture: string;
   lastName: string;
   // / FIX: Plan to use Cloud Functions to add Personal team field on new user, then replace with <[teams: number]: string>
-  teams?: any;
+  teams?: Array<string>;
 }
 
 export interface Snippet {
@@ -15,6 +15,7 @@ export interface Snippet {
   content: string;
   description: string;
   ownerID: string;
+  ownerName: string;
   ownerPic: string;
   status: string;
   team: string;
@@ -36,19 +37,27 @@ export interface TeamMemberRoles {
   [key: string]: string;
 }
 
+export interface TeamMember {
+  [userId: string]: string;
+}
+
 export interface Team {
   id: string;
   name: string;
   // FIXME: how do we mark admins?
-  members: Array<User>;
+  members: TeamMember;
   roles: TeamMemberRoles;
   subscriptions: Array<Subscription>;  
+}
+
+export interface Teams {
+  [teamId: string]: Team;
 }
 
 export interface State {
   user: User | null;
   snippets: Array<Snippet> | null;
-  teams: Array<Team> | null;
+  teams: Teams | null;
   selectedTeam: string;
 }
 

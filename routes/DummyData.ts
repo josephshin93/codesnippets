@@ -4,7 +4,7 @@ import {
   Teams,
   Subscription,
   Snippet,
-} from './types';
+} from '../types';
 
 export const users: Array<User> = [
   {
