@@ -5,70 +5,116 @@ import {
 import {
   User,
   Teams,
+  Team,
 } from '../types';
 import * as dummydata from './DummyData';
+import {firestore} from 'firebase-admin';
 
+
+// TODO: add types to queries
 module.exports = (app: any, firebase: any) => {
-  // app.post("/api/add_team", (req: Request, res: Response) => {
-  //   console.log(req.body);
+  app.post('/api/add_team', (req: Request, res: Response) => {
+    console.log('post /api/add_team');
+    // console.log('req.body', req.body);
+    // console.log('req.user', req.user);
 
-  //   const {
-  //     content,
-  //     description,
-  //     ownerID,
-  //     ownerName,
-  //     status,
-  //     team,
-  //     title
-  //   } = req.body;
+    const newTeam: Team = {
+      name: req.body.name,
+      members: req.body.members,
+      roles: req.body.roles,
+      subscriptions: req.body.subscriptions,  
+    };
 
-  //   const team = {
-  //     title,
-  //     content,
-  //     description,
-  //     ownerID,
-  //     ownerName,
-  //     status,
-  //     team,
-  //     timeCreated: new Date(),
-  //     totalComments: 0,
-  //     totalLikes: 0
-  //   };
-  //   firebase.collection('teams').add(team);
-  // });
+    const user = <User>req.user;
+    // an empty response is sent if the user id does not exist
+    if (!user.id) {
+      res.send({});
+    }
+
+    // add in user as member and admin if that is not present
+    if (!newTeam.members[user.id]) {
+      newTeam.members[user.id] = user.firstName + ' ' + user.lastName;
+    }
+    if (!newTeam.roles[user.id]) {
+      newTeam.roles[user.id] = 'admin';
+    }
+
+    // console.log('new team', newTeam);
+
+    firebase.collection('teams').add(newTeam)
+      .then((docRef: any) => {
+        // console.log('added doc', docRef.id);
+
+        // add new team to user's teams
+        firebase.collection('users').doc(user.id).update({
+          teams: firestore.FieldValue.arrayUnion(docRef.id)
+        })
+        .then(() => {
+          res.send({ newTeamId: docRef.id });
+        })
+        .catch((error: any) => {
+          console.error('Error updating user\'s team array', error);
+        });
+
+        
+      })
+      .catch((error: any) => {
+        console.error('Error adding team document', error);
+      });
+  });
 
   app.get('/api/teams', (req: Request, res: Response) => {
     console.log('get /api/teams');
     // console.log(req.user);
     // console.log(req.query);
 
+    let teams: Teams = {};
     const user: User | null | undefined = <User>req.user
-    if (user && user.teams) {
-      /**
-       * get document references for all teams
-       *   duplicate team ids will result in duplicate results
-       *   non-existent team ids will result in a null object
-       */
-      const teamRefs = user.teams.map((teamId) => {
-        // console.log('making document reference for '+teamId);
-        return firebase.collection('teams').doc(teamId);
-      });
-
-      firebase
-      .getAll(...teamRefs)
-      .then((docs: any) => {
-        let teams: Teams = {};
-        docs.forEach((doc: any) => {
-          // console.log(doc.id, doc.data());
-          teams[doc.id] = doc.data();
-        });
-        res.send(teams);
-      })
-      .catch((err: any) => {
-        console.log('Error getting teams.', err);
-      });
+    if (!user || !user.id) {
+      console.log('invalid user or no user id');
+      res.send(teams);
     } else {
-      res.send({});
+
+      // query current user to get list of user's teams
+      firebase.collection('users').doc(user.id).get()
+      .then((doc: any) => {
+        const currentUser = doc.data();
+        if (!currentUser.teams || currentUser.teams.length === 0) {
+          console.log('doc did not have teams', currentUser);
+          res.send(teams);
+        } else {
+          
+          /**
+           * get document references for all teams
+           *   duplicate team ids will result in duplicate results
+           *   non-existent team ids will result in a null object
+           */
+          const teamRefs = currentUser.teams.map((teamId: string) => {
+            return firebase.collection('teams').doc(teamId);
+          });
+
+          // query all user's teams
+          firebase.getAll(...teamRefs)
+          .then((docs: any) => {
+            docs.forEach((doc: any) => {
+              // console.log(doc.id, doc.data());
+              teams[doc.id] = doc.data();
+            });
+            res.send(teams);
+          })
+          .catch((err: any) => {
+            console.log('Error getting teams.', err);
+          });
+
+        }
+
+      })
+      .catch((error: any) => {
+        console.error(
+          'Error getting current user for getting user\'s teams', 
+          error
+        );
+      });
     }
 
   });

@@ -65,7 +65,7 @@ roles2[users[3].id] = 'member';
 
 export const teams: Teams = {
   '0': {
-      id: '0',
+      // id: '0',
       name: 'Alpha Team',
       members: {
         '0': 'Joseph Shin',
@@ -77,7 +77,7 @@ export const teams: Teams = {
       ],
   },
   '1': {
-      id: '1',
+      // id: '1',
       name: 'Beta Team',
       members: {
         '0': 'Joseph Shin',
@@ -89,7 +89,7 @@ export const teams: Teams = {
       ],
   },
   '2': {
-    id: '2',
+    // id: '2',
     name: 'Avengers',
     members: {
       '1': 'Thor Odinson',

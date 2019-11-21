@@ -1,13 +1,18 @@
-import { FETCH_TEAMS } from '../types';
+import {
+  FETCH_TEAMS,
+  ADD_TEAM,
+} from '../types';
 
-// FIXME: type action
+// TODO: type action
 const teamsReducer = (state = [], action: any) => {
-    switch (action.type) {
-        case FETCH_TEAMS:
-            return action.payload;
-        default:
-            return state;
-    }
+  switch (action.type) {
+    case FETCH_TEAMS:
+      return action.payload;
+    case ADD_TEAM:
+      return state;
+    default:
+      return state;
+  }
 };
 
 export default teamsReducer;

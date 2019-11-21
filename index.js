@@ -31,7 +31,7 @@ var firebase = admin.firestore();
 require('./services/passport')(firebase);
 app.use(passport.initialize());
 app.use(passport.session());
-require('./routes/authRoutes')(app);
+require('./routes/authRoutes')(app, firebase);
 require('./routes/snippetRoutes')(app, firebase);
 require('./routes/teamRoutes')(app, firebase);
 if (process.env.NODE_ENV === 'production') {

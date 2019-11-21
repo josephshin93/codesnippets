@@ -22,7 +22,7 @@ interface TeamNavigationProps {
 class TeamNavigation extends Component<TeamNavigationProps> {
 
   componentDidMount() {
-    console.log('<TeamNavigation /> did mount');
+    // console.log('<TeamNavigation /> did mount');
   }
 
   // settings for the 'personal' team cannot be accessed
@@ -39,7 +39,7 @@ class TeamNavigation extends Component<TeamNavigationProps> {
       return (
         <Link 
           className='collection-item' 
-          to={'/team-settings/'+targetTeam.id}
+          to={'/team-settings/'+this.props.selectedTeam}
         >
           <li>{targetTeam.name + ' Settings'}</li>
         </Link>
@@ -61,7 +61,9 @@ class TeamNavigation extends Component<TeamNavigationProps> {
   }
     
   render() {
-    // FIXME: style team-list area
+    // console.log('<TeamNavigation /> rendering');
+
+    // TODO: style team-list area
     // TODO: implement user picture display at top of team nav section
     return (
       <section className='team-nav'>

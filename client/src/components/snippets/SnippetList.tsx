@@ -21,7 +21,7 @@ interface Props {
 
 class SnippetList extends Component<Props> {
   componentDidMount() {
-    console.log('<SnippetList /> did mount');
+    // console.log('<SnippetList /> did mount');
     if (this.props.user && !isEmpty(this.props.user)) {
       this.props.fetchSnippets();
     }

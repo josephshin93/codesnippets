@@ -42,12 +42,22 @@ export interface TeamMember {
 }
 
 export interface Team {
-  id: string;
   name: string;
-  // FIXME: how do we mark admins?
   members: TeamMember;
   roles: TeamMemberRoles;
   subscriptions: Array<Subscription>;  
+}
+
+export interface FormTeamMember {
+  userId: string;
+  memberName: string;
+  role: string;
+}
+
+export interface FormTeam {
+  name: string;
+  members: Array<FormTeamMember>;
+  subscriptions: Array<Subscription>;
 }
 
 export interface Teams {
@@ -67,4 +77,4 @@ export const FETCH_SNIPPETS = 'fetch_snippets';
 export const AUTHORIZE_USER = 'authorize_user';
 export const FETCH_TEAMS = 'fetch_teams';
 export const SELECT_TEAM = 'select_team';
-
+export const ADD_TEAM = 'add_team';

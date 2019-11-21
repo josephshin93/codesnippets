@@ -56,7 +56,7 @@ roles2[exports.users[2].id] = 'admin';
 roles2[exports.users[3].id] = 'member';
 exports.teams = {
     '0': {
-        id: '0',
+        // id: '0',
         name: 'Alpha Team',
         members: {
             '0': 'Joseph Shin',
@@ -68,7 +68,7 @@ exports.teams = {
         ],
     },
     '1': {
-        id: '1',
+        // id: '1',
         name: 'Beta Team',
         members: {
             '0': 'Joseph Shin',
@@ -80,7 +80,7 @@ exports.teams = {
         ],
     },
     '2': {
-        id: '2',
+        // id: '2',
         name: 'Avengers',
         members: {
             '1': 'Thor Odinson',
