@@ -78,3 +78,4 @@ export const AUTHORIZE_USER = 'authorize_user';
 export const FETCH_TEAMS = 'fetch_teams';
 export const SELECT_TEAM = 'select_team';
 export const ADD_TEAM = 'add_team';
+export const EDIT_TEAM = 'edit_team';

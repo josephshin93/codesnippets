@@ -1,12 +1,16 @@
 import React from 'react';
 import {
+  State,
   Team,
+  Teams,
   FormTeam,
 } from '../../store/types';
 import { History } from 'history';
+import { match } from 'react-router';
 import { connect } from 'react-redux';
 import {
   addTeam,
+  editTeam,
   fetchUser,
 } from '../../store/actions';
 import { 
@@ -25,10 +29,16 @@ import {
 
 
 interface TeamFormProps {
-  addTeam: (team: Team, next?: Function) => void;
+  addTeam: (team: Team, next?: () => void) => void;
+  editTeam: (team: Team, teamId: string, next?: () => void) => void;
   fetchUser: () => void;
-  team?: Team;
+  teams: Teams | null;
   history: History;
+  match: match;
+}
+
+interface TeamFormMatchParams {
+  teamId?: string;
 }
 
 const teamFormValidationSchema = Yup.object({
@@ -61,7 +71,7 @@ const teamFormValidationSchema = Yup.object({
     })),
 });
 
-const initialValues = (team?: Team): FormTeam => {
+const initialValues = (team: Team | null): FormTeam => {
   if (team) {
     return teamToForm(team);
   }
@@ -195,24 +205,44 @@ const renderSubsInput = (subscriptions: any) => {
 
 const TeamForm: React.FC<TeamFormProps> = (props) => {
 
+  // console.log('<TeamForm /> rendering', '<TeamForm /> props', props);
+
+  // load in team if this form is meant to edit a team's settings
+  let addMode = true;
+  let targetTeam: Team | null = null;
+  const matchParams: TeamFormMatchParams = props.match.params;
+  if (matchParams.teamId && props.teams) {
+    targetTeam = props.teams[matchParams.teamId];
+    addMode = false;
+  }
+
   // FIXME: cannot use materialize-styled <select> elements without jQuery
   return (
     <Formik
-      initialValues={initialValues(props.team)}
+      initialValues={initialValues(targetTeam)}
       validationSchema={teamFormValidationSchema}
       onSubmit={(values, actions) => {
         // console.log('submitting team form');
         // console.log(values);
 
-        /**
-         * add new team and set it as the selected team, then refresh user 
-         * data to ensure accurate list of teams will be displayed
-         */
-        props.addTeam(formToTeam(values), () => {
-          actions.setSubmitting(false);
-          props.fetchUser();
-          props.history.push('/dashboard');
-        });
+        if (addMode) {
+          /**
+           * add new team and set it as the selected team, then refresh user 
+           * data to ensure accurate list of teams will be displayed
+           */
+          props.addTeam(formToTeam(values), () => {
+            actions.setSubmitting(false);
+            props.fetchUser();
+            props.history.push('/dashboard');
+          });
+        } else {
+          props.editTeam(formToTeam(values), matchParams.teamId || '', () => {
+            actions.setSubmitting(false);
+            props.fetchUser();
+            props.history.push('/dashboard');
+          });
+        }
+        
       }}
     >
       {({ values, handleSubmit }) => {
@@ -222,7 +252,9 @@ const TeamForm: React.FC<TeamFormProps> = (props) => {
           {renderTextInput('name', 'Team Name')}
           {renderMembersInput(values.members)}
           {renderSubsInput(values.subscriptions)}
-          <button type='submit'>Create Team</button>
+          <button type='submit'>
+            {addMode ? 'Create Team' : 'Confirm Edit'}
+          </button>
         </Form>
         );
       }}
@@ -230,4 +262,16 @@ const TeamForm: React.FC<TeamFormProps> = (props) => {
   );
 };
 
-export default connect(null, { addTeam, fetchUser })(TeamForm);
+const mapStateToProps = ({ teams }: State) => {
+  return { teams };
+};
+
+const mapDispatchToProps = () => {
+  return {
+    editTeam,
+    addTeam,
+    fetchUser,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps())(TeamForm);

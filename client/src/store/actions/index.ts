@@ -7,6 +7,7 @@ import {
   FETCH_TEAMS,
   SELECT_TEAM,
   ADD_TEAM,
+  EDIT_TEAM,
 } from '../types';
 import {
   teams,
@@ -71,7 +72,8 @@ export const selectTeam = (teamId: string) => {
   return { type: SELECT_TEAM, payload: teamId };
 };
 
-export const addTeam = (team: Team, next?: Function) => 
+// FIXME: add team actions aren't being used correctly
+export const addTeam = (team: Team, next?: () => void) => 
   async (dispatch: Dispatch<AnyAction>) => {
     console.log('post api/add_team', team);
 
@@ -81,5 +83,17 @@ export const addTeam = (team: Team, next?: Function) =>
     dispatch({ type: ADD_TEAM, payload: res.data });
     dispatch(selectTeam(res.data.newTeamId));
 
+    if (next) next();
+  };
+
+// FIXME: edit team actions aren't being used correctly
+export const editTeam = (team: Team, teamId: string, next?: () => void) => 
+  async (dispatch: Dispatch<AnyAction>) => {
+    console.log('post api/edit_team', teamId, team);
+
+    const res = await axios.post('/api/edit_team', { teamId, ...team });
+
+    dispatch({ type: EDIT_TEAM, payload: res.data });
+    
     if (next) next();
   };

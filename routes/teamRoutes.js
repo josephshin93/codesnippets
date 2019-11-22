@@ -2,7 +2,34 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var firebase_admin_1 = require("firebase-admin");
 // TODO: add types to queries
+// TODO: use better response status codes
 module.exports = function (app, firebase) {
+    app.post('/api/edit_team', function (req, res) {
+        console.log('post /api/edit_team');
+        // console.log('req.body', req.body);
+        // console.log('req.user', req.user);
+        var editedTeam = {
+            name: req.body.name,
+            members: req.body.members,
+            roles: req.body.roles,
+            subscriptions: req.body.subscriptions,
+        };
+        var user = req.user;
+        // an empty response is sent if the user id does not exist
+        if (!user.id) {
+            res.send({});
+        }
+        // console.log('edited team', editedTeam);
+        firebase.collection('teams').doc(req.body.teamId).set(editedTeam)
+            .then(function (docRef) {
+            // console.log('team edit done');
+            // FIXME: what do i send back?
+            res.send({});
+        })
+            .catch(function (error) {
+            console.error('Error editing team document', error);
+        });
+    });
     app.post('/api/add_team', function (req, res) {
         console.log('post /api/add_team');
         // console.log('req.body', req.body);

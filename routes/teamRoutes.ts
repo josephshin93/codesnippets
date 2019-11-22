@@ -12,7 +12,40 @@ import {firestore} from 'firebase-admin';
 
 
 // TODO: add types to queries
+// TODO: use better response status codes
 module.exports = (app: any, firebase: any) => {
+  app.post('/api/edit_team', (req: Request, res: Response) => {
+    console.log('post /api/edit_team');
+    // console.log('req.body', req.body);
+    // console.log('req.user', req.user);
+
+    const editedTeam: Team = {
+      name: req.body.name,
+      members: req.body.members,
+      roles: req.body.roles,
+      subscriptions: req.body.subscriptions,  
+    };
+
+    const user = <User>req.user;
+    // an empty response is sent if the user id does not exist
+    if (!user.id) {
+      res.send({});
+    }
+
+    // console.log('edited team', editedTeam);
+
+    firebase.collection('teams').doc(req.body.teamId).set(editedTeam)
+      .then((docRef: any) => {
+        // console.log('team edit done');
+
+        // FIXME: what do i send back?
+        res.send({});
+      })
+      .catch((error: any) => {
+        console.error('Error editing team document', error);
+      });
+  });
+
   app.post('/api/add_team', (req: Request, res: Response) => {
     console.log('post /api/add_team');
     // console.log('req.body', req.body);
@@ -118,4 +151,5 @@ module.exports = (app: any, firebase: any) => {
     }
 
   });
+
 };

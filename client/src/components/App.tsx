@@ -42,6 +42,7 @@ class App extends Component<AppProps> {
             <ProtectedRoute exact path='/dashboard' component={Dashboard} />  
             <ProtectedRoute exact path='/newsnippet' component={NewSnippet} />
             <ProtectedRoute exact path='/new-team' component={TeamForm} />
+            <ProtectedRoute path='/team-settings/:teamId' component={TeamForm} />
             <Route render={() => (<h3>Sorry, this page does not exist.</h3>)} />
           </Switch>
         </div>
