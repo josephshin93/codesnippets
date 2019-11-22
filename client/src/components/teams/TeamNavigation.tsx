@@ -25,8 +25,11 @@ class TeamNavigation extends Component<TeamNavigationProps> {
     // console.log('<TeamNavigation /> did mount');
   }
 
-  // settings for the 'personal' team cannot be accessed
   renderTeamSettingsLink() {
+    /**
+     * get currently selected team,
+     * settings for the 'Personal' team does not exist
+     */
     let targetTeam: Team | null = null;
     if (
       this.props.teams && 
@@ -35,7 +38,16 @@ class TeamNavigation extends Component<TeamNavigationProps> {
     ) {
       targetTeam = this.props.teams[this.props.selectedTeam];
     }
-    if (targetTeam) {
+    // determine user role in currently selected team
+    let userRole: string | null = null;
+    if (
+      this.props.user && 
+      targetTeam && 
+      targetTeam.roles[this.props.user.id]
+    ) {
+      userRole = targetTeam.roles[this.props.user.id];
+    }
+    if (targetTeam && userRole === 'admin') {
       return (
         <Link 
           className='collection-item' 
