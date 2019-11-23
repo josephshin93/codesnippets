@@ -31,19 +31,20 @@ class SnippetList extends Component<Props> {
             <div>
               <h3 className="title">Title: {snippet.title}</h3>
               <p>
-                <b>Content:</b> {snippet.content} <br />
                 <b>Description:</b> {snippet.description} <br />
+                <b>Content:</b> {snippet.content} <br />
                 <b>OwnerID:</b> {snippet.ownerID} <br />
                 <b>OwnerName:</b> {snippet.ownerName} <br />
                 <b>OwnerPic:</b> {snippet.ownerPic} <br />
                 <b>Status:</b> {snippet.status} <br />
                 <b>Team: </b>
                 {snippet.team} <br />
-                <b>Snippet:</b>{" "}
+                <b>Date:</b>{" "}
                 {new Date(
                   snippet.timeCreated._seconds * 1000
                 ).toLocaleDateString()}{" "}
                 <br />
+                <b>Week:</b> {snippet.week} <br />
                 <b>TotalComments:</b> {snippet.totalComments} <br />
                 <b>TotalLikes:</b> {snippet.totalLikes} <br />
               </p>
