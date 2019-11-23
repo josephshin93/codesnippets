@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 // import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { State, User } from '../store/types';
+import { connect } from "react-redux";
+import { State, User } from "../store/types";
 
-import SnippetList from './snippets/SnippetList';
-import TeamNavigation from './teams/TeamNavigation';
+import SnippetList from "./snippets/SnippetList";
+import FilterSnippetForm from "./snippets/filterSnippetForm";
+import TeamNavigation from "./teams/TeamNavigation";
 
 interface DashboardProps {
   user: User | null;
@@ -14,27 +15,27 @@ class Dashboard extends Component<DashboardProps> {
   render() {
     if (this.props.user) {
       return [
-        <div key='1' className='container'>
-          <div className='row'>
-            <div className='col s12'>
-              <div className='card horizontal'>
-                <div className='card-content'>
-                  <span className='card-title'>User Info</span>
+        <div key="1" className="container">
+          <div className="row">
+            <div className="col s12">
+              <div className="card horizontal">
+                <div className="card-content">
+                  <span className="card-title">User Info</span>
                   <img
                     src={this.props.user.picture}
-                    alt='avatar'
-                    className='circle left'
-                    width='70'
-                    height='70'
+                    alt="avatar"
+                    className="circle left"
+                    width="70"
+                    height="70"
                     style={{
-                      verticalAlign: 'middle',
-                      marginBottom: '4px',
-                      marginRight: '10px'
+                      verticalAlign: "middle",
+                      marginBottom: "4px",
+                      marginRight: "10px"
                     }}
                   ></img>
-                  <div className='right' style={{ marginLeft: '20px' }}>
+                  <div className="right" style={{ marginLeft: "20px" }}>
                     <p>
-                      Name:{' '}
+                      Name:{" "}
                       <b>
                         {this.props.user.firstName} {this.props.user.lastName}
                       </b>
@@ -50,20 +51,19 @@ class Dashboard extends Component<DashboardProps> {
               </div>
             </div>
           </div>
-          
-          <div className='row'>
-            <div className='col s3'>
+
+          <div className="row">
+            <div className="col s3">
               <TeamNavigation />
             </div>
-            <div className='col s9'>
-              <SnippetList key='2' />
+            <div className="col s9">
+              <SnippetList key="2" />
             </div>
           </div>
-
         </div>
       ];
     }
-    return '';
+    return "";
   }
 }
 

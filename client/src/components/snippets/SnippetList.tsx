@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { fetchSnippets } from "../../store/actions";
 import { State, User, Snippet } from "../../store/types";
 import { isEmpty } from "../../lib/lib";
+import FilterSnippetForm from "./filterSnippetForm";
 
 interface Props {
   fetchSnippets: (filters?: any) => void;
@@ -67,11 +68,16 @@ class SnippetList extends Component<Props> {
     return (
       <ul className="collection with-header">
         <li className="collection-header lighten-5 blue">
-          <h1>Snippets</h1>
-          <Link className="waves-effect waves-light blue btn" to="/newsnippet">
+          <h3>Snippets</h3>
+          <span></span>
+          <Link
+            className="center waves-effect waves-light blue btn"
+            to="/newsnippet"
+          >
             Add Snippet
           </Link>
         </li>
+        <FilterSnippetForm />
         {this.renderSnippets()}
       </ul>
     );
