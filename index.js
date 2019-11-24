@@ -34,6 +34,23 @@ app.use(passport.session());
 require('./routes/authRoutes')(app, firebase);
 require('./routes/snippetRoutes')(app, firebase);
 require('./routes/teamRoutes')(app, firebase);
+// Testing emailer/scheduler
+var fakeMember = { "FAKE USER ID": "FAKE USER NAME" };
+var fakeRole = { "FAKE USER ID": "admin" };
+var fakeSubs = [{
+        title: "FAKE SUB TITLE",
+        issueTime: 18,
+        issueDay: 6,
+        content: "FAKE SUB CONTENT"
+    }];
+var team = {
+    name: "FAKE TEAM",
+    members: fakeMember,
+    roles: fakeRole,
+    subscriptions: fakeSubs
+};
+var sub = "sub";
+require('./services/scheduler')(firebase, team);
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static('client/build'));
     var path_1 = require('path');

@@ -1,0 +1,8 @@
+{
+    "watch": ["**/*"],
+    "ignore": ["client", "node_modules", "database", ".git"],
+    "exec": "ts-node index.ts",
+    "restartable": "rs",
+    "verbose": true,
+    "ext": "js, ts"
+}
