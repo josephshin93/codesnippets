@@ -1,23 +1,9 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import {
-  Link,
-} from 'react-router-dom';
-import {
-  State,
-  Teams,
-  User,
-} from '../../store/types';
-import {
-  fetchTeams,
-  mockFetchTeams,
-  selectTeam,
-} from '../../store/actions';
-import {
-  isEmpty,
-} from '../../lib/lib';
-
-
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import { State, Teams, User } from "../../store/types";
+import { fetchTeams, mockFetchTeams, selectTeam } from "../../store/actions";
+import { isEmpty } from "../../lib/lib";
 
 interface TeamListProps {
   fetchTeams: (teamIds?: Array<string>) => void;
@@ -31,9 +17,8 @@ interface TeamListProps {
 }
 
 class TeamList extends Component<TeamListProps> {
-
   componentDidMount() {
-    console.log('<TeamList /> did mount');
+    console.log("<TeamList /> did mount");
     if (this.props.user && !isEmpty(this.props.user) && this.props.teams) {
       this.props.fetchTeams(this.props.user.teams);
     }
@@ -46,29 +31,29 @@ class TeamList extends Component<TeamListProps> {
   render() {
     if (this.props.teams) {
       return (
-        <ul className='collection'>
+        <ul className="collection">
           {Object.keys(this.props.teams).map((teamId: string) => {
-            let liClasses = 'collection-item';
-            if (teamId === this.props.selectedTeam) liClasses += ' active';
+            let liClasses = "collection-item";
+            if (teamId === this.props.selectedTeam) liClasses += " active";
             // FIXME: why does this have to be validated again? tslinter problem?
             if (this.props.teams) {
               return (
                 <Link
-                  key={teamId} 
-                  className= {liClasses} 
-                  onClick={() => this.changeTeam(teamId)} 
-                  to='#'
+                  key={teamId}
+                  className={liClasses}
+                  onClick={() => this.changeTeam(teamId)}
+                  to="#"
                 >
                   <li>{this.props.teams[teamId].name}</li>
                 </Link>
               );
             }
-            return <li>*</li>
+            return <li>*</li>;
           })}
         </ul>
       );
     }
-    
+
     return <p>No teams to display.</p>;
   }
 }
@@ -77,7 +62,7 @@ const mapStateToProps = (state: State) => {
   return {
     user: state.user,
     teams: state.teams,
-    selectedTeam: state.selectedTeam,
+    selectedTeam: state.selectedTeam
   };
 };
 
@@ -85,7 +70,7 @@ const mapDispatchToProps = () => {
   return {
     mockFetchTeams,
     fetchTeams,
-    selectTeam,
+    selectTeam
   };
 };
 

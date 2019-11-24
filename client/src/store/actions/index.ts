@@ -1,6 +1,7 @@
 import axios from "axios";
 import {
   FETCH_USER,
+  FETCH_USERS,
   FETCH_SNIPPETS,
   AUTHORIZE_USER,
   FETCH_TEAMS,
@@ -21,6 +22,14 @@ export const fetchUser = () => async (dispatch: any) => {
   console.log("get api/current_user");
   const res = await axios.get("api/current_user");
   dispatch({ type: FETCH_USER, payload: res.data });
+};
+
+export const fetchUsers = (value: any) => async (dispatch: any) => {
+  console.log("Action: fetchUsers receives " + value);
+  const res = await axios.get("api/users", {
+    params: { teamSelected: value }
+  });
+  dispatch({ type: FETCH_USERS, payload: res.data });
 };
 
 /**

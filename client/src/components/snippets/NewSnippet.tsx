@@ -17,14 +17,14 @@ class NewSnippet extends Component<Props> {
   createListItems() {
     if (this.props.user && this.props.user.teams) {
       let teams = this.props.user.teams;
-      // return Object.keys(teams).map(k => {
-      //   return (
-      //     <option key={k} value={teams[k]}>
-      //       {teams[k]}
-      //     </option>
-      //   );
-      // });
-      return <p>Teams</p>
+      return Object.keys(teams).map(x => {
+        let k = Number(x);
+        return (
+          <option key={k} value={teams[k]}>
+            {teams[k]}
+          </option>
+        );
+      });
     } else
       return (
         <option key={0} value="Personal">

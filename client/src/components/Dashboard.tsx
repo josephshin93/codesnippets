@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import { State, User } from "../store/types";
 
 import SnippetList from "./snippets/SnippetList";
-import FilterSnippetForm from "./snippets/filterSnippetForm";
 import TeamNavigation from "./teams/TeamNavigation";
 
 interface DashboardProps {
@@ -12,6 +11,11 @@ interface DashboardProps {
 }
 
 class Dashboard extends Component<DashboardProps> {
+  componentDidMount() {
+    // To initialize a floating button ... maybe later
+    // let elems = document.querySelectorAll(".fixed-action-btn");
+    // M.FloatingActionButton.init(elems);
+  }
   render() {
     if (this.props.user) {
       return [

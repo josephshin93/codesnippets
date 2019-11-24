@@ -1,26 +1,29 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { fetchSnippets } from "../../store/actions";
+import { fetchSnippets, fetchUsers } from "../../store/actions";
 import { State, User, Snippet } from "../../store/types";
 import { isEmpty } from "../../lib/lib";
 import FilterSnippetForm from "./filterSnippetForm";
 
 interface Props {
   fetchSnippets: (filters?: any) => void;
+  fetchUsers: (selectedTeam: any) => void;
+
   snippets: Array<Snippet> | null;
   user: User | null;
+  selectedTeam: string | null;
 }
 
 class SnippetList extends Component<Props> {
   componentDidMount() {
     console.log("<SnippetList /> did mount");
     if (this.props.user && !isEmpty(this.props.user)) {
+      let team = this.props.selectedTeam;
       this.props.fetchSnippets({
-        //teamSelected: ""
-        //userSelected: null,
-        //weekSelected: null
+        teamSelected: team
       });
+      this.props.fetchUsers(team);
     }
   }
 
@@ -84,8 +87,10 @@ class SnippetList extends Component<Props> {
   }
 }
 
-function mapStateToProps({ snippets, user }: State) {
-  return { snippets, user };
+function mapStateToProps({ snippets, user, selectedTeam }: State) {
+  return { snippets, user, selectedTeam };
 }
 
-export default connect(mapStateToProps, { fetchSnippets })(SnippetList);
+export default connect(mapStateToProps, { fetchSnippets, fetchUsers })(
+  SnippetList
+);

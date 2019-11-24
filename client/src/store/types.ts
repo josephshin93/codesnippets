@@ -10,6 +10,10 @@ export interface User {
   teams?: Array<string>;
 }
 
+export interface Users {
+  [id: string]: User;
+}
+
 export interface Snippet {
   title: string;
   content: string;
@@ -47,7 +51,7 @@ export interface Team {
   // FIXME: how do we mark admins?
   members: TeamMember;
   roles: TeamMemberRoles;
-  subscriptions: Array<Subscription>;  
+  subscriptions: Array<Subscription>;
 }
 
 export interface Teams {
@@ -56,15 +60,16 @@ export interface Teams {
 
 export interface State {
   user: User | null;
+  users: Array<User> | null;
   snippets: Array<Snippet> | null;
   teams: Teams | null;
   selectedTeam: string;
 }
 
 // actions
-export const FETCH_USER = 'fetch_user';
-export const FETCH_SNIPPETS = 'fetch_snippets';
-export const AUTHORIZE_USER = 'authorize_user';
-export const FETCH_TEAMS = 'fetch_teams';
-export const SELECT_TEAM = 'select_team';
-
+export const FETCH_USER = "fetch_user";
+export const FETCH_USERS = "fetch_users";
+export const FETCH_SNIPPETS = "fetch_snippets";
+export const AUTHORIZE_USER = "authorize_user";
+export const FETCH_TEAMS = "fetch_teams";
+export const SELECT_TEAM = "select_team";

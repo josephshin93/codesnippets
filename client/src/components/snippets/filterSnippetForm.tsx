@@ -1,8 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
-import { fetchSnippets, fetchUser } from "../../store/actions";
+import { fetchSnippets } from "../../store/actions";
+import { State, User } from "../../store/types";
+import { isEmpty } from "../../lib/lib";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import moment from "moment";
 
 // TODO:
 // 1. Populate user names (values as userID) for a drop-down
@@ -10,16 +13,39 @@ import * as Yup from "yup";
 
 interface FilterSnippetFormProps {
   fetchSnippets: (filter?: any) => void;
-  //users: any;
-  //week: any;
+
+  user: User | null;
+  users: any;
+  selectedTeam: string | null;
 }
 
 const FilterSnippetForm = (props: FilterSnippetFormProps) => {
+  // Setup Materialize CSS for 'select' dropdowns
+  setTimeout(() => {
+    let selects = document.querySelectorAll("select");
+    M.FormSelect.init(selects, {});
+  }, 500);
+
+  // Populate user names for filter dropdown
+  const renderUsers = () => {
+    if (props.user && !isEmpty(props.user)) {
+      let users = props.users;
+      return Object.keys(users).map(k => {
+        return (
+          <option key={k} value={users[k].googleId}>
+            {users[k].firstName + " " + users[k].lastName}
+          </option>
+        );
+      });
+    }
+  };
+
+  // Formik hook setup
   const formik = useFormik({
     // Initial values
     initialValues: {
       user: "",
-      week: ""
+      week: moment().format("W")
     },
     // Validate form schema
     validationSchema: Yup.object({
@@ -32,8 +58,7 @@ const FilterSnippetForm = (props: FilterSnippetFormProps) => {
         props.fetchSnippets({
           userSelected: values.user,
           weekSelected: values.week,
-          // ADD TEAM SELECTED FROM REDUX STORE LATER
-          teamSelected: ""
+          teamSelected: props.selectedTeam
         });
         actions.setSubmitting(false);
         //actions.setSubmitting(false);
@@ -52,54 +77,31 @@ const FilterSnippetForm = (props: FilterSnippetFormProps) => {
           </button>
         </div>
         <div className="right input-field col m3 s12">
-          <select className="browser-default">
-            <option>hi</option>
-            <option>there</option>
+          <select id="user" value="" {...formik.getFieldProps("user")}>
+            <option value="">All Users</option>
+            {renderUsers()}
           </select>
         </div>
         <div className="right input-field col m3 s12">
-          <select className="browser-default">
-            <option>hi</option>
-            <option>there</option>
-          </select>
+          <input
+            type="number"
+            id="week"
+            min="1"
+            max="52"
+            {...formik.getFieldProps("week")}
+          ></input>
         </div>
       </form>
     </div>
-    /*
-    <div className="row">
-      <form className="col s6 offset-s6" onSubmit={formik.handleSubmit}>
-        <div className="input-field col s5">
-          <span className="#9e9e9e grey-text">User</span>
-          <select
-            id="user"
-            className="browser-default"
-            value=""
-            {...formik.getFieldProps("user")}
-          >
-            <option value="">User</option>
-            <option value="102961147317667963053" key={0}>
-              Wan Ashraf
-            </option>
-            <option value="104593608638718033745" key={1}>
-              Marc
-            </option>
-            <option value="106427510631496405227" key={2}>
-              Joe
-            </option>
-          </select>
-          <select id="week" className="browser-default" value="">
-            <option>Sarah</option>
-            <option> Khairunisa</option>
-          </select>
-          <button type="submit" className="btn waves-effect waves-light blue">
-            Filter
-            <i className="material-icons right">send</i>
-          </button>
-        </div>
-      </form>
-    </div>
-  */
   );
+};
+
+const mapStateToProps = (state: State) => {
+  return {
+    user: state.user,
+    users: state.users,
+    selectedTeam: state.selectedTeam
+  };
 };
 
 const mapDispatchToProps = () => {
@@ -108,4 +110,7 @@ const mapDispatchToProps = () => {
   };
 };
 
-export default connect(null, mapDispatchToProps())(FilterSnippetForm);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps()
+)(FilterSnippetForm);
