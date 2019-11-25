@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-var moment = require('moment');
+var moment = require("moment");
 module.exports = function (app, firebase) {
     app.post("/api/add_snippet", function (req, res) {
         console.log("post /api/add_snippet");
@@ -43,8 +43,8 @@ module.exports = function (app, firebase) {
             query = query.where("week", "==", weekSelected);
         }
         else {
-            console.log("default week");
-            query = query.where("week", "==", "47");
+            console.log("default week: " + moment().format("W"));
+            query = query.where("week", "==", moment().format("W"));
         }
         // Retrieve snippets from database
         query
