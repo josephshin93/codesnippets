@@ -13,6 +13,7 @@ interface Props {
   snippets: Array<Snippet> | null;
   user: User | null;
   selectedTeam: string | null;
+  selectedWeek: any;
 }
 
 class SnippetList extends Component<Props> {
@@ -20,8 +21,10 @@ class SnippetList extends Component<Props> {
     console.log("<SnippetList /> did mount");
     if (this.props.user && !isEmpty(this.props.user)) {
       let team = this.props.selectedTeam;
+      let week = this.props.selectedWeek;
       this.props.fetchSnippets({
-        teamSelected: team
+        teamSelected: team,
+        weekSelected: week
       });
       this.props.fetchUsers(team);
     }
@@ -33,7 +36,7 @@ class SnippetList extends Component<Props> {
         return (
           <li key={snippet.title} className="collection-item">
             <div>
-              <h3 className="title">Title: {snippet.title}</h3>
+              <h5 className="title">{snippet.title}</h5>
               <p>
                 <b>Description:</b> {snippet.description} <br />
                 <b>Content:</b> {snippet.content} <br />
@@ -87,8 +90,13 @@ class SnippetList extends Component<Props> {
   }
 }
 
-function mapStateToProps({ snippets, user, selectedTeam }: State) {
-  return { snippets, user, selectedTeam };
+function mapStateToProps({
+  snippets,
+  user,
+  selectedTeam,
+  selectedWeek
+}: State) {
+  return { snippets, user, selectedTeam, selectedWeek };
 }
 
 export default connect(mapStateToProps, { fetchSnippets, fetchUsers })(

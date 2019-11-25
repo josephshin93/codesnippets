@@ -1,22 +1,20 @@
 import React from "react";
 import { connect } from "react-redux";
-import { fetchSnippets } from "../../store/actions";
+import { fetchSnippets, selectWeek } from "../../store/actions";
 import { State, User } from "../../store/types";
 import { isEmpty } from "../../lib/lib";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import moment from "moment";
 
-// TODO:
-// 1. Populate user names (values as userID) for a drop-down
-// 2. Populate current week, can go from 1-52
-
 interface FilterSnippetFormProps {
   fetchSnippets: (filter?: any) => void;
+  selectWeek: (week: any) => void;
 
   user: User | null;
   users: any;
   selectedTeam: string | null;
+  selectedWeek: any;
 }
 
 const FilterSnippetForm = (props: FilterSnippetFormProps) => {
@@ -40,12 +38,33 @@ const FilterSnippetForm = (props: FilterSnippetFormProps) => {
     }
   };
 
+  // Populate date range from current week
+  const renderWeekRange = () => {
+    return (
+      <div className="col s12 center">
+        <h5>
+          {moment()
+            .startOf("week")
+            .year(2019)
+            .week(props.selectedWeek)
+            .format("MM/DD/YYYY") +
+            " - " +
+            moment()
+              .endOf("week")
+              .year(2019)
+              .week(props.selectedWeek)
+              .format("MM/DD/YYYY")}
+        </h5>
+      </div>
+    );
+  };
+
   // Formik hook setup
   const formik = useFormik({
     // Initial values
     initialValues: {
       user: "",
-      week: moment().format("W")
+      week: props.selectedWeek
     },
     // Validate form schema
     validationSchema: Yup.object({
@@ -55,6 +74,20 @@ const FilterSnippetForm = (props: FilterSnippetFormProps) => {
     // Handle submit
     onSubmit: (values, actions) => {
       setTimeout(() => {
+        console.log(
+          moment()
+            .startOf("week")
+            .year(2019)
+            .week(Number(values.week))
+            .format("MM/DD/YYYY") +
+            " - " +
+            moment()
+              .endOf("week")
+              .year(2019)
+              .week(Number(values.week))
+              .format("MM/DD/YYYY")
+        );
+        props.selectWeek(values.week);
         props.fetchSnippets({
           userSelected: values.user,
           weekSelected: values.week,
@@ -69,6 +102,7 @@ const FilterSnippetForm = (props: FilterSnippetFormProps) => {
 
   return (
     <div className="row">
+      <p />
       <form onSubmit={formik.handleSubmit}>
         <div className="right input-field col m3 s12">
           <button type="submit" className="btn waves-effect waves-light blue">
@@ -76,13 +110,19 @@ const FilterSnippetForm = (props: FilterSnippetFormProps) => {
             <i className="material-icons right">send</i>
           </button>
         </div>
-        <div className="right input-field col m3 s12">
+        <div className="right input-field col m6 s12">
+          <label className="active" htmlFor="user">
+            User
+          </label>
           <select id="user" value="" {...formik.getFieldProps("user")}>
             <option value="">All Users</option>
             {renderUsers()}
           </select>
         </div>
-        <div className="right input-field col m3 s12">
+        <div className="right input-field col m2 s12">
+          <label className="active" htmlFor="week">
+            Week
+          </label>
           <input
             type="number"
             id="week"
@@ -91,6 +131,7 @@ const FilterSnippetForm = (props: FilterSnippetFormProps) => {
             {...formik.getFieldProps("week")}
           ></input>
         </div>
+        {renderWeekRange()}
       </form>
     </div>
   );
@@ -100,13 +141,15 @@ const mapStateToProps = (state: State) => {
   return {
     user: state.user,
     users: state.users,
-    selectedTeam: state.selectedTeam
+    selectedTeam: state.selectedTeam,
+    selectedWeek: state.selectedWeek
   };
 };
 
 const mapDispatchToProps = () => {
   return {
-    fetchSnippets
+    fetchSnippets,
+    selectWeek
   };
 };
 

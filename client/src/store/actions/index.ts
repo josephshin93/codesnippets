@@ -5,7 +5,8 @@ import {
   FETCH_SNIPPETS,
   AUTHORIZE_USER,
   FETCH_TEAMS,
-  SELECT_TEAM
+  SELECT_TEAM,
+  SELECT_WEEK
 } from "../types";
 import { teams } from "../DummyData";
 
@@ -65,4 +66,8 @@ export const mockFetchTeams = () => (dispatch: Function) => {
 
 export const selectTeam = (teamId: string) => {
   return { type: SELECT_TEAM, payload: teamId };
+};
+
+export const selectWeek = (week: any) => {
+  return { type: SELECT_WEEK, payload: week };
 };

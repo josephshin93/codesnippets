@@ -68,3 +68,4 @@ export const FETCH_SNIPPETS = "fetch_snippets";
 export const AUTHORIZE_USER = "authorize_user";
 export const FETCH_TEAMS = "fetch_teams";
 export const SELECT_TEAM = "select_team";
+export const SELECT_WEEK = "select_week";
