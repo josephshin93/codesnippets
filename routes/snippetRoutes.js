@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+var moment = require('moment');
 module.exports = function (app, firebase) {
     app.post("/api/add_snippet", function (req, res) {
         console.log("post /api/add_snippet");
@@ -13,6 +14,7 @@ module.exports = function (app, firebase) {
             ownerName: ownerName,
             status: status,
             team: team,
+            week: moment().format("W"),
             timeCreated: new Date(),
             totalComments: 0,
             totalLikes: 0
@@ -21,15 +23,13 @@ module.exports = function (app, firebase) {
     });
     app.get("/api/snippets", function (req, res) {
         console.log("Route: GET /api/snippets");
-        //const { teamSelected, userSelected, weekSelected } = req.query;
-        //console.log(
-        //  "Params: " + teamSelected + " " + userSelected + " " + weekSelected
-        //);
+        // Setup query then filters if they exist
+        var query = firebase.collection("snippets");
         var teamSelected = req.query.teamSelected || null;
         var userSelected = req.query.userSelected || null;
         var weekSelected = req.query.weekSelected || null;
-        // Test filter logic
-        var query = firebase.collection("snippets");
+        // Append filters for team, user, and/or week
+        // Otherwise, query all snippets for current week
         if (teamSelected) {
             console.log(teamSelected);
             query = query.where("team", "==", teamSelected);
@@ -46,20 +46,11 @@ module.exports = function (app, firebase) {
             console.log("default week");
             query = query.where("week", "==", "47");
         }
-        // Get query
-        /* FIXME: implement snippet query parameters (by team, by user, etc)
-        firebase
-          .collection("snippets")
-          .where("week", "==", weekSelected)
-          */
+        // Retrieve snippets from database
         query
             .get()
             .then(function (snapshot) {
-            // snapshot.docs.forEach((doc: any) => {
-            //   console.log(doc.id, doc.data());
-            // });
             res.send(snapshot.docs.map(function (doc) { return doc.data(); }));
-            // res.send(dummydata.snippets);
         })["catch"](function (err) {
             console.log("Error getting snippets.", err);
         });

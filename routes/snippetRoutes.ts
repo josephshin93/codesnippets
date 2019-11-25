@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as dummydata from "./DummyData";
+var moment = require('moment');
 
 module.exports = (app: any, firebase: any) => {
   app.post("/api/add_snippet", (req: Request, res: Response) => {
@@ -24,6 +24,7 @@ module.exports = (app: any, firebase: any) => {
       ownerName,
       status,
       team,
+      week: moment().format("W");
       timeCreated: new Date(),
       totalComments: 0,
       totalLikes: 0
