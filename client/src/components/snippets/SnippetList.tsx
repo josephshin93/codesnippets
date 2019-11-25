@@ -26,6 +26,8 @@ class SnippetList extends Component<Props> {
         teamSelected: team,
         weekSelected: week
       });
+      // Fetching user names for filter dropdown
+      // Placing this here allows the dropdown to update based on Team Navigation
       this.props.fetchUsers(team);
     }
   }
