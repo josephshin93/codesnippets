@@ -4,12 +4,30 @@ import {
   EDIT_TEAM,
 } from '../types';
 
+const initialState = {
+  all: {
+    name: 'All',
+    members: {},
+    roles: {},
+    subscriptions: [],
+  },
+  personal: {
+    name: 'Personal',
+    members: {},
+    roles: {},
+    subscriptions: [],
+  },
+}
+
 // TODO: type action
 // FIXME: add team and edit team actions aren't being used correctly
-const teamsReducer = (state = {}, action: any) => {
+const teamsReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case FETCH_TEAMS:
-      return action.payload;
+      return {
+        ...state,
+        ...action.payload,
+      };
     case ADD_TEAM:
       return state;
     case EDIT_TEAM:
