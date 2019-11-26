@@ -65,6 +65,7 @@ export interface State {
 export const FETCH_USER = "fetch_user";
 export const FETCH_USERS = "fetch_users";
 export const FETCH_SNIPPETS = "fetch_snippets";
+export const FETCH_SNIPPET = "fetch_snippet";
 export const AUTHORIZE_USER = "authorize_user";
 export const FETCH_TEAMS = "fetch_teams";
 export const SELECT_TEAM = "select_team";

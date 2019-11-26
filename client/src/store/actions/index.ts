@@ -3,12 +3,14 @@ import {
   FETCH_USER,
   FETCH_USERS,
   FETCH_SNIPPETS,
+  FETCH_SNIPPET,
   AUTHORIZE_USER,
   FETCH_TEAMS,
   SELECT_TEAM,
   SELECT_WEEK
 } from "../types";
 import { teams } from "../DummyData";
+import { async } from "q";
 
 export const authorizeUser = () => {
   const userString = localStorage.getItem("user");
@@ -33,17 +35,22 @@ export const fetchUsers = (value: any) => async (dispatch: any) => {
   dispatch({ type: FETCH_USERS, payload: res.data });
 };
 
-/**
- * TODO:
- *   implement this function to get snippets from a specific team, if no team
- *   is specified, then get all snippets from teams involving the current user
- */
+// Get a list of snippets based on filter values
 export const fetchSnippets = (values: any) => async (dispatch: any) => {
   console.log("Action: fetchSnippets");
   const res = await axios.get("api/snippets", {
     params: { ...values }
   });
   dispatch({ type: FETCH_SNIPPETS, payload: res.data });
+};
+
+// Get a single snippet based on ID
+export const fetchSnippet = (snippetID: string) => async (dispatch: any) => {
+  console.log("Action: fetchSnippet with id " + snippetID);
+  const res = await axios.get("api/snippet", {
+    params: { id: snippetID }
+  });
+  dispatch({ type: FETCH_SNIPPET, payload: res.data });
 };
 
 export const addSnippet = (values: any) => async (dispatch: any) => {

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-var moment = require('moment');
+var moment = require("moment");
 
 module.exports = (app: any, firebase: any) => {
   app.post("/api/add_snippet", (req: Request, res: Response) => {
@@ -24,7 +24,7 @@ module.exports = (app: any, firebase: any) => {
       ownerName,
       status,
       team,
-      week: moment().format("W");
+      week: moment().format("W"),
       timeCreated: new Date(),
       totalComments: 0,
       totalLikes: 0
@@ -55,8 +55,8 @@ module.exports = (app: any, firebase: any) => {
       console.log(weekSelected);
       query = query.where("week", "==", weekSelected);
     } else {
-      console.log("default week");
-      query = query.where("week", "==", "47");
+      console.log("default week = " + moment().format("W"));
+      query = query.where("week", "==", moment().format("W"));
     }
 
     // Retrieve snippets from database
@@ -67,6 +67,26 @@ module.exports = (app: any, firebase: any) => {
       })
       .catch((err: any) => {
         console.log("Error getting snippets.", err);
+      });
+  });
+
+  // Get single snippet
+  app.get("/api/snippet", (req: Request, res: Response) => {
+    console.log("Route: GET api/snippet");
+
+    // Setup query variables
+    let query = firebase.collection("snippets");
+    let snippetID = req.query.id;
+
+    // Retrieve snippet from database
+    query
+      .doc(snippetID)
+      .get()
+      .then((doc: any) => {
+        res.send(doc.data());
+      })
+      .catch((err: any) => {
+        console.log("Error getting snippet", err);
       });
   });
 };

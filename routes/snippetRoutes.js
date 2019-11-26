@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-var moment = require('moment');
+var moment = require("moment");
 module.exports = function (app, firebase) {
     app.post("/api/add_snippet", function (req, res) {
         console.log("post /api/add_snippet");
@@ -43,8 +43,8 @@ module.exports = function (app, firebase) {
             query = query.where("week", "==", weekSelected);
         }
         else {
-            console.log("default week");
-            query = query.where("week", "==", "47");
+            console.log("default week = " + moment().format("W"));
+            query = query.where("week", "==", moment().format("W"));
         }
         // Retrieve snippets from database
         query
@@ -53,6 +53,22 @@ module.exports = function (app, firebase) {
             res.send(snapshot.docs.map(function (doc) { return doc.data(); }));
         })["catch"](function (err) {
             console.log("Error getting snippets.", err);
+        });
+    });
+    // Get single snippet
+    app.get("/api/snippet", function (req, res) {
+        console.log("Route: GET api/snippet");
+        // Setup query variables
+        var query = firebase.collection("snippets");
+        var snippetID = req.query.id;
+        // Retrieve snippet from database
+        query
+            .doc(snippetID)
+            .get()
+            .then(function (doc) {
+            res.send(doc.data());
+        })["catch"](function (err) {
+            console.log("Error getting snippet", err);
         });
     });
 };
