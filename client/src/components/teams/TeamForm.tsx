@@ -179,20 +179,28 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
     };
   }
 
-  addMember(userId: string) {
+  addMember(userId: string, arrayHelpers: any) {
     const newUser = this.state.users.find(user => user.id === userId);
 
-    let newTeam = this.state.targetTeam;
-    if (newTeam && newUser) {
-      newTeam.members[newUser.id] = newUser.firstName + ' ' + newUser.lastName;
-      newTeam.roles[newUser.id] = 'pending';
-    }
+    // let newTeam = this.state.targetTeam;
+    // if (newTeam && newUser) {
+    //   newTeam.members[newUser.id] = newUser.firstName + ' ' + newUser.lastName;
+    //   newTeam.roles[newUser.id] = 'pending';
+    // }
 
     // console.log('new member added', newTeam);
 
-    this.setState({
-      targetTeam: newTeam,
-    });
+    // this.setState({
+    //   targetTeam: newTeam,
+    // });
+
+    if (newUser) {
+      arrayHelpers.push({
+        userId: newUser.id,
+        memberName: newUser.firstName + ' ' + newUser.lastName,
+        role: 'pending',
+      });
+    }
   }
 
   renderTextInput(name: string, label: string) {
@@ -205,7 +213,7 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
     );
   }
 
-  renderMembers(members: Array<FormTeamMember>) {
+  renderMembers(members: Array<FormTeamMember>, arrayHelpers: any) {
     if (members.length === 0) {
       return <p>Team has no members.</p>;
     } else {
@@ -231,15 +239,17 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
               e.preventDefault();
 
               // remove specific team member in the local state
-              let newTeam = this.state.targetTeam;
-              if (newTeam) {
-                delete newTeam.members[member.userId];
-                delete newTeam.roles[member.userId];
-              }
+              // let newTeam = this.state.targetTeam;
+              // if (newTeam) {
+              //   delete newTeam.members[member.userId];
+              //   delete newTeam.roles[member.userId];
+              // }
 
-              this.setState({
-                targetTeam: newTeam,
-              });
+              // this.setState({
+              //   targetTeam: newTeam,
+              // });
+
+              arrayHelpers.remove(index, 1);
             }}
           >
             Remove
@@ -260,17 +270,91 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
           name={'members'} 
           render={(arrayHelpers) => (
             <div>
-              {this.renderMembers(members)}
+              {this.renderMembers(members, arrayHelpers)}
               <p>Add members</p>
               <DropdownSearch 
                 search={ts} 
-                onAct={(userId: string) => this.addMember(userId)} 
+                onAct={
+                  (userId: string) => this.addMember(userId, arrayHelpers)
+                } 
               />
             </div>
           )}
         />
       </div>
     );
+  }
+
+  renderSubs(subscriptions: Array<Subscription>, arrayHelpers: any) {
+    if (subscriptions.length === 0) {
+      return <p>Team has no subscriptions.</p>
+    } else {
+      return subscriptions.map((sub: Subscription, index: number) => (
+        <div key={index}>
+          <Field name={`subscriptions[${index}].title`} type='text' />
+          <ErrorMessage name={`subscriptions[${index}].title`} />
+          <Field 
+            name={`subscriptions[${index}].issueTime`} 
+            as='select' 
+            className='browser-default'
+          >
+            <option value='500'>5:00 AM</option>
+            <option value='600'>6:00 AM</option>
+            <option value='700'>7:00 AM</option>                  
+            <option value='800'>8:00 AM</option>
+            <option value='900'>9:00 AM</option>
+            <option value='1000'>10:00 AM</option>                  
+            <option value='1100'>11:00 AM</option>
+            <option value='1200'>12:00 PM</option>
+            <option value='1300'>1:00 PM</option>                  
+            <option value='1400'>2:00 PM</option>
+            <option value='1500'>3:00 PM</option>
+            <option value='1600'>4:00 PM</option>                  
+            <option value='1700'>5:00 PM</option>
+            <option value='1800'>6:00 PM</option>
+            <option value='1900'>7:00 PM</option>                  
+            <option value='2000'>8:00 PM</option>                  
+            <option value='2100'>9:00 PM</option>                  
+            <option value='2200'>10:00 PM</option>                  
+            <option value='2300'>11:00 PM</option>                   
+          </Field>
+          <ErrorMessage name={`subscriptions[${index}].issueTime`} />
+          <Field 
+            name={`subscriptions[${index}].issueDay`} 
+            as='select' 
+            className='browser-default'
+          >
+            <option value='0'>Sunday</option>
+            <option value='1'>Monday</option>
+            <option value='2'>Tuesday</option>
+            <option value='3'>Wednesday</option>
+            <option value='4'>Thursday</option>
+            <option value='5'>Friday</option>
+            <option value='6'>Saturday</option>
+          </Field>
+          <ErrorMessage name={`subscriptions[${index}].issueDay`} />
+          <Field 
+            name={`subscriptions[${index}].content`} 
+            as='textarea' 
+          />
+          <ErrorMessage name={`subscriptions[${index}].content`} />
+          <button onClick={(e) => {
+            e.preventDefault();
+            
+            // let newTeam = this.state.targetTeam;
+            // newTeam.subscriptions.splice(index, 1);
+
+            // this.setState({
+            //   targetTeam: newTeam,
+            // });
+
+            arrayHelpers.remove(index);
+          }}>
+            Remove
+          </button>
+        </div>
+      ));
+    }
   }
 
   renderSubsInput(subscriptions: Array<Subscription>) {
@@ -281,57 +365,27 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
           name='subscriptions'
           render={(arrayHelpers) => (
             <div>
-              {subscriptions.map((sub: Subscription, index: number) => (
-                <div key={index}>
-                  <Field name={`subscriptions[${index}].title`} type='text' />
-                  <ErrorMessage name={`subscriptions[${index}].title`} />
-                  <Field 
-                    name={`subscriptions[${index}].issueTime`} 
-                    as='select' 
-                    className='browser-default'
-                  >
-                    <option value='500'>5:00 AM</option>
-                    <option value='600'>6:00 AM</option>
-                    <option value='700'>7:00 AM</option>                  
-                    <option value='800'>8:00 AM</option>
-                    <option value='900'>9:00 AM</option>
-                    <option value='1000'>10:00 AM</option>                  
-                    <option value='1100'>11:00 AM</option>
-                    <option value='1200'>12:00 PM</option>
-                    <option value='1300'>1:00 PM</option>                  
-                    <option value='1400'>2:00 PM</option>
-                    <option value='1500'>3:00 PM</option>
-                    <option value='1600'>4:00 PM</option>                  
-                    <option value='1700'>5:00 PM</option>
-                    <option value='1800'>6:00 PM</option>
-                    <option value='1900'>7:00 PM</option>                  
-                    <option value='2000'>8:00 PM</option>                  
-                    <option value='2100'>9:00 PM</option>                  
-                    <option value='2200'>10:00 PM</option>                  
-                    <option value='2300'>11:00 PM</option>                   
-                  </Field>
-                  <ErrorMessage name={`subscriptions[${index}].issueTime`} />
-                  <Field 
-                    name={`subscriptions[${index}].issueDay`} 
-                    as='select' 
-                    className='browser-default'
-                  >
-                    <option value='0'>Sunday</option>
-                    <option value='1'>Monday</option>
-                    <option value='2'>Tuesday</option>
-                    <option value='3'>Wednesday</option>
-                    <option value='4'>Thursday</option>
-                    <option value='5'>Friday</option>
-                    <option value='6'>Saturday</option>
-                  </Field>
-                  <ErrorMessage name={`subscriptions[${index}].issueDay`} />
-                  <Field 
-                    name={`subscriptions[${index}].content`} 
-                    as='textarea' 
-                  />
-                  <ErrorMessage name={`subscriptions[${index}].content`} />
-                </div>
-              ))}
+              {this.renderSubs(subscriptions, arrayHelpers)}
+              <button onClick={(e) => {
+                e.preventDefault();
+                
+                const defaultSub: Subscription = {
+                  title: '',
+                  issueDay: 1,
+                  issueTime: 700,
+                  content: '',
+                };
+                // let newTeam = this.state.targetTeam;
+                // newTeam.subscriptions.push(defaultSub);
+
+                // this.setState({
+                //   targetTeam: newTeam,
+                // });
+
+                arrayHelpers.push(defaultSub);
+              }}>
+                Add new subscription
+              </button>
             </div>
           )}
         />
