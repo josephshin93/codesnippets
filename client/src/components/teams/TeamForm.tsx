@@ -47,7 +47,7 @@ interface TeamFormProps {
 interface TeamFormState {
   users: Array<User>;
   targetTeamId: string | null;
-  targetTeam: Team | null;
+  targetTeam: Team;
 }
 
 interface TeamFormMatchParams {
@@ -97,7 +97,12 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
 
     // initialize state data
     let targetTeamId: string = '';
-    let targetTeam: Team | null = null;
+    let targetTeam: Team = {
+      name: '',
+      members: {},
+      roles: {},
+      subscriptions: [],
+    };
     let users: Array<User> = [];
     
     // set targetTeamId and targetTeam if corresponding data is available
