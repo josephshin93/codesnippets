@@ -36,4 +36,19 @@ module.exports = function (app, firebase) {
             console.error('Error retrieving current user', error);
         });
     });
+    app.get('/api/all_users', function (req, res) {
+        console.log('get /api/all_users');
+        // retrieve all users from database
+        firebase.collection('users').get()
+            .then(function (snapshot) {
+            var allUsers = [];
+            snapshot.forEach(function (doc) {
+                allUsers.push(__assign({ id: doc.id }, doc.data()));
+            });
+            res.send(allUsers);
+        })
+            .catch(function (error) {
+            console.error('Error retrieving all users', error);
+        });
+    });
 };

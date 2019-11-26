@@ -6,7 +6,7 @@ import {
 
 // TODO: type action
 // FIXME: add team and edit team actions aren't being used correctly
-const teamsReducer = (state = [], action: any) => {
+const teamsReducer = (state = {}, action: any) => {
   switch (action.type) {
     case FETCH_TEAMS:
       return action.payload;

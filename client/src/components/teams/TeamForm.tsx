@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
   State,
+  User,
   Team,
   Teams,
   FormTeam,
+  FormTeamMember,
+  Subscription,
 } from '../../store/types';
 import { History } from 'history';
 import { match } from 'react-router';
@@ -20,11 +23,15 @@ import {
   ErrorMessage, 
   FieldArray, 
 } from 'formik';
+import DropdownSearch from './DropdownSearch';
 import * as Yup from 'yup';
 import {
+  isEmpty,
   formToTeam,
   teamToForm,
 } from '../../lib/lib';
+import Axios from 'axios';
+const TrieSearch = require('trie-search');
 
 
 
@@ -35,6 +42,12 @@ interface TeamFormProps {
   teams: Teams | null;
   history: History;
   match: match;
+}
+
+interface TeamFormState {
+  users: Array<User>;
+  targetTeamId: string | null;
+  targetTeam: Team | null;
 }
 
 interface TeamFormMatchParams {
@@ -49,9 +62,12 @@ const teamFormValidationSchema = Yup.object({
     .of(Yup.object({
       userId: Yup.string(),
       memberName: Yup.string()
-        .max(25, 'Must be 25 characters or less'),
+        .max(45, 'Must be 45 characters or less'),
       role: Yup.string()
-        .matches(/(admin|member)/, 'Must be \'admin\' \'or member\'')
+        .matches(
+          /(admin|member|pending)/, 
+          'Must be \'admin\' or \'member\' or \'pending\''
+        )
     })),
   subscriptions: Yup.array()
     .of(Yup.object({
@@ -71,196 +87,298 @@ const teamFormValidationSchema = Yup.object({
     })),
 });
 
-const initialValues = (team: Team | null): FormTeam => {
-  if (team) {
-    return teamToForm(team);
-  }
-  return {
-    name: '',
-    members: [
-      { userId: '', memberName: '', role: '' },
-    ],
-    subscriptions: [
-      { title: '', issueTime: 700, issueDay: 1, content: '' }
-    ],
-  };
-};
-
 // TODO: style form (inputs, error messages, etc)
 
-const renderTextInput = (name: string, label: string) => {
-  return (
-    <div>
-      <label htmlFor={name}>{label}</label>
-      <Field name={name} type='text'/>
-      <ErrorMessage name={name} component='div' />
-    </div>
-  );
-};
+class TeamForm extends Component<TeamFormProps, TeamFormState> {
+  _isMounted = false;
 
-const renderMembersInput = (members: any) => {
-  return (
-    <div>
-      <label htmlFor={'members'}>Members</label>
-      <FieldArray 
-        name={'members'} 
-        render={(arrayHelpers) => (
-          <div>
-            {members.map((member: any, index: number) => (
-              <div key={index}>
-                <Field 
-                  name={`members[${index}].memberName`}
-                  type='text'
-                />
-                <ErrorMessage name={`members[${index}].memberName`} />
-                <Field 
-                  name={`members[${index}].role`} 
-                  as='select'
-                  className='browswer-default'
-                >
-                  <option value='admin'>admin</option>
-                  <option value='member'>member</option>
-                </Field>
-                <ErrorMessage name={`members[${index}].role`} />
-                <button 
-                  onClick={() => arrayHelpers.remove(index)}
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-      />
-    </div>
-  );
-};
+  constructor(props: TeamFormProps) {
+    super(props);
 
-const renderSubsInput = (subscriptions: any) => {
-  return (
-    <div>
-      <label htmlFor='subscriptions'>Subscriptions</label>
-      <FieldArray 
-        name='subscriptions'
-        render={(arrayHelpers) => (
-          <div>
-            {subscriptions.map((sub: any, index: number) => (
-              <div key={index}>
-                <Field name={`subscriptions[${index}].title`} type='text' />
-                <ErrorMessage name={`subscriptions[${index}].title`} />
-                <Field 
-                  name={`subscriptions[${index}].issueTime`} 
-                  as='select' 
-                  className='browser-default'
-                >
-                  <option value='500'>5:00 AM</option>
-                  <option value='600'>6:00 AM</option>
-                  <option value='700'>7:00 AM</option>                  
-                  <option value='800'>8:00 AM</option>
-                  <option value='900'>9:00 AM</option>
-                  <option value='1000'>10:00 AM</option>                  
-                  <option value='1100'>11:00 AM</option>
-                  <option value='1200'>12:00 PM</option>
-                  <option value='1300'>1:00 PM</option>                  
-                  <option value='1400'>2:00 PM</option>
-                  <option value='1500'>3:00 PM</option>
-                  <option value='1600'>4:00 PM</option>                  
-                  <option value='1700'>5:00 PM</option>
-                  <option value='1800'>6:00 PM</option>
-                  <option value='1900'>7:00 PM</option>                  
-                  <option value='2000'>8:00 PM</option>                  
-                  <option value='2100'>9:00 PM</option>                  
-                  <option value='2200'>10:00 PM</option>                  
-                  <option value='2300'>11:00 PM</option>                   
-                </Field>
-                <ErrorMessage name={`subscriptions[${index}].issueTime`} />
-                <Field 
-                  name={`subscriptions[${index}].issueDay`} 
-                  as='select' 
-                  className='browser-default'
-                >
-                  <option value='0'>Sunday</option>
-                  <option value='1'>Monday</option>
-                  <option value='2'>Tuesday</option>
-                  <option value='3'>Wednesday</option>
-                  <option value='4'>Thursday</option>
-                  <option value='5'>Friday</option>
-                  <option value='6'>Saturday</option>
-                </Field>
-                <ErrorMessage name={`subscriptions[${index}].issueDay`} />
-                <Field 
-                  name={`subscriptions[${index}].content`} 
-                  as='textarea' 
-                />
-                <ErrorMessage name={`subscriptions[${index}].content`} />
-              </div>
-            ))}
-          </div>
-        )}
-      />
-    </div>
-  );
-};
+    // initialize state data
+    let targetTeamId: string = '';
+    let targetTeam: Team | null = null;
+    let users: Array<User> = [];
+    
+    // set targetTeamId and targetTeam if corresponding data is available
+    const matchParams: TeamFormMatchParams = props.match.params;
+    if (matchParams.teamId) {
+      targetTeamId = matchParams.teamId;
 
+      if (props.teams && props.teams[targetTeamId]) {
+        targetTeam = props.teams[targetTeamId];
+      }
+    }
 
-const TeamForm: React.FC<TeamFormProps> = (props) => {
+    // set the state
+    this.state = {
+      targetTeamId,
+      targetTeam,
+      users, 
+    };
 
-  // console.log('<TeamForm /> rendering', '<TeamForm /> props', props);
-
-  // load in team if this form is meant to edit a team's settings
-  let addMode = true;
-  let targetTeam: Team | null = null;
-  const matchParams: TeamFormMatchParams = props.match.params;
-  if (matchParams.teamId && props.teams) {
-    targetTeam = props.teams[matchParams.teamId];
-    addMode = false;
+    // bind functions
+    this.initialValues = this.initialValues.bind(this);
   }
 
-  // FIXME: cannot use materialize-styled <select> elements without jQuery
-  return (
-    <Formik
-      initialValues={initialValues(targetTeam)}
-      validationSchema={teamFormValidationSchema}
-      onSubmit={(values, actions) => {
-        // console.log('submitting team form');
-        // console.log(values);
+  // FIXME: component mounts twice on refresh and route
+  async componentDidMount() {
+    // console.log('<TeamForm /> did mount');
+    this._isMounted = true;
 
-        if (addMode) {
-          /**
-           * add new team and set it as the selected team, then refresh user 
-           * data to ensure accurate list of teams will be displayed
-           */
-          props.addTeam(formToTeam(values), () => {
-            actions.setSubmitting(false);
-            props.fetchUser();
-            props.history.push('/dashboard');
-          });
-        } else {
-          props.editTeam(formToTeam(values), matchParams.teamId || '', () => {
-            actions.setSubmitting(false);
-            props.fetchUser();
-            props.history.push('/dashboard');
-          });
-        }
-        
-      }}
-    >
-      {({ values, handleSubmit }) => {
-        // console.log(values);
-        return (
-        <Form onSubmit={handleSubmit}>
-          {renderTextInput('name', 'Team Name')}
-          {renderMembersInput(values.members)}
-          {renderSubsInput(values.subscriptions)}
-          <button type='submit'>
-            {addMode ? 'Create Team' : 'Confirm Edit'}
-          </button>
-        </Form>
-        );
-      }}
-    </Formik>
-  );
-};
+    // get all the users for adding members
+    let usersDataRes = await Axios.get('/api/all_users');
+    let users = usersDataRes ? usersDataRes.data : [];
+    console.log('get /api/all_users', usersDataRes);
+
+    // get target team if it is required
+    let targetTeamDataRes = null;
+    if (
+      this.state.targetTeamId !== '' && 
+      (this.state.targetTeam === null || isEmpty(this.state.targetTeam))
+    ) {
+      targetTeamDataRes = await Axios.get(
+        '/api/team', 
+        { params: { targetTeamId: this.state.targetTeamId } }
+      );
+      console.log('get /api/team', this.state.targetTeamId, targetTeamDataRes);
+    }
+    let targetTeam = targetTeamDataRes ? 
+      targetTeamDataRes.data : 
+      this.state.targetTeam;
+
+    if (this._isMounted) {
+      this.setState({
+        users,
+        targetTeam,
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  initialValues(team: Team | null): FormTeam {
+    if (team) {
+      return teamToForm(team);
+    }
+    return {
+      name: '',
+      members: [
+        { userId: '', memberName: '', role: '' },
+      ],
+      subscriptions: [
+        { title: '', issueTime: 700, issueDay: 1, content: '' }
+      ],
+    };
+  }
+
+  addMember(userId: string) {
+    const newUser = this.state.users.find(user => user.id === userId);
+
+    let newTeam = this.state.targetTeam;
+    if (newTeam && newUser) {
+      newTeam.members[newUser.id] = newUser.firstName + ' ' + newUser.lastName;
+      newTeam.roles[newUser.id] = 'pending';
+    }
+
+    // console.log('new member added', newTeam);
+
+    this.setState({
+      targetTeam: newTeam,
+    });
+  }
+
+  renderTextInput(name: string, label: string) {
+    return (
+      <div>
+        <label htmlFor={name}>{label}</label>
+        <Field name={name} type='text'/>
+        <ErrorMessage name={name} component='div' />
+      </div>
+    );
+  }
+
+  renderMembersInput(members: Array<FormTeamMember>) {
+    let ts = new TrieSearch('email');
+    ts.addAll(this.state.users);
+
+    return (
+      <div>
+        <label htmlFor={'members'}>Members</label>
+        <FieldArray 
+          name={'members'} 
+          render={(arrayHelpers) => (
+            <div>
+              {members.map((member: FormTeamMember, index: number) => (
+                <div key={index}>
+                  <Field 
+                    name={`members[${index}].memberName`}
+                    type='text'
+                  />
+                  <ErrorMessage name={`members[${index}].memberName`} />
+                  <Field 
+                    name={`members[${index}].role`} 
+                    as='select'
+                    className='browswer-default'
+                  >
+                    <option value='admin'>admin</option>
+                    <option value='member'>member</option>
+                    <option value='pending'>pending</option>
+                  </Field>
+                  <ErrorMessage name={`members[${index}].role`} />
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+
+                      // remove specific team member in the local state
+                      let newTeam = this.state.targetTeam;
+                      if (newTeam) {
+                        delete newTeam.members[member.userId];
+                        delete newTeam.roles[member.userId];
+                      }
+
+                      this.setState({
+                        targetTeam: newTeam,
+                      });
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <DropdownSearch 
+                search={ts} 
+                onAct={(userId: string) => this.addMember(userId)} 
+              />
+            </div>
+          )}
+        />
+      </div>
+    );
+  }
+
+  renderSubsInput(subscriptions: Array<Subscription>) {
+    return (
+      <div>
+        <label htmlFor='subscriptions'>Subscriptions</label>
+        <FieldArray 
+          name='subscriptions'
+          render={(arrayHelpers) => (
+            <div>
+              {subscriptions.map((sub: Subscription, index: number) => (
+                <div key={index}>
+                  <Field name={`subscriptions[${index}].title`} type='text' />
+                  <ErrorMessage name={`subscriptions[${index}].title`} />
+                  <Field 
+                    name={`subscriptions[${index}].issueTime`} 
+                    as='select' 
+                    className='browser-default'
+                  >
+                    <option value='500'>5:00 AM</option>
+                    <option value='600'>6:00 AM</option>
+                    <option value='700'>7:00 AM</option>                  
+                    <option value='800'>8:00 AM</option>
+                    <option value='900'>9:00 AM</option>
+                    <option value='1000'>10:00 AM</option>                  
+                    <option value='1100'>11:00 AM</option>
+                    <option value='1200'>12:00 PM</option>
+                    <option value='1300'>1:00 PM</option>                  
+                    <option value='1400'>2:00 PM</option>
+                    <option value='1500'>3:00 PM</option>
+                    <option value='1600'>4:00 PM</option>                  
+                    <option value='1700'>5:00 PM</option>
+                    <option value='1800'>6:00 PM</option>
+                    <option value='1900'>7:00 PM</option>                  
+                    <option value='2000'>8:00 PM</option>                  
+                    <option value='2100'>9:00 PM</option>                  
+                    <option value='2200'>10:00 PM</option>                  
+                    <option value='2300'>11:00 PM</option>                   
+                  </Field>
+                  <ErrorMessage name={`subscriptions[${index}].issueTime`} />
+                  <Field 
+                    name={`subscriptions[${index}].issueDay`} 
+                    as='select' 
+                    className='browser-default'
+                  >
+                    <option value='0'>Sunday</option>
+                    <option value='1'>Monday</option>
+                    <option value='2'>Tuesday</option>
+                    <option value='3'>Wednesday</option>
+                    <option value='4'>Thursday</option>
+                    <option value='5'>Friday</option>
+                    <option value='6'>Saturday</option>
+                  </Field>
+                  <ErrorMessage name={`subscriptions[${index}].issueDay`} />
+                  <Field 
+                    name={`subscriptions[${index}].content`} 
+                    as='textarea' 
+                  />
+                  <ErrorMessage name={`subscriptions[${index}].content`} />
+                </div>
+              ))}
+            </div>
+          )}
+        />
+      </div>
+    );
+  }
+
+  render() {
+    // console.log('<TeamForm /> rendering', this.state, this.props);
+
+    return (
+      <Formik
+        initialValues={this.initialValues(this.state.targetTeam)}
+        enableReinitialize
+        validationSchema={teamFormValidationSchema}
+        onSubmit={(values, actions) => {
+          // console.log('submitting team form');
+          // console.log(values);
+
+          if (this.state.targetTeamId === '') {
+            /**
+             * add new team and set it as the selected team, then refresh user 
+             * data to ensure accurate list of teams will be displayed
+             */
+            this.props.addTeam(formToTeam(values), () => {
+              actions.setSubmitting(false);
+              this.props.fetchUser();
+              this.props.history.push('/dashboard');
+            });
+          } else {
+            this.props.editTeam(
+              formToTeam(values), 
+              this.state.targetTeamId || '', 
+              () => {
+                actions.setSubmitting(false);
+                this.props.fetchUser();
+                this.props.history.push('/dashboard');
+              }
+            );
+          }
+          
+        }}
+      >
+        {({ values, handleSubmit }) => {
+          // console.log(values);
+          return (
+          <Form onSubmit={handleSubmit}>
+            {this.renderTextInput('name', 'Team Name')}
+            {this.renderMembersInput(values.members)}
+            {this.renderSubsInput(values.subscriptions)}
+            <button type='submit'>
+              {this.state.targetTeamId === '' ? 'Create Team' : 'Confirm Edit'}
+            </button>
+          </Form>
+          );
+        }}
+      </Formik>
+    );
+  }
+}
+
 
 const mapStateToProps = ({ teams }: State) => {
   return { teams };

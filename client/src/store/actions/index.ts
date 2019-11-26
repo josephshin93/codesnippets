@@ -60,7 +60,7 @@ export const addSnippet = (values: any) => async (dispatch: any) => {
 export const fetchTeams = (teamIds?: Array<string>) => 
   async (dispatch: Dispatch<AnyAction>) => {
     console.log('get api/teams');
-    const res = await axios.get('api/teams');
+    const res = await axios.get('/api/teams');
     dispatch({ type: FETCH_TEAMS, payload: res.data });
   };
 

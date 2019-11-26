@@ -150,6 +150,24 @@ module.exports = (app: any, firebase: any) => {
       });
     }
 
+  });  
+  
+  app.get('/api/team', (req: Request, res: Response) => {
+    console.log('get /api/team');
+    // console.log(req.user);
+    // console.log(req.query);
+
+    // retrieve the target team from database and send it to client
+    firebase.collection('teams').doc(req.query.targetTeamId).get()
+    .then((doc: any) => {
+      res.send({ ...doc.data() });
+    })
+    .catch((error: any) => {
+      console.error(
+        'Error retrieving the team with id ' + req.query.targetTeamId, 
+        error
+      );
+    });
   });
 
 };
