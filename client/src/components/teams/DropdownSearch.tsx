@@ -8,6 +8,7 @@ interface DropdownSearchProps {
 }
 
 interface DropdownSearchState {
+  input: string;
   results: Array<any>;
 }
 
@@ -16,6 +17,7 @@ class DropdownSearch extends Component<DropdownSearchProps, DropdownSearchState>
     super(props);
 
     this.state = {
+      input: '',
       results: [],
     };
 
@@ -28,6 +30,7 @@ class DropdownSearch extends Component<DropdownSearchProps, DropdownSearchState>
     //   this.props.search.get(event.currentTarget.value)
     // );
     this.setState({
+      input: event.currentTarget.value,
       results: this.props.search.get(event.currentTarget.value),
     });
   }
@@ -40,7 +43,11 @@ class DropdownSearch extends Component<DropdownSearchProps, DropdownSearchState>
           <p>Email: {entry.email}</p>
           <button onClick={(e) => {
             e.preventDefault();
-            this.props.onAct(entry.id)
+            this.props.onAct(entry.id);
+            this.setState({
+              input: '',
+              results: [],
+            });
           }}>Add</button>
         </li>
       ));
@@ -54,6 +61,8 @@ class DropdownSearch extends Component<DropdownSearchProps, DropdownSearchState>
       <div>
         <input 
           type='text' 
+          placeholder='Search user by email' 
+          value={this.state.input}
           onChange={this.handleChange} 
         />
         <ul className='collection'>

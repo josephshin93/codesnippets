@@ -205,6 +205,50 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
     );
   }
 
+  renderMembers(members: Array<FormTeamMember>) {
+    if (members.length === 0) {
+      return <p>Team has no members.</p>;
+    } else {
+      return members.map((member: FormTeamMember, index: number) => (
+        <div key={index}>
+          <Field 
+            name={`members[${index}].memberName`}
+            type='text'
+          />
+          <ErrorMessage name={`members[${index}].memberName`} />
+          <Field 
+            name={`members[${index}].role`} 
+            as='select'
+            className='browswer-default'
+          >
+            <option value='admin'>admin</option>
+            <option value='member'>member</option>
+            <option value='pending'>pending</option>
+          </Field>
+          <ErrorMessage name={`members[${index}].role`} />
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+
+              // remove specific team member in the local state
+              let newTeam = this.state.targetTeam;
+              if (newTeam) {
+                delete newTeam.members[member.userId];
+                delete newTeam.roles[member.userId];
+              }
+
+              this.setState({
+                targetTeam: newTeam,
+              });
+            }}
+          >
+            Remove
+          </button>
+        </div>
+      ));
+    }
+  }
+
   renderMembersInput(members: Array<FormTeamMember>) {
     let ts = new TrieSearch('email');
     ts.addAll(this.state.users);
@@ -216,43 +260,8 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
           name={'members'} 
           render={(arrayHelpers) => (
             <div>
-              {members.map((member: FormTeamMember, index: number) => (
-                <div key={index}>
-                  <Field 
-                    name={`members[${index}].memberName`}
-                    type='text'
-                  />
-                  <ErrorMessage name={`members[${index}].memberName`} />
-                  <Field 
-                    name={`members[${index}].role`} 
-                    as='select'
-                    className='browswer-default'
-                  >
-                    <option value='admin'>admin</option>
-                    <option value='member'>member</option>
-                    <option value='pending'>pending</option>
-                  </Field>
-                  <ErrorMessage name={`members[${index}].role`} />
-                  <button 
-                    onClick={(e) => {
-                      e.preventDefault();
-
-                      // remove specific team member in the local state
-                      let newTeam = this.state.targetTeam;
-                      if (newTeam) {
-                        delete newTeam.members[member.userId];
-                        delete newTeam.roles[member.userId];
-                      }
-
-                      this.setState({
-                        targetTeam: newTeam,
-                      });
-                    }}
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
+              {this.renderMembers(members)}
+              <p>Add members</p>
               <DropdownSearch 
                 search={ts} 
                 onAct={(userId: string) => this.addMember(userId)} 
