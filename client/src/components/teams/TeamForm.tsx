@@ -88,6 +88,13 @@ const teamFormValidationSchema = Yup.object({
 });
 
 // TODO: style form (inputs, error messages, etc)
+// FIXME: should we make the member name of team members unedit-able?
+/**
+ * FIXME:
+ *  at least one member should be able to edit the team,
+ *  maybe create a creator status and automatically assign at team creation
+ *  and design a way to change the creator so there is only and always one
+ */
 
 class TeamForm extends Component<TeamFormProps, TeamFormState> {
   _isMounted = false;
