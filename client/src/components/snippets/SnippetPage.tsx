@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps, match } from "react-router-dom";
 import * as H from "history";
-import { State, User, Snippet } from "../../store/types";
+import { State, User } from "../../store/types";
 import { withRouter } from "react-router";
 import CommentList from "../comments/CommentList";
 import { fetchSnippet } from "../../store/actions";
@@ -24,7 +24,7 @@ class SnippetPage extends Component<Props> {
     console.log("<SnippetPage /> did mount");
     //this.getParams();
     // const { foo } = this.props.location;
-    console.log(this.props.location.state.foo);
+    // console.log(this.props.location.state.snippet);
     // 1. Get the snippet ID
     // 2. Fetch the snippet
   }
@@ -39,7 +39,7 @@ class SnippetPage extends Component<Props> {
   */
 
   render() {
-    const snippet = this.props.location.state.foo;
+    const snippet = this.props.location.state.snippet;
     return (
       <div>
         This is the Snippet page for {snippet.title}

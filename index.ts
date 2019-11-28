@@ -42,7 +42,7 @@ require("./routes/authRoutes")(app);
 require("./routes/usersRoutes")(app, firebase);
 require("./routes/snippetRoutes")(app, firebase);
 require("./routes/teamRoutes")(app, firebase);
-require("./routes/commentRoutes")(app, firebase);
+//require("./routes/commentRoutes")(app, firebase);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));

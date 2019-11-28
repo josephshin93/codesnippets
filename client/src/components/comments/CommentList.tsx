@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { fetchComments } from "../../store/actions";
 import { State, User, Comment } from "../../store/types";
-import { isEmpty } from "../../lib/lib";
 
 interface CommentListProps {
   fetchComments: (snippetId: string) => void;

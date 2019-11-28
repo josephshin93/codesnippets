@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchSnippet } from "../../store/actions";
 import { State, User, Snippet } from "../../store/types";
-import { isEmpty } from "../../lib/lib";
 
 interface Props {
   fetchSnippet: (snippetID: string) => void;
@@ -49,14 +48,11 @@ class SnippetSingle extends Component<AllProps> {
             to={{
               pathname: `/snippet/${this.props.snippet.id}`,
               state: {
-                foo: this.props.snippet
+                snippet: this.props.snippet
               }
             }}
           >
-            Test
-          </Link>
-          <Link to={`/snippet/${this.props.snippet.id}`}>
-            <h5 className="title">Go</h5>
+            <h5>Test</h5>
           </Link>
         </div>
       </li>

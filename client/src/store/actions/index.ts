@@ -10,7 +10,6 @@ import {
   SELECT_TEAM,
   SELECT_WEEK
 } from "../types";
-import { async } from "q";
 
 export const authorizeUser = () => {
   const userString = localStorage.getItem("user");
@@ -56,9 +55,7 @@ export const fetchSnippet = (snippetID: string) => async (dispatch: any) => {
 // Get a list of comments based on snippet ID
 export const fetchComments = (snippetId: string) => async (dispatch: any) => {
   console.log("Action: fetchComments with id " + snippetId);
-  const res = await axios.get("api/comments", {
-    params: { snippetId: snippetId }
-  });
+  const res = await axios.get("api/snippetComment");
   dispatch({ type: FETCH_COMMENTS, payload: res.data });
 };
 

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 
+/*
 module.exports = (app: any, firebase: any) => {
   app.get("/api/comments", (req: Request, res: Response) => {
     console.log("Route: GET /api/comments");
@@ -26,3 +27,4 @@ module.exports = (app: any, firebase: any) => {
       });
   });
 };
+*/

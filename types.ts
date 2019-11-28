@@ -61,11 +61,8 @@ export interface Comment {
   userId: string;
   userPicture: string;
   comment: string;
+  snippetId: string;
   timeCreated: Date;
-}
-
-export interface Comments {
-  [commentId: string]: Comment;
 }
 
 export interface State {
@@ -73,7 +70,7 @@ export interface State {
   snippets: Array<Snippet> | null;
   teams: Teams | null;
   selectedTeam: string;
-  comments: Comments | null;
+  comments: Array<Comment> | null;
 }
 
 // actions
