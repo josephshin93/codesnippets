@@ -18,7 +18,8 @@ interface TeamListProps {
 
 class TeamList extends Component<TeamListProps> {
   componentDidMount() {
-    console.log("<TeamList /> did mount");
+    // console.log('<TeamList /> did mount');
+
     if (this.props.user && !isEmpty(this.props.user) && this.props.teams) {
       this.props.fetchTeams(this.props.user.teams);
     }
@@ -29,7 +30,10 @@ class TeamList extends Component<TeamListProps> {
   }
 
   render() {
+    // console.log('<TeamList /> rendering');
     if (this.props.teams) {
+      // console.log('teams', this.props.teams);
+      // console.log('selectedTeam', this.props.selectedTeam);
       return (
         <ul className="collection">
           {Object.keys(this.props.teams).map((teamId: string) => {

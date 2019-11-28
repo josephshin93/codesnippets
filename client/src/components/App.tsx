@@ -12,6 +12,7 @@ import Header from './Header';
 import Landing from './Landing';
 import Dashboard from './Dashboard';
 import NewSnippet from './snippets/NewSnippet';
+import TeamForm from './teams/TeamForm';
 
 
 interface AppProps {
@@ -21,17 +22,17 @@ interface AppProps {
 
 class App extends Component<AppProps> {
   componentDidMount() {
-    console.log('<App /> did mount');
+    // console.log('<App /> did mount');
     this.props.authorizeUser();
   }
 
   componentDidUpdate() {
-    console.log('<App /> did update');
+    // console.log('<App /> did update');
     if (!this.props.user) this.props.authorizeUser();
   }
 
   render() {
-    console.log('<App /> rendering');
+    // console.log('<App /> rendering');
     return (
       <BrowserRouter>
         <div>
@@ -40,6 +41,8 @@ class App extends Component<AppProps> {
             <Route exact path='/' component={Landing} />
             <ProtectedRoute exact path='/dashboard' component={Dashboard} />  
             <ProtectedRoute exact path='/newsnippet' component={NewSnippet} />
+            <ProtectedRoute exact path='/new-team' component={TeamForm} />
+            <ProtectedRoute path='/team-settings/:teamId' component={TeamForm} />
             <Route render={() => (<h3>Sorry, this page does not exist.</h3>)} />
           </Switch>
         </div>
