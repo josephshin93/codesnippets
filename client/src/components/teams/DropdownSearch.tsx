@@ -39,20 +39,38 @@ class DropdownSearch extends Component<DropdownSearchProps, DropdownSearchState>
     if (this.state.results && this.state.results.length > 0) {
       return this.state.results.map((entry, index) => (
         <li key={index} className='collection-item'>
-          <p>Name: {entry.firstName + ' ' + entry.lastName}</p>
-          <p>Email: {entry.email}</p>
-          <button onClick={(e) => {
-            e.preventDefault();
-            this.props.onAct(entry.id);
-            this.setState({
-              input: '',
-              results: [],
-            });
-          }}>Add</button>
+          <div className='row'>
+            <div className='col s10'>
+              <p>Name: {entry.firstName + ' ' + entry.lastName}</p>
+              <p>Email: {entry.email}</p>
+            </div>
+            <div className='col s2'>
+              <button 
+                className='btn-floating btn-small waves-effect waves-light'
+                style={{marginTop: '0.9rem'}}
+                onClick={(e) => {
+                  e.preventDefault();
+                  this.props.onAct(entry.id);
+                  this.setState({
+                    input: '',
+                    results: [],
+                  });
+                }}
+              >
+                <i className='material-icons'>add</i>
+              </button>
+            </div>
+          </div>
         </li>
       ));
     }
-    return <li className='collection=item'>No results found.</li>;
+    return (
+      <li className='collection=item'>
+        <p className='grey-text text-lighten-2' style={{paddingLeft: '10px'}}>
+          <em>No results found.</em>
+        </p>
+      </li>
+    );
   }
 
   // FIXME?: entry display is specific to user data, not generalized
