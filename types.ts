@@ -45,7 +45,7 @@ export interface Team {
   name: string;
   members: TeamMember;
   roles: TeamMemberRoles;
-  subscriptions: Array<Subscription>;  
+  subscriptions: Array<Subscription>;
 }
 
 export interface FormTeamMember {
@@ -73,9 +73,11 @@ export interface State {
 
 // actions
 export const FETCH_USER = 'fetch_user';
+export const FETCH_USERS = 'fetch_users';
 export const FETCH_SNIPPETS = 'fetch_snippets';
 export const AUTHORIZE_USER = 'authorize_user';
 export const FETCH_TEAMS = 'fetch_teams';
 export const SELECT_TEAM = 'select_team';
+export const SELECT_WEEK = 'select_week';
 export const ADD_TEAM = 'add_team';
 export const EDIT_TEAM = 'edit_team';
