@@ -87,6 +87,7 @@ const teamFormValidationSchema = Yup.object({
 });
 
 // FIXME: should we make the member name of team members unedit-able?
+// FIXME: should we remove the pending status for the time being?
 /**
  * FIXME:
  *  at least one member should be able to edit the team,
@@ -242,7 +243,7 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
     } else {
       return members.map((member: FormTeamMember, index: number) => (
         <div className='row' key={index}>
-          <div className='col s5'>
+          <div className='col s7'>
             <Field 
               name={`members[${index}].memberName`}
               type='text'
@@ -254,7 +255,7 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
             />
           </div>
 
-          <div className='col s5'>
+          <div className='col s3'>
             <Field 
               name={`members[${index}].role`} 
               as='select'
@@ -270,9 +271,9 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
             />
           </div>
 
-          <div className='col s2'>
+          <div className='col s1 offset-s1'>
             <button 
-              className='waves-effect waves-light btn red'
+              className='waves-effect waves-light btn-floating red darken-1'
               onClick={(e) => {
                 e.preventDefault();
 
@@ -290,7 +291,8 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
                 arrayHelpers.remove(index, 1);
               }}
             >
-              Remove
+              <i className='material-icons'>clear</i>
+              {/* Remove */}
             </button>
           </div>
         </div>
@@ -349,7 +351,7 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
         <div className='row' key={index}>
           <div className='col s12'>
             <div className='row'>
-              <div className='col s8'>
+              <div className='col s6'>
                 <Field 
                   name={`subscriptions[${index}].title`} 
                   type='text' 
@@ -405,10 +407,30 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
                 </Field>
                 <ErrorMessage name={`subscriptions[${index}].issueDay`} />
               </div>
+              <div className='col s1 offset-s1'>
+                  <button 
+                    className='waves-effect waves-light btn-floating red darken-1'
+                    onClick={(e) => {
+                      e.preventDefault();
+                      
+                      // let newTeam = this.state.targetTeam;
+                      // newTeam.subscriptions.splice(index, 1);
+
+                      // this.setState({
+                      //   targetTeam: newTeam,
+                      // });
+
+                      arrayHelpers.remove(index);
+                    }}
+                  >
+                    <i className='material-icons'>clear</i>
+                  </button>
+              </div>
             </div>
 
+
             <div className='row'>
-              <div className='input-field col s12'>
+              <div className='input-field col s10'>
                 <Field 
                   className='materialize-textarea'
                   name={`subscriptions[${index}].content`} 
@@ -419,28 +441,6 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
                   className='red-text text-darken-2'
                   name={`subscriptions[${index}].content`} 
                 />
-              </div>
-            </div>
-            
-            <div className='row'>
-              <div className='col s2 offset-s10'>
-                <button 
-                  className='waves-effect waves-light btn red'
-                  onClick={(e) => {
-                    e.preventDefault();
-                    
-                    // let newTeam = this.state.targetTeam;
-                    // newTeam.subscriptions.splice(index, 1);
-
-                    // this.setState({
-                    //   targetTeam: newTeam,
-                    // });
-
-                    arrayHelpers.remove(index);
-                  }}
-                >
-                  Remove
-                </button>
               </div>
             </div>
           </div>
