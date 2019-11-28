@@ -6,7 +6,6 @@ interface FormProps {
   // TODO: Typescript format
   teams: any;
   user: any;
-  history: any;
   addSnippet(values: any): any;
 }
 
@@ -48,7 +47,6 @@ const AddSnippetForm = (props: FormProps) => {
         actions.setSubmitting(false);
         actions.resetForm({});
         actions.setStatus({ success: "Snippet Created !" });
-        //props.history.push("/dashboard");
       }, 1000);
     }
   });
