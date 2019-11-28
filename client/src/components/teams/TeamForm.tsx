@@ -26,7 +26,6 @@ import {
 import DropdownSearch from './DropdownSearch';
 import * as Yup from 'yup';
 import {
-  isEmpty,
   formToTeam,
   teamToForm,
 } from '../../lib/lib';
@@ -87,7 +86,6 @@ const teamFormValidationSchema = Yup.object({
     })),
 });
 
-// TODO: style form (inputs, error messages, etc)
 // FIXME: should we make the member name of team members unedit-able?
 /**
  * FIXME:
@@ -135,7 +133,7 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
 
   // FIXME: component mounts twice on refresh and route
   async componentDidMount() {
-    // console.log('<TeamForm /> did mount');
+    // console.log('<TeamForm /> did mount', this.props, this.state);
     this._isMounted = true;
 
     // get all the users for adding members
@@ -143,11 +141,11 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
     let users = usersDataRes ? usersDataRes.data : [];
     console.log('get /api/all_users', usersDataRes);
 
-    // get target team if it is required
+    // get target team if it is required (empty name means empty target Team)
     let targetTeamDataRes = null;
     if (
       this.state.targetTeamId !== '' && 
-      (this.state.targetTeam === null || isEmpty(this.state.targetTeam))
+      (this.state.targetTeam === null || this.state.targetTeam.name === '')
     ) {
       targetTeamDataRes = await Axios.get(
         '/api/team', 
