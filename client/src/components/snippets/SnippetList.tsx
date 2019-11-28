@@ -5,6 +5,7 @@ import { fetchSnippets, fetchUsers } from "../../store/actions";
 import { State, User, Snippet } from "../../store/types";
 import { isEmpty } from "../../lib/lib";
 import FilterSnippetForm from "./filterSnippetForm";
+import SnippetSingle from "./SnippetSingle";
 
 interface Props {
   fetchSnippets: (filters?: any) => void;
@@ -34,33 +35,9 @@ class SnippetList extends Component<Props> {
 
   renderSnippets() {
     if (this.props.snippets && this.props.snippets.length > 0) {
-      return this.props.snippets.map((snippet: any) => {
-        return (
-          <li key={snippet.title} className="collection-item">
-            <div>
-              <h5 className="title">{snippet.title}</h5>
-              <p>
-                <b>Description:</b> {snippet.description} <br />
-                <b>Content:</b> {snippet.content} <br />
-                <b>OwnerID:</b> {snippet.ownerID} <br />
-                <b>OwnerName:</b> {snippet.ownerName} <br />
-                <b>OwnerPic:</b> {snippet.ownerPic} <br />
-                <b>Status:</b> {snippet.status} <br />
-                <b>Team: </b>
-                {snippet.team} <br />
-                <b>Date:</b>{" "}
-                {new Date(
-                  snippet.timeCreated._seconds * 1000
-                ).toLocaleDateString()}{" "}
-                <br />
-                <b>Week:</b> {snippet.week} <br />
-                <b>TotalComments:</b> {snippet.totalComments} <br />
-                <b>TotalLikes:</b> {snippet.totalLikes} <br />
-              </p>
-            </div>
-          </li>
-        );
-      });
+      return this.props.snippets.map((snippet: any) => (
+        <SnippetSingle key={snippet.id} snippet={snippet} />
+      ));
     }
 
     return (

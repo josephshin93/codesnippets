@@ -15,6 +15,7 @@ export interface Users {
 }
 
 export interface Snippet {
+  id: string;
   title: string;
   content: string;
   description: string;
@@ -23,6 +24,7 @@ export interface Snippet {
   ownerPic: string;
   status: string;
   team: string;
+  week: string;
   timeCreated: Date;
   totalComments: number;
   totalLikes: number;
@@ -58,11 +60,20 @@ export interface Teams {
   [teamId: string]: Team;
 }
 
+export interface Comment {
+  id: string;
+  userId: string;
+  userPicture: string;
+  comment: string;
+  timeCreated: Date;
+}
+
 export interface State {
   user: User | null;
   users: Array<User> | null;
   snippets: Array<Snippet> | null;
   snippet: Snippet | null;
+  comments: Array<Comment> | null;
   teams: Teams | null;
   selectedTeam: string;
   selectedWeek: any;
@@ -73,6 +84,7 @@ export const FETCH_USER = "fetch_user";
 export const FETCH_USERS = "fetch_users";
 export const FETCH_SNIPPETS = "fetch_snippets";
 export const FETCH_SNIPPET = "fetch_snippet";
+export const FETCH_COMMENTS = "fetch_comments";
 export const AUTHORIZE_USER = "authorize_user";
 export const FETCH_TEAMS = "fetch_teams";
 export const SELECT_TEAM = "select_team";

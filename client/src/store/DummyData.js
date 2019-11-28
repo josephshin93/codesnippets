@@ -1,5 +1,5 @@
-import { User, TeamMemberRoles, Teams, Subscription, Snippet } from "./types";
-
+"use strict";
+exports.__esModule = true;
 /*
 export const users: Array<User> = [
   {

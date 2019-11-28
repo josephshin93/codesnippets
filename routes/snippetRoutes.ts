@@ -63,7 +63,11 @@ module.exports = (app: any, firebase: any) => {
     query
       .get()
       .then((snapshot: any) => {
-        res.send(snapshot.docs.map((doc: any) => doc.data()));
+        res.send(
+          snapshot.docs.map((doc: any) => {
+            return { ...doc.data(), id: doc.id };
+          })
+        );
       })
       .catch((err: any) => {
         console.log("Error getting snippets.", err);

@@ -11,12 +11,14 @@ export interface User {
 }
 
 export interface Snippet {
+  id: string;
   title: string;
   content: string;
   description: string;
   ownerID: string;
   ownerName: string;
   ownerPic: string;
+  week: string;
   status: string;
   team: string;
   timeCreated: Date;
@@ -54,11 +56,24 @@ export interface Teams {
   [teamId: string]: Team;
 }
 
+export interface Comment {
+  id: string;
+  userId: string;
+  userPicture: string;
+  comment: string;
+  timeCreated: Date;
+}
+
+export interface Comments {
+  [commentId: string]: Comment;
+}
+
 export interface State {
   user: User | null;
   snippets: Array<Snippet> | null;
   teams: Teams | null;
   selectedTeam: string;
+  comments: Comments | null;
 }
 
 // actions
@@ -66,6 +81,7 @@ export const FETCH_USER = "fetch_user";
 export const FETCH_USERS = "fetch_users";
 export const FETCH_SNIPPETS = "fetch_snippets";
 export const FETCH_SNIPPET = "fetch_snippet";
+export const FETCH_COMMENTS = "fetch_comments";
 export const AUTHORIZE_USER = "authorize_user";
 export const FETCH_TEAMS = "fetch_teams";
 export const SELECT_TEAM = "select_team";

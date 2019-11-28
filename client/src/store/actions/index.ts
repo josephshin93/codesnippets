@@ -4,12 +4,12 @@ import {
   FETCH_USERS,
   FETCH_SNIPPETS,
   FETCH_SNIPPET,
+  FETCH_COMMENTS,
   AUTHORIZE_USER,
   FETCH_TEAMS,
   SELECT_TEAM,
   SELECT_WEEK
 } from "../types";
-import { teams } from "../DummyData";
 import { async } from "q";
 
 export const authorizeUser = () => {
@@ -53,6 +53,15 @@ export const fetchSnippet = (snippetID: string) => async (dispatch: any) => {
   dispatch({ type: FETCH_SNIPPET, payload: res.data });
 };
 
+// Get a list of comments based on snippet ID
+export const fetchComments = (snippetId: string) => async (dispatch: any) => {
+  console.log("Action: fetchComments with id " + snippetId);
+  const res = await axios.get("api/comments", {
+    params: { snippetId: snippetId }
+  });
+  dispatch({ type: FETCH_COMMENTS, payload: res.data });
+};
+
 export const addSnippet = (values: any) => async (dispatch: any) => {
   console.log("get api/add_snippet");
   const res = await axios.post("api/add_snippet", values);
@@ -67,9 +76,11 @@ export const fetchTeams = (teamIds?: Array<string>) => async (
   dispatch({ type: FETCH_TEAMS, payload: res.data });
 };
 
+/*
 export const mockFetchTeams = () => (dispatch: Function) => {
   dispatch({ type: FETCH_TEAMS, payload: teams });
 };
+*/
 
 export const selectTeam = (teamId: string) => {
   return { type: SELECT_TEAM, payload: teamId };
