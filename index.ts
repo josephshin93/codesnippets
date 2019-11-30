@@ -5,6 +5,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const admin = require('firebase-admin');
+const scheduler = require('./services/scheduler');
 import { Request, Response } from 'express';
 import { Subscription, Team, TeamMember } from './types';
 
@@ -74,7 +75,8 @@ require('./routes/teamRoutes')(app, firebase);
 //   roles: fakeRole,
 //   subscriptions: fakeSubs
 // }
-// require('./services/scheduler')(firebase, team);
+// scheduler.scheduleSubscriptions(firebase, team);
+scheduler.scheduleAllOnStart(firebase);
 
 
 if (process.env.NODE_ENV === 'production') {

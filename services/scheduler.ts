@@ -7,21 +7,45 @@ import { Subscription, Team, TeamMember, Teams } from '../types';
 
 const emailJobs = <any>{};
 
-module.exports = async function(firebase: any, team: Team) {
+module.exports = {
   
-  console.log("\n===\n[DEBUG START] scheduler.ts\n===\n");
-  console.log("[DEBUG] Team => ", team);
+  scheduleAllOnStart: async function(firebase: any) {
+    // console.log("\n===\n[DEBUG START] scheduler.ts scheduleAllOnStart\n===\n");
+
+    var teams = await firebase.collection('teams').get();
+    teams.forEach(async function(doc: any) {
+      // console.log(doc.data().name + " =>", doc.data());
+      await scheduleSubscriptions(firebase, doc.data());
+    });
+
+
+    console.log("The following emails were scheduled on server start: ");
+    for (var name in emailJobs) console.log(name);
+
+    // console.log("\n===\n[DEBUG END] scheduler.ts scheduleAllOnStart\n===\n");
+  }
+
+}
+
+async function scheduleSubscriptions(firebase: any, team: Team) {
+  // console.log("\n===\n[DEBUG START] scheduler.ts scheduleSubscriptions\n===\n");
+  // console.log("[DEBUG] Team => ", team.name);
 
   for (let subscription of team.subscriptions) {
     scheduleEmail(team, subscription, firebase);
   }
 
-  console.log("\n===\n[DEBUG END] scheduler.ts\n===\n");
+  // console.log("\n===\n[DEBUG END] scheduler.ts scheduleSubscriptions\n===\n");
 }
 
 async function scheduleEmail(team: Team, subscription: Subscription, firebase: any) {
     
   var { title, issueTime, issueDay, type } = subscription;
+
+  if (type == null || issueDay == null || issueDay == null) {
+    console.error(`[ERROR] The following subscription for team ${team.name} is malformed =>`, subscription, "\n");
+    return;
+  }
 
   // Create identifier for scheduler
   var jobName = `${team.name}-${type}`;
@@ -31,12 +55,12 @@ async function scheduleEmail(team: Team, subscription: Subscription, firebase: a
     
   // Set scheduler details
   var rule = new cron.RecurrenceRule();
-  rule.dayOfWeek = [issueDay];
-  rule.hour = issueTime;
+  rule.dayOfWeek = [parseInt(issueDay)];
+  rule.hour = parseInt(issueTime.slice(0,-2));
 
   // FOR TESTING
   var date = new Date;
-  var seconds = date.getSeconds() + 1;
+  var seconds = date.getSeconds() + 5;
   var minutes = date.getMinutes();
   rule.minute = minutes;
   rule.second = seconds;    
@@ -62,7 +86,6 @@ async function scheduleEmail(team: Team, subscription: Subscription, firebase: a
     };
 
     // Collect team snippets for digest
-    // TODO only get past week's snippets
     var snippets = (type == 'digest') ? await getTeamSnippets(firebase, team) : null;
     var teamSnippets = (type == 'digest') ? collectSnippets(snippets) : null;
 
@@ -74,15 +97,14 @@ async function scheduleEmail(team: Team, subscription: Subscription, firebase: a
 
     try {
       console.log(`[CRON DEBUG] \"${jobName}\" just ran. Will run again at: `, emailJobs[jobName].nextInvocation()._date._d);
-      // await emailer.send();
+      await emailer.send();
     } catch (err) {
-      console.log("[CRON DEBUG] ERROR sending emails: ",err);
+      console.log("[CRON DEBUG] ERROR sending emails => ", err.response.body.errors);
     }
   });
 }
 
 async function getTeamSnippets(firebase: any, team: Team) {
-  // TODO only get past week's snippets && needs to be in CRON
   var lastWeek = new Date();
   lastWeek.setDate(lastWeek.getDate() - 7);
   try {
@@ -119,7 +141,7 @@ function collectSnippets(snippets: any) {
                 : doc.data().description;
     teamSnippets.push({
       title: doc.data().title,
-      desc, 
+      desc: "", 
       owner: doc.data().ownerName,
     })
   });

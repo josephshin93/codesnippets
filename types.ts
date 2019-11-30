@@ -27,8 +27,8 @@ export interface Snippet {
 export interface Subscription {
   title: string;
   // FIXME: is there a better way to type issue time and day?
-  issueTime: number;
-  issueDay: number;
+  issueTime: string;
+  issueDay: string;
   type: string;
   // FIXME: content to just refers to the message, what about digest info?
   content?: string;
