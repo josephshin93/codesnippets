@@ -44,4 +44,24 @@ module.exports = (app: any, firebase: any) => {
       })
     }
   );
+
+  app.get(
+    '/api/all_users',
+    (req: Request, res: Response) => {
+      console.log('get /api/all_users');
+
+      // retrieve all users from database
+      firebase.collection('users').get()
+      .then((snapshot: any) => {
+        let allUsers: Array<User> = [];
+        snapshot.forEach((doc: any) => {
+          allUsers.push({ id: doc.id, ...doc.data()});
+        });
+        res.send(allUsers);
+      })
+      .catch((error: any) => {
+        console.error('Error retrieving all users', error);
+      })
+    }
+  );
 }

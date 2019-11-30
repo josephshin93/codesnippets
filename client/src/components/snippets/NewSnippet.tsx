@@ -7,9 +7,7 @@ import { State, User } from "../../store/types";
 interface Props {
   // TODO: Typescript format
   addSnippet: (values: any) => void;
-  history: any;
   user: User | null;
-  teams: any;
 }
 
 class NewSnippet extends Component<Props> {
@@ -17,14 +15,15 @@ class NewSnippet extends Component<Props> {
   createListItems() {
     if (this.props.user && this.props.user.teams) {
       let teams = this.props.user.teams;
-      // return Object.keys(teams).map(k => {
-      //   return (
-      //     <option key={k} value={teams[k]}>
-      //       {teams[k]}
-      //     </option>
-      //   );
-      // });
-      return <p>Teams</p>
+      return Object.keys(teams).map(keyString => {
+        // Follow User interface property
+        let k = Number(keyString);
+        return (
+          <option key={k} value={teams[k]}>
+            {teams[k]}
+          </option>
+        );
+      });
     } else
       return (
         <option key={0} value="Personal">
@@ -43,7 +42,6 @@ class NewSnippet extends Component<Props> {
                 teams={this.createListItems()}
                 addSnippet={this.props.addSnippet}
                 user={this.props.user}
-                history={this.props.history}
               />
             }
           </div>

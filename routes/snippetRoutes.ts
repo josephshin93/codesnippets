@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
-import * as dummydata from './DummyData';
+import { Request, Response } from "express";
+var moment = require("moment");
 
 module.exports = (app: any, firebase: any) => {
-  app.post('/api/add_snippet', (req: Request, res: Response) => {
-    console.log('/api/add_snippet');
+  app.post("/api/add_snippet", (req: Request, res: Response) => {
+    console.log("post /api/add_snippet");
     // console.log(req.body);
 
     const {
@@ -24,31 +24,49 @@ module.exports = (app: any, firebase: any) => {
       ownerName,
       status,
       team,
+      week: moment().format("W"),
       timeCreated: new Date(),
       totalComments: 0,
       totalLikes: 0
     };
-    firebase.collection('snippets').add(snippet);
+    firebase.collection("snippets").add(snippet);
   });
 
-  app.get('/api/snippets', (req: Request, res: Response) => {
-    console.log('get /api/snippets');
+  app.get("/api/snippets", (req: Request, res: Response) => {
+    console.log("Route: GET /api/snippets");
 
-    // FIXME: implement snippet query parameters (by team, by user, etc)
-    firebase
-      .collection('snippets')
-      .orderBy('timeCreated', 'desc')
+    // Setup query then filters if they exist
+    let query = firebase.collection("snippets");
+    let teamSelected = req.query.teamSelected || null;
+    let userSelected = req.query.userSelected || null;
+    let weekSelected = req.query.weekSelected || null;
+
+    // Append filters for team, user, and/or week
+    // Otherwise, query all snippets for current week
+    if (teamSelected) {
+      console.log(teamSelected);
+      query = query.where("team", "==", teamSelected);
+    }
+    if (userSelected) {
+      console.log(userSelected);
+      query = query.where("ownerID", "==", userSelected);
+    }
+    if (weekSelected) {
+      console.log(weekSelected);
+      query = query.where("week", "==", weekSelected);
+    } else {
+      console.log("default week: " + moment().format("W"));
+      query = query.where("week", "==", moment().format("W"));
+    }
+
+    // Retrieve snippets from database
+    query
       .get()
       .then((snapshot: any) => {
-        // snapshot.docs.forEach((doc: any) => {
-        //   console.log(doc.id, doc.data());
-        // });
         res.send(snapshot.docs.map((doc: any) => doc.data()));
-        // res.send(dummydata.snippets);
       })
       .catch((err: any) => {
-        console.log('Error getting snippets.', err);
+        console.log("Error getting snippets.", err);
       });
-
   });
 };

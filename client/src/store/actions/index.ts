@@ -1,11 +1,13 @@
-import axios from 'axios';
+import axios from "axios";
 import {
   Team,
   FETCH_USER,
+  FETCH_USERS,
   FETCH_SNIPPETS,
   AUTHORIZE_USER,
   FETCH_TEAMS,
   SELECT_TEAM,
+  SELECT_WEEK,
   ADD_TEAM,
   EDIT_TEAM,
 } from '../types';
@@ -20,11 +22,11 @@ import {
 
 
 export const authorizeUser = () => {
-  const userString = localStorage.getItem('user');
+  const userString = localStorage.getItem("user");
   const user = userString ? JSON.parse(userString) : null;
   return {
     type: AUTHORIZE_USER,
-    user,
+    user
   };
 };
 
@@ -40,29 +42,40 @@ export const fetchUser = () => async (dispatch: any) => {
   dispatch({ type: FETCH_USER, payload: res.data });
 };
 
+export const fetchUsers = (value: any) => async (dispatch: any) => {
+  console.log("Action: fetchUsers receives " + value);
+  const res = await axios.get("api/users", {
+    params: { teamSelected: value }
+  });
+  dispatch({ type: FETCH_USERS, payload: res.data });
+};
+
 /**
  * TODO:
- *   implement this function to get snippets from a specific team, if no team 
+ *   implement this function to get snippets from a specific team, if no team
  *   is specified, then get all snippets from teams involving the current user
  */
-export const fetchSnippets = () => async (dispatch: any) => {
-  console.log('get api/snippets');
-  const res = await axios.get('api/snippets');
+export const fetchSnippets = (values: any) => async (dispatch: any) => {
+  console.log("Action: fetchSnippets");
+  const res = await axios.get("api/snippets", {
+    params: { ...values }
+  });
   dispatch({ type: FETCH_SNIPPETS, payload: res.data });
 };
 
 export const addSnippet = (values: any) => async (dispatch: any) => {
-  console.log('get api/add_snippet');
-  const res = await axios.post('api/add_snippet', values);
+  console.log("get api/add_snippet");
+  const res = await axios.post("api/add_snippet", values);
   dispatch({ type: FETCH_SNIPPETS, payload: res.data });
 };
 
-export const fetchTeams = (teamIds?: Array<string>) => 
-  async (dispatch: Dispatch<AnyAction>) => {
-    console.log('get api/teams');
-    const res = await axios.get('api/teams');
-    dispatch({ type: FETCH_TEAMS, payload: res.data });
-  };
+export const fetchTeams = (teamIds?: Array<string>) => async (
+  dispatch: Dispatch<AnyAction>
+) => {
+  console.log('get api/teams');
+  const res = await axios.get('/api/teams');
+  dispatch({ type: FETCH_TEAMS, payload: res.data });
+ };
 
 export const mockFetchTeams = () => (dispatch: Dispatch<AnyAction>) => {
   dispatch({ type: FETCH_TEAMS, payload: teams });
@@ -70,6 +83,10 @@ export const mockFetchTeams = () => (dispatch: Dispatch<AnyAction>) => {
 
 export const selectTeam = (teamId: string) => {
   return { type: SELECT_TEAM, payload: teamId };
+};
+
+export const selectWeek = (week: any) => {
+  return { type: SELECT_WEEK, payload: week };
 };
 
 // FIXME: add team actions aren't being used correctly

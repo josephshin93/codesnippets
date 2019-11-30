@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var firebase_admin_1 = require("firebase-admin");
 // TODO: add types to queries
@@ -116,5 +127,18 @@ module.exports = function (app, firebase) {
                 console.error('Error getting current user for getting user\'s teams', error);
             });
         }
+    });
+    app.get('/api/team', function (req, res) {
+        console.log('get /api/team');
+        // console.log(req.user);
+        // console.log(req.query);
+        // retrieve the target team from database and send it to client
+        firebase.collection('teams').doc(req.query.targetTeamId).get()
+            .then(function (doc) {
+            res.send(__assign({}, doc.data()));
+        })
+            .catch(function (error) {
+            console.error('Error retrieving the team with id ' + req.query.targetTeamId, error);
+        });
     });
 };

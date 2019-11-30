@@ -19,6 +19,7 @@
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-scripts": "3.2.0",
+    "trie-search": "^1.2.11",
     "typescript": "3.6.4",
     "yup": "^0.27.0"
   },
