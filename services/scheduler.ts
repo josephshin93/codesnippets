@@ -56,7 +56,7 @@ async function scheduleEmail(team: Team, subscription: Subscription, firebase: a
   // Set scheduler details
   var rule = new cron.RecurrenceRule();
   rule.dayOfWeek = [parseInt(issueDay)];
-  rule.hour = parseInt(issueTime.slice(0,-2));
+  rule.hour = parseInt(issueTime.toString().slice(0,-2));
 
   // FOR TESTING
   var date = new Date;

@@ -44,15 +44,17 @@ export const users: Array<User> = [
 export const subscriptions: Array<Subscription> = [
   {
     title: 'Reminder',
-    issueTime: 1500,
-    issueDay: 5,
+    issueTime: '1500',
+    issueDay: '5',
     content: 'This is a reminder',
+    type: 'reminder',
   },
   {
     title: 'Digest',
-    issueTime: 700,
-    issueDay: 1,
+    issueTime: '700',
+    issueDay: '1',
     content: 'This is a weekly digest',
+    type: 'digest',
   },
 ]
 

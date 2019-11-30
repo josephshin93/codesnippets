@@ -37,15 +37,17 @@ exports.users = [
 exports.subscriptions = [
     {
         title: 'Reminder',
-        issueTime: 1500,
-        issueDay: 5,
-        content: 'This is a reminder'
+        issueTime: '1500',
+        issueDay: '5',
+        content: 'This is a reminder',
+        type: 'reminder'
     },
     {
         title: 'Digest',
-        issueTime: 700,
-        issueDay: 1,
-        content: 'This is a weekly digest'
+        issueTime: '700',
+        issueDay: '1',
+        content: 'This is a weekly digest',
+        type: 'digest'
     },
 ];
 var roles1 = {};
