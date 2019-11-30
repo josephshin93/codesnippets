@@ -10,10 +10,6 @@ export interface User {
   teams?: Array<string>;
 }
 
-export interface Users {
-  [id: string]: User;
-}
-
 export interface Snippet {
   title: string;
   content: string;
@@ -31,8 +27,8 @@ export interface Snippet {
 export interface Subscription {
   title: string;
   // FIXME: is there a better way to type issue time and day?
-  issueTime: number;
-  issueDay: number;
+  issueTime: string;
+  issueDay: string;
   type: string;
   // FIXME: content to just refers to the message, what about digest info?
   content?: string;
@@ -71,11 +67,9 @@ export interface Teams {
 
 export interface State {
   user: User | null;
-  users: Array<User> | null;
   snippets: Array<Snippet> | null;
   teams: Teams | null;
   selectedTeam: string;
-  selectedWeek: any;
 }
 
 // actions
