@@ -31,15 +31,31 @@ var firebase = admin.firestore();
 require("./services/passport")(firebase);
 app.use(passport.initialize());
 app.use(passport.session());
-require("./routes/authRoutes")(app);
-require("./routes/usersRoutes")(app, firebase);
-require("./routes/snippetRoutes")(app, firebase);
-require("./routes/teamRoutes")(app, firebase);
-if (process.env.NODE_ENV === "production") {
-    app.use(express.static("client/build"));
-    var path_1 = require("path");
-    app.get("*", function (req, res) {
-        res.sendFile(path_1.resolve(__dirname, "client", "build", "index.html"));
+require('./routes/authRoutes')(app, firebase);
+require('./routes/snippetRoutes')(app, firebase);
+require('./routes/teamRoutes')(app, firebase);
+// Testing emailer/scheduler
+var fakeMember = { "FAKE USER ID": "FAKE USER NAME" };
+var fakeRole = { "FAKE USER ID": "admin" };
+var fakeSubs = [{
+        title: "FAKE SUB TITLE",
+        issueTime: 18,
+        issueDay: 6,
+        content: "FAKE SUB CONTENT"
+    }];
+var team = {
+    name: "FAKE TEAM",
+    members: fakeMember,
+    roles: fakeRole,
+    subscriptions: fakeSubs
+};
+var sub = "sub";
+require('./services/scheduler')(firebase, team);
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static('client/build'));
+    var path_1 = require('path');
+    app.get('*', function (req, res) {
+        res.sendFile(path_1.resolve(__dirname, 'client', 'build', 'index.html'));
     });
 }
 var PORT = process.env.PORT || 5000;

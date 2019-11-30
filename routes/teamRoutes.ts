@@ -9,6 +9,7 @@ import {
 } from '../types';
 import * as dummydata from './DummyData';
 import {firestore} from 'firebase-admin';
+const scheduler = require('../services/scheduler');
 
 
 // TODO: add types to queries
@@ -44,6 +45,8 @@ module.exports = (app: any, firebase: any) => {
       .catch((error: any) => {
         console.error('Error editing team document', error);
       });
+
+    scheduler.scheduleSubscriptions(firebase, editedTeam);
   });
 
   app.post('/api/add_team', (req: Request, res: Response) => {
@@ -94,6 +97,9 @@ module.exports = (app: any, firebase: any) => {
       .catch((error: any) => {
         console.error('Error adding team document', error);
       });
+
+      // Schedule team's subscriptions
+      scheduler.scheduleSubscriptions(firebase, newTeam);
   });
 
   app.get('/api/teams', (req: Request, res: Response) => {

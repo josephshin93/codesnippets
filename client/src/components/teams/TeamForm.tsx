@@ -73,6 +73,11 @@ const teamFormValidationSchema = Yup.object({
       title: Yup.string()
         .max(25, 'Must be 25 characters or less')
         .required('Subscription title is required'),
+      type: Yup.string()
+        .matches(
+          /(reminder|digest)/,
+          'Must be \'reminder\' or \'digest\''
+        ),
       issueTime: Yup.number()
         .min(100)
         .max(2359)
@@ -180,7 +185,7 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
         { userId: '', memberName: '', role: '' },
       ],
       subscriptions: [
-        { title: '', issueTime: 700, issueDay: 1, content: '' }
+        { title: '', issueTime: 700, issueDay: 1, content: '', type: 'digest' }
       ],
     };
   }
@@ -351,7 +356,7 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
         <div className='row' key={index}>
           <div className='col s12'>
             <div className='row'>
-              <div className='col s6'>
+              <div className='col s4'>
                 <Field 
                   name={`subscriptions[${index}].title`} 
                   type='text' 
@@ -361,6 +366,20 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
                   className='red-text text-darken-2'
                   name={`subscriptions[${index}].title`} 
                   component='span'
+                />
+              </div>
+              <div className='col s2'>
+                <Field 
+                  name={`subscriptions[${index}].type`} 
+                  as='select'
+                  className='browser-default'
+                >
+                  <option value='digest'>Digest</option>
+                  <option value='reminder'>Reminder</option>
+                </Field>
+                <ErrorMessage 
+                  className='red-text text-darken-2'
+                  name={`subscriptions[${index}].type`} 
                 />
               </div>
               <div className='col s2'>
@@ -472,6 +491,7 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
                           issueDay: 1,
                           issueTime: 700,
                           content: '',
+                          type: 'digest',
                         };
                         // let newTeam = this.state.targetTeam;
                         // newTeam.subscriptions.push(defaultSub);
