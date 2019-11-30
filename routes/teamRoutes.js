@@ -10,8 +10,9 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var firebase_admin_1 = require("firebase-admin");
+var scheduler = require('../services/scheduler');
 // TODO: add types to queries
 // TODO: use better response status codes
 module.exports = function (app, firebase) {
@@ -23,7 +24,7 @@ module.exports = function (app, firebase) {
             name: req.body.name,
             members: req.body.members,
             roles: req.body.roles,
-            subscriptions: req.body.subscriptions,
+            subscriptions: req.body.subscriptions
         };
         var user = req.user;
         // an empty response is sent if the user id does not exist
@@ -36,10 +37,10 @@ module.exports = function (app, firebase) {
             // console.log('team edit done');
             // FIXME: what do i send back?
             res.send({});
-        })
-            .catch(function (error) {
+        })["catch"](function (error) {
             console.error('Error editing team document', error);
         });
+        scheduler.scheduleSubscriptions(firebase, editedTeam);
     });
     app.post('/api/add_team', function (req, res) {
         console.log('post /api/add_team');
@@ -49,7 +50,7 @@ module.exports = function (app, firebase) {
             name: req.body.name,
             members: req.body.members,
             roles: req.body.roles,
-            subscriptions: req.body.subscriptions,
+            subscriptions: req.body.subscriptions
         };
         var user = req.user;
         // an empty response is sent if the user id does not exist
@@ -73,14 +74,14 @@ module.exports = function (app, firebase) {
             })
                 .then(function () {
                 res.send({ newTeamId: docRef.id });
-            })
-                .catch(function (error) {
+            })["catch"](function (error) {
                 console.error('Error updating user\'s team array', error);
             });
-        })
-            .catch(function (error) {
+        })["catch"](function (error) {
             console.error('Error adding team document', error);
         });
+        // Schedule team's subscriptions
+        scheduler.scheduleSubscriptions(firebase, newTeam);
     });
     app.get('/api/teams', function (req, res) {
         console.log('get /api/teams');
@@ -117,13 +118,11 @@ module.exports = function (app, firebase) {
                             teams[doc.id] = doc.data();
                         });
                         res.send(teams);
-                    })
-                        .catch(function (err) {
+                    })["catch"](function (err) {
                         console.log('Error getting teams.', err);
                     });
                 }
-            })
-                .catch(function (error) {
+            })["catch"](function (error) {
                 console.error('Error getting current user for getting user\'s teams', error);
             });
         }
@@ -136,8 +135,7 @@ module.exports = function (app, firebase) {
         firebase.collection('teams').doc(req.query.targetTeamId).get()
             .then(function (doc) {
             res.send(__assign({}, doc.data()));
-        })
-            .catch(function (error) {
+        })["catch"](function (error) {
             console.error('Error retrieving the team with id ' + req.query.targetTeamId, error);
         });
     });

@@ -9,6 +9,10 @@ const emailJobs = <any>{};
 
 module.exports = {
   
+  scheduleSubscriptions: async function(firebase: any, team: Team) {
+    await scheduleSubscriptions(firebase, team);
+  }, 
+
   scheduleAllOnStart: async function(firebase: any) {
     // console.log("\n===\n[DEBUG START] scheduler.ts scheduleAllOnStart\n===\n");
 
@@ -102,6 +106,9 @@ async function scheduleEmail(team: Team, subscription: Subscription, firebase: a
       console.log("[CRON DEBUG] ERROR sending emails => ", err.response.body.errors);
     }
   });
+
+  const week = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  console.log(`Scheduled ${jobName} at ${issueTime} on ${week[parseInt(issueDay)]}`);
 }
 
 async function getTeamSnippets(firebase: any, team: Team) {
