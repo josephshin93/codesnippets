@@ -55,14 +55,40 @@ export const fetchSnippet = (snippetID: string) => async (dispatch: any) => {
 // Get a list of comments based on snippet ID
 export const fetchComments = (snippetId: string) => async (dispatch: any) => {
   console.log("Action: fetchComments with id " + snippetId);
-  const res = await axios.get("api/snippetComment");
+  const res = await axios.get("/api/comments", {
+    params: { id: snippetId }
+  });
   dispatch({ type: FETCH_COMMENTS, payload: res.data });
 };
 
+// Post a snippet
 export const addSnippet = (values: any) => async (dispatch: any) => {
-  console.log("get api/add_snippet");
+  console.log("Action: post api/add_snippet");
   const res = await axios.post("api/add_snippet", values);
   dispatch({ type: FETCH_SNIPPETS, payload: res.data });
+};
+
+// Post a comment
+export const addComment = (values: any) => async (dispatch: any) => {
+  console.log(
+    "Action: addComment with " +
+      values.comment +
+      " and snippet id " +
+      values.snippetId
+  );
+  const res = await axios.post("/api/add_comment", values);
+  dispatch({ type: FETCH_COMMENTS, payload: res.data });
+};
+
+// Delete a comment with comment ID
+export const deleteComment = (snipId: string, comId: string) => async (
+  dispatch: any
+) => {
+  console.log("Action: deleteComment from " + snipId + "/" + comId);
+  const res = await axios.delete("/api/delete_comment", {
+    params: { snippetId: snipId, commentId: comId }
+  });
+  dispatch({ type: FETCH_COMMENTS, payload: res.data });
 };
 
 export const fetchTeams = (teamIds?: Array<string>) => async (

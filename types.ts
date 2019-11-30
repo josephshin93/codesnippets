@@ -58,7 +58,7 @@ export interface Teams {
 
 export interface Comment {
   id: string;
-  userId: string;
+  googleId: string;
   userPicture: string;
   comment: string;
   snippetId: string;
@@ -79,6 +79,7 @@ export const FETCH_USERS = "fetch_users";
 export const FETCH_SNIPPETS = "fetch_snippets";
 export const FETCH_SNIPPET = "fetch_snippet";
 export const FETCH_COMMENTS = "fetch_comments";
+export const ADD_COMMENT = "add_comment";
 export const AUTHORIZE_USER = "authorize_user";
 export const FETCH_TEAMS = "fetch_teams";
 export const SELECT_TEAM = "select_team";

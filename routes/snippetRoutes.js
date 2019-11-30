@@ -84,22 +84,29 @@ module.exports = function (app, firebase) {
             console.log("Error getting snippet", err);
         });
     });
-    app.get("/api/snippetComment", function (req, res) {
-        console.log("Route: GET /api/snippetComment");
-        // Setup query variables
-        //let snippetId = req.query.id;
-        var query = firebase
-            .collection("comments")
-            .where("commentId", "==", "wHluxCee7or8J2ppINOV");
-        // Retrieve comments from database
-        query
-            .get()
-            .then(function (snapshot) {
-            res.send(snapshot.docs.map(function (doc) {
-                return __assign(__assign({}, doc.data()), { id: doc.id });
-            }));
-        })["catch"](function (err) {
-            console.log("Error getting comments", err);
+    /*
+    app.get("/api/snippetComment", (req: Request, res: Response) => {
+      console.log("Route: GET /api/snippetComment");
+  
+      // Setup query variables
+      //let snippetId = req.query.id;
+      let query = firebase
+        .collection("comments")
+        .where("commentId", "==", "wHluxCee7or8J2ppINOV");
+  
+      // Retrieve comments from database
+      query
+        .get()
+        .then((snapshot: any) => {
+          res.send(
+            snapshot.docs.map((doc: any) => {
+              return { ...doc.data(), id: doc.id };
+            })
+          );
+        })
+        .catch((err: any) => {
+          console.log("Error getting comments", err);
         });
     });
+    */
 };

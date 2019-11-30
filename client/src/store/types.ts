@@ -62,9 +62,10 @@ export interface Teams {
 
 export interface Comment {
   id: string;
-  userId: string;
+  googleId: string;
   userPicture: string;
   comment: string;
+  snippetId: string;
   timeCreated: Date;
 }
 

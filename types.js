@@ -6,6 +6,7 @@ exports.FETCH_USERS = "fetch_users";
 exports.FETCH_SNIPPETS = "fetch_snippets";
 exports.FETCH_SNIPPET = "fetch_snippet";
 exports.FETCH_COMMENTS = "fetch_comments";
+exports.ADD_COMMENT = "add_comment";
 exports.AUTHORIZE_USER = "authorize_user";
 exports.FETCH_TEAMS = "fetch_teams";
 exports.SELECT_TEAM = "select_team";

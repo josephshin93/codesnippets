@@ -94,6 +94,7 @@ module.exports = (app: any, firebase: any) => {
       });
   });
 
+  /*
   app.get("/api/snippetComment", (req: Request, res: Response) => {
     console.log("Route: GET /api/snippetComment");
 
@@ -117,4 +118,5 @@ module.exports = (app: any, firebase: any) => {
         console.log("Error getting comments", err);
       });
   });
+  */
 };

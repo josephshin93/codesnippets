@@ -41,9 +41,15 @@ class SnippetPage extends Component<Props> {
   render() {
     const snippet = this.props.location.state.snippet;
     return (
-      <div>
-        This is the Snippet page for {snippet.title}
-        <CommentList key={snippet.id} snippetId={snippet.id} />
+      <div className="row">
+        <div className="col s8">
+          <br />
+          This is the Snippet page for {snippet.title}
+        </div>
+        <div className="col s4">
+          <br />
+          <CommentList key={snippet.id} snippetId={snippet.id} />
+        </div>
       </div>
     );
   }
