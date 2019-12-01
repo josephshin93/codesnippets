@@ -10,6 +10,10 @@ export interface User {
   teams?: Array<string>;
 }
 
+export interface Users {
+  [id: string]: User;
+}
+
 export interface Snippet {
   title: string;
   content: string;
@@ -29,6 +33,7 @@ export interface Subscription {
   // FIXME: is there a better way to type issue time and day?
   issueTime: number;
   issueDay: number;
+  type: string;
   // FIXME: content to just refers to the message, what about digest info?
   content?: string;
 }
@@ -45,7 +50,7 @@ export interface Team {
   name: string;
   members: TeamMember;
   roles: TeamMemberRoles;
-  subscriptions: Array<Subscription>;  
+  subscriptions: Array<Subscription>;
 }
 
 export interface FormTeamMember {
@@ -66,16 +71,20 @@ export interface Teams {
 
 export interface State {
   user: User | null;
+  users: Array<User> | null;
   snippets: Array<Snippet> | null;
   teams: Teams | null;
   selectedTeam: string;
+  selectedWeek: any;
 }
 
 // actions
 export const FETCH_USER = 'fetch_user';
+export const FETCH_USERS = 'fetch_users';
 export const FETCH_SNIPPETS = 'fetch_snippets';
 export const AUTHORIZE_USER = 'authorize_user';
 export const FETCH_TEAMS = 'fetch_teams';
 export const SELECT_TEAM = 'select_team';
+export const SELECT_WEEK = 'select_week';
 export const ADD_TEAM = 'add_team';
 export const EDIT_TEAM = 'edit_team';

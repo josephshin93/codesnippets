@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { fetchSnippets } from '../../store/actions';
+import {
+  fetchSnippets, 
+  fetchUsers,
+} from '../../store/actions';
 import {
   State,
   User,
@@ -11,13 +14,18 @@ import {
   isEmpty,
 } from '../../lib/lib';
 import Fuse from 'fuse.js';
+import FilterSnippetForm from './filterSnippetForm';
 
 
 
-interface SnippetListProps {
-  fetchSnippets: () => void;
+interface Props {
+  fetchSnippets: (filters?: any) => void;
+  fetchUsers: (selectedTeam: any) => void;
+
   snippets: Array<Snippet> | null;
   user: User | null;
+  selectedTeam: string | null;
+  selectedWeek: any;
 }
 
 interface SnippetListState {
@@ -56,8 +64,16 @@ class SnippetList extends Component<SnippetListProps, SnippetListState> {
 
   async componentDidMount() {
     // console.log('<SnippetList /> did mount');
+
     if (this.props.user && !isEmpty(this.props.user)) {
-      await this.props.fetchSnippets();
+      let team = this.props.selectedTeam;
+      let week = this.props.selectedWeek;
+      await this.props.fetchSnippets({
+        teamSelected: team,
+        weekSelected: week
+      });
+      await this.props.fetchUsers(team);
+        
       if (this.props.snippets) {
         this.setState({
           snippets: this.props.snippets,
@@ -106,46 +122,52 @@ class SnippetList extends Component<SnippetListProps, SnippetListState> {
     if (this.state.snippets && this.state.snippets.length > 0) {
       return this.state.snippets.map( (snippet: any) => {
         return (
-          <li key={snippet.title} className='collection-item'>
+          <li key={snippet.title} className="collection-item">
             <div>
-              <h3 className='title'>Title: {snippet.title}</h3>
+              <h5 className="title">{snippet.title}</h5>
               <p>
-                <b>Content:</b> { snippet.content } <br />
-                <b>Description:</b> { snippet.description } <br />
-                <b>OwnerID:</b> { snippet.ownerID } <br />
-                <b>OwnerName:</b> { snippet.ownerName } <br />
-                <b>OwnerPic:</b> { snippet.ownerPic } <br />
-                <b>Status:</b> { snippet.status } <br />
-                <b>Team: </b>{ snippet.team } <br />
-                <b>Snippet:</b> {
-                  new Date(snippet.timeCreated._seconds * 1000).toLocaleDateString() 
-                } <br />
-                <b>TotalComments:</b> { snippet.totalComments } <br />
-                <b>TotalLikes:</b> { snippet.totalLikes } <br />
+                <b>Description:</b> {snippet.description} <br />
+                <b>Content:</b> {snippet.content} <br />
+                <b>OwnerID:</b> {snippet.ownerID} <br />
+                <b>OwnerName:</b> {snippet.ownerName} <br />
+                <b>OwnerPic:</b> {snippet.ownerPic} <br />
+                <b>Status:</b> {snippet.status} <br />
+                <b>Team: </b>
+                {snippet.team} <br />
+                <b>Date:</b>{" "}
+                {new Date(
+                  snippet.timeCreated._seconds * 1000
+                ).toLocaleDateString()}{" "}
+                <br />
+                <b>Week:</b> {snippet.week} <br />
+                <b>TotalComments:</b> {snippet.totalComments} <br />
+                <b>TotalLikes:</b> {snippet.totalLikes} <br />
               </p>
             </div>
           </li>
         );
       });
     }
-    
+
     return (
-      <li className='collection-item'>
+      <li className="collection-item">
         <h5>No snippets to display.</h5>
       </li>
-    )
+    );
   }
-  
+
+
   render() {
     // console.log("snippet list props", this.props);
 
     return (
-      <ul className='collection with-header'>
-        <li className='collection-header lighten-5 blue'>
-          <h1>Snippets</h1> 
-          <Link 
-            className='waves-effect waves-light blue btn' 
-            to='/newsnippet'
+      <ul className="collection with-header">
+        <li className="collection-header lighten-5 blue">
+          <h3>Snippets</h3>
+          <span></span>
+          <Link
+            className="center waves-effect waves-light blue btn"
+            to="/newsnippet"
           >
             Add Snippet
           </Link>
@@ -153,14 +175,22 @@ class SnippetList extends Component<SnippetListProps, SnippetListState> {
         <li className='collection-header'>
           {this.renderSearch()}
         </li>
+        <FilterSnippetForm />
         {this.renderSnippets()}
       </ul>
     );
   }
 }
 
-function mapStateToProps({ snippets, user }: State) {
-  return { snippets, user };
+function mapStateToProps({
+  snippets,
+  user,
+  selectedTeam,
+  selectedWeek
+}: State) {
+  return { snippets, user, selectedTeam, selectedWeek };
 }
 
-export default connect(mapStateToProps, { fetchSnippets })(SnippetList);
+export default connect(mapStateToProps, { fetchSnippets, fetchUsers })(
+  SnippetList
+);
