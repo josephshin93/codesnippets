@@ -6,9 +6,12 @@ import * as Yup from "yup";
 interface PassedProps {
   snippetId: string;
   addComment: (values: any) => void;
+  fetchComments: (snippetId: string) => void;
 }
 
-const AddCommentForm = (props: PassedProps) => {
+type AllProps = PassedProps;
+
+const AddCommentForm = (props: AllProps) => {
   // Pass the useFormik() to initialize the form
   const formik = useFormik({
     initialValues: {
@@ -28,6 +31,7 @@ const AddCommentForm = (props: PassedProps) => {
         });
         actions.setSubmitting(false);
         actions.resetForm({});
+        props.fetchComments(props.snippetId);
       }, 500);
     }
   });

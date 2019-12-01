@@ -63,9 +63,10 @@ class CommentList extends Component<AllProps> {
         <button
           type="button"
           className="material-icons"
-          onClick={() =>
-            this.props.deleteComment(this.props.snippetId, commentId)
-          }
+          onClick={() => {
+            this.props.deleteComment(this.props.snippetId, commentId);
+            this.props.fetchComments(this.props.snippetId);
+          }}
         >
           clear
         </button>
@@ -84,8 +85,8 @@ class CommentList extends Component<AllProps> {
             src={user.picture}
             alt="avatar"
             className="circle"
-            width="25"
-            height="25"
+            width="10"
+            height="10"
             style={{
               verticalAlign: "middle",
               marginBottom: "4px",
@@ -104,12 +105,12 @@ class CommentList extends Component<AllProps> {
   render() {
     return (
       <div>
-        Comments!
         {this.renderComments()}
         <br />
         <AddCommentForm
           snippetId={this.props.snippetId}
           addComment={this.props.addComment}
+          fetchComments={this.props.fetchComments}
         />
       </div>
     );
