@@ -18,7 +18,7 @@ import FilterSnippetForm from './filterSnippetForm';
 
 
 
-interface Props {
+interface SnippetListProps {
   fetchSnippets: (filters?: any) => void;
   fetchUsers: (selectedTeam: any) => void;
 
