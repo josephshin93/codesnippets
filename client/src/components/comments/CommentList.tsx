@@ -61,11 +61,18 @@ class CommentList extends Component<AllProps> {
         </span>
         */
         <button
+          style={{
+            padding: "0",
+            border: "none",
+            background: "none"
+          }}
           type="button"
           className="material-icons"
           onClick={() => {
             this.props.deleteComment(this.props.snippetId, commentId);
-            this.props.fetchComments(this.props.snippetId);
+            setTimeout(() => {
+              window.location.reload();
+            }, 100);
           }}
         >
           clear
@@ -80,21 +87,21 @@ class CommentList extends Component<AllProps> {
     if (user === null) return;
     if (this.props.comments && this.props.comments.length > 0) {
       return this.props.comments.map((comment: any) => (
-        <ul className="collection-item avatar" key={comment.id}>
+        <ul className="collection-header avatar" key={comment.id}>
           <img
-            src={user.picture}
+            src={comment.userPicture}
             alt="avatar"
             className="circle"
-            width="10"
-            height="10"
+            width="25"
+            height="25"
             style={{
               verticalAlign: "middle",
               marginBottom: "4px",
               marginRight: "10px"
             }}
           ></img>
-          {comment.comment} ---
-          <span>
+          {comment.userFirstName} : {comment.comment}
+          <span className="right">
             {this.renderButton(comment.id, comment.googleId, user.googleId)}
           </span>
         </ul>

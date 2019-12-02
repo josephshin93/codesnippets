@@ -1,6 +1,5 @@
 // interfaces
 export interface User {
-  id: string;
   email: string;
   firstName: string;
   googleId: string;
@@ -19,9 +18,10 @@ export interface Snippet {
   title: string;
   content: string;
   description: string;
-  ownerID: string;
-  ownerName: string;
-  ownerPic: string;
+  ownerId: string;
+  ownerFirstName: string;
+  ownerLastName: string;
+  ownerPicture: string;
   status: string;
   team: string;
   week: string;

@@ -44,7 +44,9 @@ module.exports = function (app, firebase) {
                 comment: req.body.comment,
                 timeCreated: new Date(),
                 googleId: user.googleId,
-                userPicture: user.picture
+                userPicture: user.picture,
+                userFirstName: user.firstName,
+                userLastName: user.lastName
             };
             firebase
                 .collection("snippets")

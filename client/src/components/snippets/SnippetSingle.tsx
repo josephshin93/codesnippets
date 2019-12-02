@@ -27,21 +27,26 @@ class SnippetSingle extends Component<AllProps> {
     return (
       <li className="collection-item">
         <div>
-          <h5 className="title">{snippet.title}</h5>
-          <p>
+          <h6 className="title">
+            <b>{snippet.title}</b>
+          </h6>
+          <div className="truncate">
             <b>Description:</b> {snippet.description} <br />
+          </div>
+          <div className="truncate">
             <b>Content:</b> {snippet.content} <br />
-            <b>OwnerID:</b> {snippet.ownerID} <br />
-            <b>OwnerName:</b> {snippet.ownerName} <br />
-            <b>OwnerPic:</b> {snippet.ownerPic} <br />
-            <b>Status:</b> {snippet.status} <br />
-            <b>Team: </b>
-            {snippet.team} <br />
-            <br />
-            <b>Week:</b> {snippet.week} <br />
-            <b>TotalComments:</b> {snippet.totalComments} <br />
-            <b>TotalLikes:</b> {snippet.totalLikes} <br />
-          </p>
+          </div>
+          <b>OwnerID:</b> {snippet.ownerId} <br />
+          <b>OwnerName:</b> {snippet.ownerFirstName} {snippet.ownerLastName}{" "}
+          <br />
+          <b>OwnerPic:</b> {snippet.ownerPicture} <br />
+          <b>Status:</b> {snippet.status} <br />
+          <b>Team: </b>
+          {snippet.team} <br />
+          <br />
+          <b>Week:</b> {snippet.week} <br />
+          <b>TotalComments:</b> {snippet.totalComments} <br />
+          <b>TotalLikes:</b> {snippet.totalLikes} <br />
         </div>
         <div>
           <Link

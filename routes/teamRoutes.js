@@ -1,5 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 module.exports = function (app, firebase) {
     // app.post("/api/add_team", (req: Request, res: Response) => {
     //   console.log(req.body);
@@ -26,8 +26,8 @@ module.exports = function (app, firebase) {
     //   };
     //   firebase.collection('teams').add(team);
     // });
-    app.get('/api/teams', function (req, res) {
-        console.log('get /api/teams');
+    app.get("/api/teams", function (req, res) {
+        console.log("get /api/teams");
         // console.log(req.user);
         // console.log(req.query);
         var user = req.user;
@@ -39,7 +39,7 @@ module.exports = function (app, firebase) {
              */
             var teamRefs = user.teams.map(function (teamId) {
                 // console.log('making document reference for '+teamId);
-                return firebase.collection('teams').doc(teamId);
+                return firebase.collection("teams").doc(teamId);
             });
             firebase
                 .getAll.apply(firebase, teamRefs).then(function (docs) {
@@ -49,9 +49,8 @@ module.exports = function (app, firebase) {
                     teams[doc.id] = doc.data();
                 });
                 res.send(teams);
-            })
-                .catch(function (err) {
-                console.log('Error getting teams.', err);
+            })["catch"](function (err) {
+                console.log("Error getting teams.", err);
             });
         }
         else {

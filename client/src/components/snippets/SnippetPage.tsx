@@ -66,15 +66,15 @@ class SnippetPage extends Component<Props> {
                     src={snippet.ownerPicture}
                     alt="avatar"
                     className="circle"
-                    width="40"
-                    height="40"
+                    width="25"
+                    height="25"
                     style={{
                       verticalAlign: "middle",
                       marginBottom: "4px",
                       marginRight: "10px"
                     }}
                   ></img>
-                  {snippet.ownerName}
+                  {snippet.ownerFirstName} {snippet.ownerLastName}
                   <br></br>
                   {snippet.description}
                 </li>
@@ -90,9 +90,9 @@ class SnippetPage extends Component<Props> {
             </div>
             <div className="col s12">
               <ul className="collection with-header">
-                <li>
+                <ul>
                   <CommentList key={snippet.id} snippetId={snippet.id} />
-                </li>
+                </ul>
               </ul>
             </div>
             <br />

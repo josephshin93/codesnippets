@@ -39,7 +39,9 @@ module.exports = (app: any, firebase: any) => {
         comment: req.body.comment,
         timeCreated: new Date(),
         googleId: user.googleId,
-        userPicture: user.picture
+        userPicture: user.picture,
+        userFirstName: user.firstName,
+        userLastName: user.lastName
       };
 
       firebase

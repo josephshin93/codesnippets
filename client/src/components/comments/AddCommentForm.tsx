@@ -24,15 +24,15 @@ const AddCommentForm = (props: AllProps) => {
     }),
     onSubmit: (values, actions) => {
       console.log("Firing away! Snippet id = " + props.snippetId);
+      props.addComment({
+        comment: values.comment,
+        snippetId: props.snippetId
+      });
+      actions.setSubmitting(false);
+      actions.resetForm({});
       setTimeout(() => {
-        props.addComment({
-          comment: values.comment,
-          snippetId: props.snippetId
-        });
-        actions.setSubmitting(false);
-        actions.resetForm({});
-        props.fetchComments(props.snippetId);
-      }, 500);
+        window.location.reload();
+      }, 100);
     }
   });
 
@@ -40,7 +40,14 @@ const AddCommentForm = (props: AllProps) => {
   return (
     <div className="row">
       <form onSubmit={formik.handleSubmit}>
-        <div className="input-field col s5">
+        <button
+          type="submit"
+          className="right btn waves-effect waves-light blue"
+        >
+          Add
+          <i className="material-icons right">comment</i>
+        </button>
+        <div className="right input-field col s7">
           <textarea
             id="comment"
             className="materialize-textarea"
@@ -55,11 +62,6 @@ const AddCommentForm = (props: AllProps) => {
             </div>
           ) : null}
         </div>
-        <br />
-        <button type="submit" className="btn waves-effect waves-light blue">
-          Add
-          <i className="material-icons right">comment</i>
-        </button>
       </form>
     </div>
   );
