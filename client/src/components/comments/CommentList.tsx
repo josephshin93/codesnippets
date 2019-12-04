@@ -4,6 +4,7 @@ import { fetchComments, addComment, deleteComment } from "../../store/actions";
 import { State, User, Comment } from "../../store/types";
 import { isEmpty } from "../../lib/lib";
 import AddCommentForm from "./AddCommentForm";
+import moment from "moment";
 
 interface CommentListProps {
   fetchComments: (snippetId: string) => void;
@@ -55,11 +56,6 @@ class CommentList extends Component<AllProps> {
     // Better chec
     if (commentUserId === googleId) {
       return (
-        /*
-        <span>
-          <i disabled="" className="material-icons">clear</i>
-        </span>
-        */
         <button
           style={{
             padding: "0",
@@ -82,12 +78,26 @@ class CommentList extends Component<AllProps> {
     // If this user matches the comment
   }
 
+  // Render time
+  renderTime(document: any) {
+    if (document && document.timeCreated) {
+      const secs = new Date(document.timeCreated._seconds * 1000);
+      return moment(secs).calendar();
+    }
+  }
+
   renderComments() {
     const user = this.props.user;
     if (user === null) return;
     if (this.props.comments && this.props.comments.length > 0) {
       return this.props.comments.map((comment: any) => (
-        <ul className="collection-header avatar" key={comment.id}>
+        <ul
+          style={{
+            whiteSpace: "pre-wrap"
+          }}
+          className="collection-header avatar"
+          key={comment.id}
+        >
           <img
             src={comment.userPicture}
             alt="avatar"
@@ -100,10 +110,19 @@ class CommentList extends Component<AllProps> {
               marginRight: "10px"
             }}
           ></img>
-          {comment.userFirstName} : {comment.comment}
+          <span
+            style={{
+              fontSize: "small",
+              fontWeight: "bold"
+            }}
+          >
+            {comment.userFirstName} : {this.renderTime(comment)}
+          </span>
           <span className="right">
             {this.renderButton(comment.id, comment.googleId, user.googleId)}
           </span>
+          <br />
+          {comment.comment}
         </ul>
       ));
     }

@@ -7,6 +7,7 @@ import { withRouter } from "react-router";
 import CommentList from "../comments/CommentList";
 import { fetchSnippet } from "../../store/actions";
 import { isEmpty } from "../../lib/lib";
+import moment from "moment";
 
 interface MatchParams {
   snippetId?: string;
@@ -46,11 +47,17 @@ class SnippetPage extends Component<Props> {
   // ContentBox
   // CommentBox
   // AddCommentForm
+  // Render time
+  renderTime(document: any) {
+    if (document && document.timeCreated) {
+      const secs = new Date(document.timeCreated._seconds * 1000);
+      return moment(secs).calendar();
+    }
+  }
 
   render() {
     const user = this.props.user;
     const snippet = this.props.location.state.snippet;
-    console.log("SNIPPET " + snippet);
     if (user && !isEmpty(user) && typeof snippet.id !== "undefined") {
       console.log("snippet.ownerPicture is " + snippet.ownerPicture);
       return (
@@ -74,7 +81,14 @@ class SnippetPage extends Component<Props> {
                       marginRight: "10px"
                     }}
                   ></img>
-                  {snippet.ownerFirstName} {snippet.ownerLastName}
+                  <span
+                    style={{
+                      fontSize: "small",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    {snippet.ownerFirstName} : {this.renderTime(snippet)}
+                  </span>
                   <br></br>
                   {snippet.description}
                 </li>

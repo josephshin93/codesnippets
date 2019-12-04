@@ -22,31 +22,56 @@ class SnippetSingle extends Component<AllProps> {
     super(props);
   }
 
+  /**
+   * Title
+   * Owner Picture (big) < Owner Name, 12/01/19 11:00 AM
+   * Description
+   * Status (Function to render status icon)
+   *    Done = done
+   *    Block = block
+   *    Open = cached
+   *    OR use (lens) (red, yellow, green)
+   * Content
+   * Total Comments (textsms), Total Likes (thumb_up)
+   *
+   */
   render() {
     const { snippet } = this.props;
     return (
       <li className="collection-item">
         <div>
-          <h6 className="title">
-            <b>{snippet.title}</b>
-          </h6>
+          <h5 className="title">{snippet.title}</h5>
+          <img
+            src={snippet.ownerPicture}
+            alt="avatar"
+            className="circle"
+            width="50"
+            height="50"
+            style={{
+              verticalAlign: "middle",
+              marginBottom: "4px",
+              marginRight: "10px"
+            }}
+          ></img>
+          <span>
+            <b>
+              {snippet.ownerFirstName} ({snippet.team}){" "}
+            </b>{" "}
+            | 12/01/19 11:30 AM
+          </span>
           <div className="truncate">
             <b>Description:</b> {snippet.description} <br />
           </div>
           <div className="truncate">
             <b>Content:</b> {snippet.content} <br />
           </div>
-          <b>OwnerID:</b> {snippet.ownerId} <br />
-          <b>OwnerName:</b> {snippet.ownerFirstName} {snippet.ownerLastName}{" "}
-          <br />
-          <b>OwnerPic:</b> {snippet.ownerPicture} <br />
           <b>Status:</b> {snippet.status} <br />
-          <b>Team: </b>
-          {snippet.team} <br />
-          <br />
           <b>Week:</b> {snippet.week} <br />
-          <b>TotalComments:</b> {snippet.totalComments} <br />
-          <b>TotalLikes:</b> {snippet.totalLikes} <br />
+          <span> </span>
+          <i className="tiny material-icons offset-s1">textsms</i> {}
+          <span>{snippet.totalComments} &nbsp; &nbsp; </span>
+          <i className="tiny material-icons">thumb_up</i> {snippet.totalLikes}{" "}
+          <br />
         </div>
         <div>
           <Link
@@ -57,7 +82,7 @@ class SnippetSingle extends Component<AllProps> {
               }
             }}
           >
-            <h5>Test</h5>
+            <h5>Go</h5>
           </Link>
         </div>
       </li>
