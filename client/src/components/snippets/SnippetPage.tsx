@@ -24,34 +24,12 @@ interface Props extends RouteComponentProps<MatchParams> {
 class SnippetPage extends Component<Props> {
   componentDidMount() {
     console.log("<SnippetPage /> did mount");
-    //this.getParams();
-    // const { foo } = this.props.location;
-    // console.log(this.props.location.state.snippet);
-    // 1. Get the snippet ID
-    // 2. Fetch the snippet
   }
 
-  /*
-  getParams() {
-    const matchParams: SnippetPageMatchParams = this.props.match.params;
-    if (matchParams.snippetId) {
-      return matchParams.snippetId;
-    }
-  }
-  */
-
-  // CommentTitle / Status [ ]
-  // OwnerPicture OwnerName / TeamName
-  // TimeCreated / WeekNumber
-  // Description
-  // ContentBox
-  // CommentBox
-  // AddCommentForm
-  // Render time
   renderTime(document: any) {
     if (document && document.timeCreated) {
       const secs = new Date(document.timeCreated._seconds * 1000);
-      return moment(secs).calendar();
+      return moment(secs).format("lll");
     }
   }
 
@@ -67,7 +45,12 @@ class SnippetPage extends Component<Props> {
               <ul className="collection with-header">
                 <li className="collection-header avatar">
                   <h5>
-                    {snippet.title} | {snippet.status}
+                    {snippet.title}{" "}
+                    <span>
+                      {" "}
+                      <i className="tiny material-icons">fiber_manual_record</i>
+                    </span>{" "}
+                    {snippet.status}
                   </h5>
                   <img
                     src={snippet.ownerPicture}
@@ -81,13 +64,11 @@ class SnippetPage extends Component<Props> {
                       marginRight: "10px"
                     }}
                   ></img>
-                  <span
-                    style={{
-                      fontSize: "small",
-                      fontWeight: "bold"
-                    }}
-                  >
-                    {snippet.ownerFirstName} : {this.renderTime(snippet)}
+                  <span style={{ fontWeight: "bold", fontSize: "small" }}>
+                    {snippet.ownerFirstName}{" "}
+                  </span>{" "}
+                  <span style={{ fontSize: "x-small" }}>
+                    ({this.renderTime(snippet)})
                   </span>
                   <br></br>
                   {snippet.description}

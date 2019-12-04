@@ -1,4 +1,3 @@
-"use strict";
 exports.__esModule = true;
 // actions
 exports.FETCH_USER = "fetch_user";

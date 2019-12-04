@@ -24,10 +24,6 @@ interface IMapDispatchToProps {
 type AllProps = CommentListProps & PassedProps & IMapDispatchToProps;
 
 class CommentList extends Component<AllProps> {
-  constructor(props: AllProps) {
-    super(props);
-  }
-
   componentDidMount() {
     console.log("<CommentList/> did mount");
     if (this.props.user && !isEmpty(this.props.user) && this.props.snippetId) {
@@ -67,8 +63,8 @@ class CommentList extends Component<AllProps> {
           onClick={() => {
             this.props.deleteComment(this.props.snippetId, commentId);
             setTimeout(() => {
-              window.location.reload();
-            }, 100);
+              this.props.fetchComments(this.props.snippetId);
+            }, 1000);
           }}
         >
           clear
@@ -82,7 +78,7 @@ class CommentList extends Component<AllProps> {
   renderTime(document: any) {
     if (document && document.timeCreated) {
       const secs = new Date(document.timeCreated._seconds * 1000);
-      return moment(secs).calendar();
+      return moment(secs).format("lll");
     }
   }
 
@@ -110,13 +106,11 @@ class CommentList extends Component<AllProps> {
               marginRight: "10px"
             }}
           ></img>
-          <span
-            style={{
-              fontSize: "small",
-              fontWeight: "bold"
-            }}
-          >
-            {comment.userFirstName} : {this.renderTime(comment)}
+          <span style={{ fontWeight: "bold", fontSize: "small" }}>
+            {comment.userFirstName}{" "}
+          </span>{" "}
+          <span style={{ fontSize: "x-small" }}>
+            ({this.renderTime(comment)})
           </span>
           <span className="right">
             {this.renderButton(comment.id, comment.googleId, user.googleId)}

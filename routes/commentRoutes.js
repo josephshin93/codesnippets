@@ -48,11 +48,15 @@ module.exports = function (app, firebase) {
                 userFirstName: user.firstName,
                 userLastName: user.lastName
             };
-            firebase
-                .collection("snippets")
-                .doc(snippetId)
-                .collection("comments")
-                .add(thisComment);
+            var snipRef = firebase.collection("snippets").doc(snippetId);
+            var comRef = snipRef.collection("comments");
+            comRef
+                .add(thisComment)
+                .then(function (docRef) {
+                console.log("Added comment", docRef.id);
+            })["catch"](function (err) {
+                console.log("Error adding comment", err);
+            });
         }
     });
     // Delete a comment

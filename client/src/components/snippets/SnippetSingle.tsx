@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchSnippet } from "../../store/actions";
 import { State, User, Snippet } from "../../store/types";
+import moment from "moment";
 
 interface Props {
   fetchSnippet: (snippetID: string) => void;
@@ -18,29 +19,30 @@ interface PassedProps {
 type AllProps = PassedProps & Props;
 
 class SnippetSingle extends Component<AllProps> {
-  constructor(props: AllProps) {
-    super(props);
+  renderTime(document: any) {
+    if (document && document.timeCreated) {
+      const secs = new Date(document.timeCreated._seconds * 1000);
+      return moment(secs).format("lll");
+    }
   }
 
-  /**
-   * Title
-   * Owner Picture (big) < Owner Name, 12/01/19 11:00 AM
-   * Description
-   * Status (Function to render status icon)
-   *    Done = done
-   *    Block = block
-   *    Open = cached
-   *    OR use (lens) (red, yellow, green)
-   * Content
-   * Total Comments (textsms), Total Likes (thumb_up)
-   *
-   */
   render() {
     const { snippet } = this.props;
     return (
       <li className="collection-item">
         <div>
-          <h5 className="title">{snippet.title}</h5>
+          <Link
+            to={{
+              pathname: `/snippet/${this.props.snippet.id}`,
+              state: {
+                snippet: this.props.snippet
+              }
+            }}
+          >
+            <span className="blue-text text-darken-3">
+              <h5 className="title">{snippet.title}</h5>
+            </span>
+          </Link>
           <img
             src={snippet.ownerPicture}
             alt="avatar"
@@ -54,11 +56,13 @@ class SnippetSingle extends Component<AllProps> {
             }}
           ></img>
           <span>
-            <b>
-              {snippet.ownerFirstName} ({snippet.team}){" "}
-            </b>{" "}
-            | 12/01/19 11:30 AM
+            <b>{snippet.ownerFirstName}</b>{" "}
+            <span style={{ fontSize: "small" }}>
+              ({this.renderTime(snippet)})
+            </span>
           </span>
+          <br />
+          <b>Team:</b> {snippet.team}
           <div className="truncate">
             <b>Description:</b> {snippet.description} <br />
           </div>
@@ -72,18 +76,6 @@ class SnippetSingle extends Component<AllProps> {
           <span>{snippet.totalComments} &nbsp; &nbsp; </span>
           <i className="tiny material-icons">thumb_up</i> {snippet.totalLikes}{" "}
           <br />
-        </div>
-        <div>
-          <Link
-            to={{
-              pathname: `/snippet/${this.props.snippet.id}`,
-              state: {
-                snippet: this.props.snippet
-              }
-            }}
-          >
-            <h5>Go</h5>
-          </Link>
         </div>
       </li>
     );

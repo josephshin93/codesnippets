@@ -44,11 +44,17 @@ module.exports = (app: any, firebase: any) => {
         userLastName: user.lastName
       };
 
-      firebase
-        .collection("snippets")
-        .doc(snippetId)
-        .collection("comments")
-        .add(thisComment);
+      let snipRef = firebase.collection("snippets").doc(snippetId);
+      let comRef = snipRef.collection("comments");
+
+      comRef
+        .add(thisComment)
+        .then((docRef: any) => {
+          console.log("Added comment", docRef.id);
+        })
+        .catch((err: any) => {
+          console.log("Error adding comment", err);
+        });
     }
   });
 

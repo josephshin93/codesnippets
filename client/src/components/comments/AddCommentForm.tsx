@@ -1,6 +1,7 @@
 import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { History } from "history";
 
 // Added from CommentList component
 interface PassedProps {
@@ -9,9 +10,13 @@ interface PassedProps {
   fetchComments: (snippetId: string) => void;
 }
 
+interface InsideProps {
+  history: History;
+}
+
 type AllProps = PassedProps;
 
-const AddCommentForm = (props: AllProps) => {
+const AddCommentForm = (props: AllProps, prop: InsideProps) => {
   // Pass the useFormik() to initialize the form
   const formik = useFormik({
     initialValues: {
@@ -23,16 +28,16 @@ const AddCommentForm = (props: AllProps) => {
         .required("Required")
     }),
     onSubmit: (values, actions) => {
-      console.log("Firing away! Snippet id = " + props.snippetId);
       props.addComment({
         comment: values.comment,
         snippetId: props.snippetId
       });
       actions.setSubmitting(false);
       actions.resetForm({});
+
       setTimeout(() => {
-        window.location.reload();
-      }, 100);
+        props.fetchComments(props.snippetId);
+      }, 1000);
     }
   });
 
