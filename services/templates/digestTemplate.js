@@ -1,7 +1,9 @@
-module.exports = function (message, team, snippets) {
+module.exports = function (message, team, snippets, content) {
     // TODO Remove after testing
     // snippets = [];
-    return "\n    <html>\n        <body>\n            <div>\n                <p>Hi " + (team.charAt(0).toUpperCase() + team.slice(1)) + " Team,\n                " + (snippets === undefined || snippets.length === 0
+    return "\n    <html>\n        <body>\n            <div>\n                <p>Hi " + (team.charAt(0).toUpperCase() + team.slice(1)) + " Team,\n\n                " + (content !== null
+        ? "<p>" + content + "</p>"
+        : "") + "\n\n                " + (snippets === undefined || snippets.length === 0
         ? "<p>No snippets were made last week :(</p>"
         : "<p>Last week <b>" + snippets.length + "</b> snippets were made!</p>") + "\n                \n                <br>\n                " + (snippets === undefined || snippets.length === 0
         ? "<p>Visit our site to get a head start on next week :D</p>"

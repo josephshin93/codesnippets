@@ -1,4 +1,4 @@
-module.exports = (message: string, team: string, snippets: any) => {
+module.exports = (message: string, team: string, snippets: any, content: string) => {
     // TODO Remove after testing
     // snippets = [];
     return `
@@ -6,6 +6,13 @@ module.exports = (message: string, team: string, snippets: any) => {
         <body>
             <div>
                 <p>Hi ${team.charAt(0).toUpperCase() + team.slice(1)} Team,
+
+                ${
+                    content !== null
+                    ? `<p>${content}</p>`
+                    : ``
+                }
+
                 ${
                     snippets === undefined || snippets.length === 0 
                     ? `<p>No snippets were made last week :(</p>`
