@@ -19,7 +19,6 @@ interface Props {
 
 class SnippetList extends Component<Props> {
   componentDidMount() {
-    console.log("<SnippetList /> did mount");
     if (this.props.user && !isEmpty(this.props.user)) {
       let team = this.props.selectedTeam;
       let week = this.props.selectedWeek;
@@ -47,9 +46,7 @@ class SnippetList extends Component<Props> {
     );
   }
 
-  // FIXME: render method called 4 times for any update to state
   render() {
-    // console.log("snippet list props", this.props);
     return (
       <ul className="collection with-header">
         <li className="collection-header lighten-5 blue">

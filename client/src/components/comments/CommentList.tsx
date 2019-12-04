@@ -25,14 +25,7 @@ type AllProps = CommentListProps & PassedProps & IMapDispatchToProps;
 
 class CommentList extends Component<AllProps> {
   componentDidMount() {
-    console.log("<CommentList/> did mount");
     if (this.props.user && !isEmpty(this.props.user) && this.props.snippetId) {
-      console.log(
-        "Google ID = " +
-          this.props.user.googleId +
-          " Snippet ID = " +
-          this.props.snippetId
-      );
       this.props.fetchComments(this.props.snippetId);
     }
   }
@@ -41,14 +34,6 @@ class CommentList extends Component<AllProps> {
   // Conditional remove button if comment userId matches current userId
   // On action shows alert for now
   renderButton(commentId: string, commentUserId: string, googleId: string) {
-    console.log(
-      "commentId: " +
-        commentId +
-        " commentUserId: " +
-        commentUserId +
-        " googleId: " +
-        googleId
-    );
     // Better chec
     if (commentUserId === googleId) {
       return (

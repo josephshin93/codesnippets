@@ -22,10 +22,6 @@ interface Props extends RouteComponentProps<MatchParams> {
 }
 
 class SnippetPage extends Component<Props> {
-  componentDidMount() {
-    console.log("<SnippetPage /> did mount");
-  }
-
   renderTime(document: any) {
     if (document && document.timeCreated) {
       const secs = new Date(document.timeCreated._seconds * 1000);

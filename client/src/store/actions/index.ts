@@ -36,7 +36,7 @@ export const fetchUsers = (value: any) => async (dispatch: any) => {
 
 // Get a list of snippets based on filter values
 export const fetchSnippets = (values: any) => async (dispatch: any) => {
-  console.log("Action: fetchSnippets");
+  //console.log("Action: fetchSnippets");
   const res = await axios.get("api/snippets", {
     params: { ...values }
   });
@@ -45,7 +45,7 @@ export const fetchSnippets = (values: any) => async (dispatch: any) => {
 
 // Get a single snippet based on ID
 export const fetchSnippet = (snippetID: string) => async (dispatch: any) => {
-  console.log("Action: fetchSnippet with id " + snippetID);
+  //console.log("Action: fetchSnippet with id " + snippetID);
   const res = await axios.get("api/snippet", {
     params: { id: snippetID }
   });
@@ -54,7 +54,7 @@ export const fetchSnippet = (snippetID: string) => async (dispatch: any) => {
 
 // Get a list of comments based on snippet ID
 export const fetchComments = (snippetId: string) => async (dispatch: any) => {
-  console.log("Action: fetchComments with id " + snippetId);
+  //console.log("Action: fetchComments with id " + snippetId);
   const res = await axios.get("/api/comments", {
     params: { id: snippetId }
   });
@@ -63,7 +63,7 @@ export const fetchComments = (snippetId: string) => async (dispatch: any) => {
 
 // Post a snippet
 export const addSnippet = (values: any) => async (dispatch: any) => {
-  console.log("Action: post api/add_snippet");
+  //console.log("Action: post api/add_snippet");
   const res = await axios.post("api/add_snippet", values);
   dispatch({ type: FETCH_SNIPPETS, payload: res.data });
 };
@@ -84,7 +84,7 @@ export const addComment = (values: any) => async (dispatch: any) => {
 export const deleteComment = (snipId: string, comId: string) => async (
   dispatch: any
 ) => {
-  console.log("Action: deleteComment from " + snipId + "/" + comId);
+  //console.log("Action: deleteComment from " + snipId + "/" + comId);
   const res = await axios.delete("/api/delete_comment", {
     params: { snippetId: snipId, commentId: comId }
   });
