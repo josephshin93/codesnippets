@@ -64,8 +64,10 @@ const teamFormValidationSchema = Yup.object({
         .max(45, 'Must be 45 characters or less'),
       role: Yup.string()
         .matches(
-          /(admin|member|pending)/, 
-          'Must be \'admin\' or \'member\' or \'pending\''
+          // /(admin|member|pending)/, 
+          // 'Must be \'admin\' or \'member\' or \'pending\''
+          /(admin|member)/, 
+          'Must be \'admin\' or \'member\''
         )
     })),
   subscriptions: Yup.array()
@@ -209,7 +211,7 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
       arrayHelpers.push({
         userId: newUser.id,
         memberName: newUser.firstName + ' ' + newUser.lastName,
-        role: 'pending',
+        role: 'member',
       });
     }
   }
@@ -268,7 +270,7 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
             >
               <option value='admin'>admin</option>
               <option value='member'>member</option>
-              <option value='pending'>pending</option>
+              {/* <option value='pending'>pending</option> */}
             </Field>
             <ErrorMessage 
               className='red-text text-darken-2'
