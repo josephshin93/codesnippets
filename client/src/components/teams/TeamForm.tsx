@@ -236,6 +236,11 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
             <p className='grey-text text-lighten-2'>
               <em>Team has no members.</em>
             </p>
+            <ErrorMessage 
+              className='red-text text-darken-2' 
+              name='members'
+              component='span'
+            />
           </div>
         </div>
       );
