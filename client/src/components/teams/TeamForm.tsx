@@ -72,7 +72,14 @@ const teamFormValidationSchema = Yup.object({
         )
     }))
     .required('A team must have at least one member')
-    .min(1, 'A team must have at least one member'),
+    .min(1, 'A team must have at least one member')
+    .test('has-admin', 'A team must have at least one admin', function (value) {
+      let adminExists = false;
+      value.forEach((member: FormTeamMember) => {
+        if (member.role === 'admin') adminExists = true;
+      });
+      return adminExists;
+    }),
   subscriptions: Yup.array()
     .of(Yup.object({
       title: Yup.string()
@@ -236,11 +243,6 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
             <p className='grey-text text-lighten-2'>
               <em>Team has no members.</em>
             </p>
-            <ErrorMessage 
-              className='red-text text-darken-2' 
-              name='members'
-              component='span'
-            />
           </div>
         </div>
       );
@@ -317,6 +319,11 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
             render={(arrayHelpers) => (
               <div>
                 {this.renderMembers(members, arrayHelpers)}
+                <ErrorMessage 
+                  className='red-text text-darken-2' 
+                  name='members'
+                  component='span'
+                />
                 <div className='row'>
                   <div className='col s8'>
                     <p style={{color: '#26a69a', fontWeight: 'bolder'}}>
@@ -537,16 +544,7 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
             // console.log('submitting team form');
             // console.log(values);
 
-            // check to make sure there is at least one admin on the team
-            let adminExists = false;
-            values.members.forEach((member) => {
-              if (member.role === 'admin') adminExists = true;
-            });
-
-            if (!adminExists) {
-              alert('Team must have at least one admin');
-
-            } else if (this.state.targetTeamId === '') {
+            if (this.state.targetTeamId === '') {
               /**
                * add new team and set it as the selected team, then refresh 
                * user data to ensure accurate list of teams will be displayed
