@@ -44,7 +44,7 @@ async function scheduleSubscriptions(firebase: any, team: Team) {
 
 async function scheduleEmail(team: Team, subscription: Subscription, firebase: any) {
     
-  var { title, issueTime, issueDay, type } = subscription;
+  var { title, issueTime, issueDay, type, content } = subscription;
 
   if (type == null || issueDay == null || issueDay == null) {
     console.error(`[ERROR] The following subscription for team ${team.name} is malformed =>`, subscription, "\n");
@@ -70,6 +70,8 @@ async function scheduleEmail(team: Team, subscription: Subscription, firebase: a
   rule.second = seconds;    
   // REMOVE AFTER TESTING
   
+  console.log(rule);
+
   // Schedule Email
   emailJobs[jobName] = cron.scheduleJob(rule, async function() {
     
@@ -83,7 +85,7 @@ async function scheduleEmail(team: Team, subscription: Subscription, firebase: a
 
     // Create email with subject line, title, body, recipients
     var email = {
-      subject,
+      subject: title,
       body: "body", // TODO still need this?
       recipients: recipients.map(email => ({ email: email.trim() })),
       dateSent: new Date(),
@@ -94,7 +96,7 @@ async function scheduleEmail(team: Team, subscription: Subscription, firebase: a
     var teamSnippets = (type == 'digest') ? collectSnippets(snippets) : null;
 
     // Assign appropriate email template
-    var template = (type == 'digest') ? digestTemplate(email, team.name, teamSnippets) : reminderTemplate(email);
+    var template = (type == 'digest') ? digestTemplate(email, team.name, teamSnippets, content) : reminderTemplate(email, team.name, content);
 
     // Create Emailer
     var emailer = new Emailer(email, template);

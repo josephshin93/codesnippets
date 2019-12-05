@@ -1,10 +1,14 @@
-module.exports = (message: any) => {
+module.exports = (message: any, team: string, content: string) => {
     return `
     <html>
         <body>
             <div>
-                <b>Weekly Reminder</b>
-                <p>Here's a quick reminder to submit your snippets for this week!</p>     
+                <p>Hi ${team.charAt(0).toUpperCase() + team.slice(1)} Team,</p>
+                ${
+                    content !== null
+                    ? `<p>${content}</p><br>`
+                    : `<b>Weekly Reminder</b><p>Here's a quick reminder to submit your snippets for this week!</p>`
+                }
             </div>
         </body>
     </html>
