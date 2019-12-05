@@ -38,6 +38,7 @@ interface TeamFormProps {
   addTeam: (team: Team, next?: () => void) => void;
   editTeam: (team: Team, teamId: string, next?: () => void) => void;
   fetchUser: () => void;
+  user: User | null;
   teams: Teams | null;
   history: History;
   match: match;
@@ -69,7 +70,9 @@ const teamFormValidationSchema = Yup.object({
           /(admin|member)/, 
           'Must be \'admin\' or \'member\''
         )
-    })),
+    }))
+    .required('A team must have at least one member')
+    .min(1, 'A team must have at least one member'),
   subscriptions: Yup.array()
     .of(Yup.object({
       title: Yup.string()
@@ -94,14 +97,6 @@ const teamFormValidationSchema = Yup.object({
 });
 
 // FIXME: should we make the member name of team members unedit-able?
-// FIXME: should we remove the pending status for the time being?
-/**
- * FIXME:
- *  at least one member should be able to edit the team,
- *  maybe create a creator status and automatically assign at team creation
- *  and design a way to change the creator so there is only and always one
- */
-
 class TeamForm extends Component<TeamFormProps, TeamFormState> {
   _isMounted = false;
 
@@ -126,6 +121,14 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
       if (props.teams && props.teams[targetTeamId]) {
         targetTeam = props.teams[targetTeamId];
       }
+    }
+
+    // add in current user as an admin by default
+    // FIXME: redirect back to the home page if this.props.user is null?
+    if (this.props.user) {
+      targetTeam.members[this.props.user.id] = 
+        this.props.user.firstName + ' ' + this.props.user.lastName;
+      targetTeam.roles[this.props.user.id] = 'admin';
     }
 
     // set the state
@@ -177,19 +180,8 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
     this._isMounted = false;
   }
 
-  initialValues(team: Team | null): FormTeam {
-    if (team) {
-      return teamToForm(team);
-    }
-    return {
-      name: '',
-      members: [
-        { userId: '', memberName: '', role: '' },
-      ],
-      subscriptions: [
-        { title: '', issueTime: 700, issueDay: 1, content: '', type: 'digest' }
-      ],
-    };
+  initialValues(team: Team): FormTeam {
+    return teamToForm(team);
   }
 
   addMember(userId: string, arrayHelpers: any) {
@@ -540,7 +532,16 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
             // console.log('submitting team form');
             // console.log(values);
 
-            if (this.state.targetTeamId === '') {
+            // check to make sure there is at least one admin on the team
+            let adminExists = false;
+            values.members.forEach((member) => {
+              if (member.role === 'admin') adminExists = true;
+            });
+
+            if (!adminExists) {
+              alert('Team must have at least one admin');
+
+            } else if (this.state.targetTeamId === '') {
               /**
                * add new team and set it as the selected team, then refresh 
                * user data to ensure accurate list of teams will be displayed
@@ -593,8 +594,8 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
 }
 
 
-const mapStateToProps = ({ teams }: State) => {
-  return { teams };
+const mapStateToProps = ({ user, teams }: State) => {
+  return { user, teams };
 };
 
 const mapDispatchToProps = () => {
