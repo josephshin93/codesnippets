@@ -73,6 +73,8 @@ export const fetchSnippets = (values: any) => async (dispatch: any) => {
     params: { ...values }
   });
 
+  console.log('fetched snippets', res.data);
+
   // initialize or re-initialize fuse search
   fuse = new Fuse(res.data, fuseOpts);
 

@@ -30,7 +30,7 @@ const AddSnippetForm = (props: FormProps) => {
         .max(4000, "Must be 4000 characters or less")
         .required("Required"),
       status: Yup.string(),
-      team: Yup.string().required("Must choose team")
+      team: Yup.string(),
     }),
     onSubmit: (values, actions) => {
       setTimeout(() => {

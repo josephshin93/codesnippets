@@ -27,7 +27,7 @@ module.exports = function (app, firebase) {
                 status: req.body.status,
                 team: req.body.team,
                 content: req.body.content,
-                ownerId: user.googleId,
+                ownerID: user.googleId,
                 ownerFirstName: user.firstName,
                 ownerLastName: user.lastName,
                 ownerPicture: user.picture,
@@ -71,6 +71,7 @@ module.exports = function (app, firebase) {
                 firebase.collection('users').doc(user.id).get()
                     .then(function (doc) {
                     var userTeams = doc.data().teams;
+                    userTeams.push('');
                     // console.log(doc.data());
                     // send snippets only from teams that the user is a part of
                     res.send(snippets.filter(function (snippet) { return userTeams.includes(snippet.team); }));
@@ -78,6 +79,19 @@ module.exports = function (app, firebase) {
                     .catch(function (error) {
                     console.error('Error getting user ' + user.id + ' teams in getting snippet list', error);
                 });
+            }
+            else if (teamSelected === 'personal') {
+                /**
+                 * send snippets that current user created but does not belong to team
+                 *   this is the current definition of personal snippets
+                 */
+                var personalSnippets = snippets.filter(function (snippet) {
+                    // console.log(snippet.title, snippet.ownerID, snippet.team);
+                    return snippet.ownerID === user.googleId &&
+                        (!snippet.team || snippet.team === '');
+                });
+                // console.log('personal snippets', personalSnippets);
+                res.send(personalSnippets);
             }
             else {
                 // send snippets only from selected team

@@ -16,7 +16,7 @@ module.exports = (app: any, firebase: any) => {
         status: req.body.status,
         team: req.body.team,
         content: req.body.content,
-        ownerId: user.googleId,
+        ownerID: user.googleId,
         ownerFirstName: user.firstName,
         ownerLastName: user.lastName,
         ownerPicture: user.picture,
@@ -76,6 +76,7 @@ module.exports = (app: any, firebase: any) => {
         firebase.collection('users').doc(user.id).get()
         .then((doc: any) => {
           const userTeams = doc.data().teams;
+          userTeams.push('');
           // console.log(doc.data());
 
           // send snippets only from teams that the user is a part of
@@ -91,6 +92,20 @@ module.exports = (app: any, firebase: any) => {
           );
         });
         
+      } else if (teamSelected === 'personal') {
+      
+        /**
+         * send snippets that current user created but does not belong to team
+         *   this is the current definition of personal snippets
+         */
+        const personalSnippets = snippets.filter((snippet: Snippet) => {
+          // console.log(snippet.title, snippet.ownerID, snippet.team);
+          return snippet.ownerID === user.googleId && 
+            (!snippet.team || snippet.team === '');
+        });
+        // console.log('personal snippets', personalSnippets);
+        res.send(personalSnippets);
+      
       } else {
         
         // send snippets only from selected team
