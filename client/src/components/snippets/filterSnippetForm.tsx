@@ -74,19 +74,6 @@ const FilterSnippetForm = (props: FilterSnippetFormProps) => {
     // Handle submit
     onSubmit: (values, actions) => {
       setTimeout(() => {
-        console.log(
-          moment()
-            .startOf("week")
-            .year(2019)
-            .week(Number(values.week))
-            .format("MM/DD/YYYY") +
-            " - " +
-            moment()
-              .endOf("week")
-              .year(2019)
-              .week(Number(values.week))
-              .format("MM/DD/YYYY")
-        );
         props.selectWeek(values.week);
         props.fetchSnippets({
           userSelected: values.user,

@@ -9,7 +9,7 @@ module.exports = function (app, firebase) {
         var query = firebase.collection("users");
         var teamSelected = req.query.teamSelected || null;
         // Handle filter
-        if (teamSelected) {
+        if (teamSelected && teamSelected !== "all") {
             console.log("Team selected is " + teamSelected);
             query = query.where("teams", "array-contains", teamSelected);
         }

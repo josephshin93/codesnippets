@@ -2,12 +2,12 @@ const express = require("express");
 const keys = require("./config/keys");
 const cookieSession = require("cookie-session");
 const app = express();
-const bodyParser = require('body-parser');
-const passport = require('passport');
-const admin = require('firebase-admin');
-const scheduler = require('./services/scheduler');
-import { Request, Response } from 'express';
-import { Subscription, Team, TeamMember } from './types';
+const bodyParser = require("body-parser");
+const passport = require("passport");
+const admin = require("firebase-admin");
+const scheduler = require("./services/scheduler");
+import { Request, Response } from "express";
+import { Subscription, Team, TeamMember } from "./types";
 
 app.use(bodyParser.json());
 app.use(
@@ -40,10 +40,11 @@ require("./services/passport")(firebase);
 app.use(passport.initialize());
 app.use(passport.session());
 
-require('./routes/authRoutes')(app, firebase);
-require('./routes/usersRoutes')(app, firebase);
-require('./routes/snippetRoutes')(app, firebase);
-require('./routes/teamRoutes')(app, firebase);
+require("./routes/authRoutes")(app, firebase);
+require("./routes/usersRoutes")(app, firebase);
+require("./routes/snippetRoutes")(app, firebase);
+require("./routes/teamRoutes")(app, firebase);
+require("./routes/commentRoutes")(app, firebase);
 
 // TODO
 // FOR TESTING EMAIL SCHEDULER REMOVE WHEN FINISHED
@@ -55,19 +56,19 @@ require('./routes/teamRoutes')(app, firebase);
 // var fakeMember = { "aKJtboKgff9o0CyTzJbY": "Marc Tibbs", "R8vDws3j8PYBzojx3Vzf": "Marc Christopher Tibbs"};
 // var fakeRole = { "aKJtboKgff9o0CyTzJbY": "admin", "R8vDws3j8PYBzojx3Vzf": "member" } ;
 // var fakeSubs = [
-// { 
+// {
 //   title: "FAKE DIGEST",
 //   issueTime: hours,  // 0-23
 //   issueDay: day,    // 0-7 (Sunday = 0 OR 7)
 //   content: "FAKE SUB CONTENT",
-//   type: "digest" // "digest" || "reminder" 
-// }, 
-// { 
+//   type: "digest" // "digest" || "reminder"
+// },
+// {
 //   title: "FAKE REMINDER",
 //   issueTime: hours,  // 0-23
 //   issueDay: day,    // 0-7 (Sunday = 0 OR 7)
 //   content: "FAKE SUB CONTENT",
-//   type: "reminder" // "digest" || "reminder" 
+//   type: "reminder" // "digest" || "reminder"
 // }
 // ];
 // var team =  {
@@ -79,8 +80,8 @@ require('./routes/teamRoutes')(app, firebase);
 // scheduler.scheduleSubscriptions(firebase, team);
 scheduler.scheduleAllOnStart(firebase);
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/build'));
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
 
   const path = require("path");
   app.get("*", (req: Request, res: Response) => {
