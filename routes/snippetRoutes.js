@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var moment = require("moment");
 module.exports = function (app, firebase) {
@@ -50,7 +61,9 @@ module.exports = function (app, firebase) {
         console.log('Route: GET /api/snippets', '->', 'querying for snippets of week', weekSelected, ' and owner', userSelected);
         query.get()
             .then(function (snapshot) {
-            var snippets = snapshot.docs.map(function (doc) { return doc.data(); });
+            var snippets = snapshot.docs.map(function (doc) {
+                return __assign(__assign({}, doc.data()), { id: doc.id });
+            });
             // console.log(snippets);
             if (!teamSelected || teamSelected === '') {
                 // query for current user in order to get the list of teams

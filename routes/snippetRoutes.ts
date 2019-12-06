@@ -62,7 +62,9 @@ module.exports = (app: any, firebase: any) => {
     );
     query.get()
     .then((snapshot: any) => {
-      let snippets = snapshot.docs.map((doc: any) => doc.data());
+      let snippets = snapshot.docs.map((doc: any) => {
+        return { ...doc.data(), id: doc.id };
+      });
       // console.log(snippets);
       
       if (!teamSelected || teamSelected === '') {
