@@ -10,7 +10,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = function (app, firebase) {
     app.get("/api/comments", function (req, res) {
         console.log("Route: GET /api/comments");
@@ -28,7 +28,8 @@ module.exports = function (app, firebase) {
             res.send(snapshot.docs.map(function (doc) {
                 return __assign(__assign({}, doc.data()), { id: doc.id });
             }));
-        })["catch"](function (err) {
+        })
+            .catch(function (err) {
             console.log("Error getting comments", err);
         });
     });
@@ -55,13 +56,14 @@ module.exports = function (app, firebase) {
                 .then(function (docRef) {
                 console.log("Added comment", docRef.id);
                 res.send({ newCommentId: docRef.id });
-            })["catch"](function (err) {
+            })
+                .catch(function (err) {
                 console.log("Error adding comment", err);
             });
         }
     });
     // Delete a comment
-    app["delete"]("/api/delete_comment", function (req, res) {
+    app.delete("/api/delete_comment", function (req, res) {
         var user = req.user;
         if (!user) {
             res.send({});
@@ -77,7 +79,7 @@ module.exports = function (app, firebase) {
                 .collection("comments")
                 .doc(thisComment);
             // Delete comment from database
-            query["delete"]()["catch"](function (err) {
+            query.delete().catch(function (err) {
                 console.log("Error deleting comment", err);
             });
         }

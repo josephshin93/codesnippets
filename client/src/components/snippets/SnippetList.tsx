@@ -1,16 +1,28 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { Link } from "react-router-dom";
-import { fetchSnippets, fetchUsers } from "../../store/actions";
-import { State, User, Snippet } from "../../store/types";
-import { isEmpty } from "../../lib/lib";
-import FilterSnippetForm from "./filterSnippetForm";
-import Fuse from "fuse.js";
-import SnippetSingle from "./SnippetSingle";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import {
+  fetchSnippets, 
+  searchSnippetList, 
+  fetchUsers,
+} from '../../store/actions';
+import {
+  State,
+  User,
+  Snippet,
+} from '../../store/types';
+import {
+  isEmpty,
+} from '../../lib/lib';
+import FilterSnippetForm from './filterSnippetForm';
+import SnippetSingle from './SnippetSingle';
+
+
 
 interface SnippetListProps {
   fetchSnippets: (filters?: any) => void;
   fetchUsers: (selectedTeam: any) => void;
+  searchSnippetList: (searchText: any) => void;
 
   snippets: Array<Snippet> | null;
   user: User | null;
@@ -19,31 +31,16 @@ interface SnippetListProps {
 }
 
 interface SnippetListState {
-  snippets: Array<Snippet>;
   searchText: string;
 }
 
-interface FuseOptions {
-  shouldSort: boolean;
-  tokenize: boolean;
-  keys: Array<string>;
-}
-
-const fuseOpts: FuseOptions = {
-  shouldSort: true,
-  tokenize: true,
-  keys: ["title", "content", "description", "ownerName"]
-};
-
 class SnippetList extends Component<SnippetListProps, SnippetListState> {
-  fuse: Fuse<Snippet, FuseOptions> | null = null;
 
   constructor(props: SnippetListProps) {
     super(props);
 
     this.state = {
-      snippets: props.snippets ? props.snippets : [],
-      searchText: ""
+      searchText: '',
     };
   }
 
@@ -59,42 +56,22 @@ class SnippetList extends Component<SnippetListProps, SnippetListState> {
       });
 
       await this.props.fetchUsers(team);
-
-      if (this.props.snippets) {
-        this.setState({
-          snippets: this.props.snippets
-        });
-        this.fuse = new Fuse(this.props.snippets, fuseOpts);
-      }
-      // Fetching user names for filter dropdown
-      // Placing this here allows the dropdown to update based on Team Navigation
-      this.props.fetchUsers(team);
     }
   }
 
   renderSearch() {
     return (
-      <div className="row">
-        <form
-          onSubmit={e => {
-            e.preventDefault();
-            if (this.fuse) {
-              let results: Array<Snippet> = this.props.snippets || [];
-              if (this.state.searchText.length > 0) {
-                results = this.fuse.search(this.state.searchText);
-              }
-              this.setState({
-                snippets: results
-              });
-            } else {
-              console.error("Fuse search is not initialized");
-            }
-          }}
-        >
-          <input
-            className="col s9"
-            type="text"
-            placeholder="Search within current list of snippets"
+      <div className='row'>
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          if (this.state.searchText.length > 0) {
+            this.props.searchSnippetList(this.state.searchText);
+          }
+        }}>
+          <input 
+            className='col s9' 
+            type='text' 
+            placeholder='Search within current list of snippets' 
             value={this.state.searchText}
             onChange={e => {
               e.preventDefault();
@@ -114,8 +91,8 @@ class SnippetList extends Component<SnippetListProps, SnippetListState> {
   }
 
   renderSnippets() {
-    if (this.state.snippets && this.state.snippets.length > 0) {
-      return this.state.snippets.map((snippet: any) => (
+    if (this.props.snippets && this.props.snippets.length > 0) {
+      return this.props.snippets.map((snippet: any) => (
         <SnippetSingle key={snippet.id} snippet={snippet} />
       ));
     }
@@ -157,6 +134,10 @@ function mapStateToProps({
   return { snippets, user, selectedTeam, selectedWeek };
 }
 
-export default connect(mapStateToProps, { fetchSnippets, fetchUsers })(
+export default connect(mapStateToProps, { 
+  fetchSnippets, 
+  searchSnippetList, 
+  fetchUsers 
+})(
   SnippetList
 );

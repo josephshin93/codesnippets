@@ -10,7 +10,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var moment = require("moment");
 module.exports = function (app, firebase) {
     app.post("/api/add_snippet", function (req, res) {
@@ -46,34 +46,46 @@ module.exports = function (app, firebase) {
         var query = firebase.collection("snippets");
         var teamSelected = req.query.teamSelected || null;
         var userSelected = req.query.userSelected || null;
-        var weekSelected = req.query.weekSelected || null;
-        // Append filters for team, user, and/or week
-        // Otherwise, query all snippets for current week
-        if (teamSelected && teamSelected !== "all") {
-            console.log("team selected: ", teamSelected);
-            query = query.where("team", "==", teamSelected);
-        }
+        var weekSelected = req.query.weekSelected || moment().format('W');
+        // Append filters for user and/or week
         if (userSelected) {
             console.log("user selected: ", userSelected);
             query = query.where("ownerID", "==", userSelected);
         }
-        if (weekSelected) {
-            console.log("week selected: ", weekSelected);
-            query = query.where("week", "==", weekSelected);
-        }
-        else {
-            console.log("default week: " + moment().format("W"));
-            query = query.where("week", "==", moment().format("W"));
-        }
-        // Retrieve snippets from database
-        query
-            .get()
+        query = query.where('week', '==', weekSelected);
+        // FIXME: should probably use an HTTP error code
+        if (!req.user)
+            res.send({});
+        var user = req.user;
+        // query for snippets
+        console.log('Route: GET /api/snippets', '->', 'querying for snippets of week', weekSelected, ' and owner', userSelected);
+        query.get()
             .then(function (snapshot) {
-            res.send(snapshot.docs.map(function (doc) {
+            var snippets = snapshot.docs.map(function (doc) {
                 return __assign(__assign({}, doc.data()), { id: doc.id });
-            }));
-        })["catch"](function (err) {
-            console.log("Error getting snippets.", err);
+            });
+            // console.log(snippets);
+            if (!teamSelected || teamSelected === '') {
+                // query for current user in order to get the list of teams
+                console.log('Route: GET /api/snippets', '->', 'querying for user', user.id);
+                firebase.collection('users').doc(user.id).get()
+                    .then(function (doc) {
+                    var userTeams = doc.data().teams;
+                    // console.log(doc.data());
+                    // send snippets only from teams that the user is a part of
+                    res.send(snippets.filter(function (snippet) { return userTeams.includes(snippet.team); }));
+                })
+                    .catch(function (error) {
+                    console.error('Error getting user ' + user.id + ' teams in getting snippet list', error);
+                });
+            }
+            else {
+                // send snippets only from selected team
+                res.send(snippets.filter(function (snippet) { return snippet.team == teamSelected; }));
+            }
+        })
+            .catch(function (error) {
+            console.error('Error getting snippets of week \'' + weekSelected + '\'', error);
         });
     });
     // Get single snippet
@@ -88,7 +100,8 @@ module.exports = function (app, firebase) {
             .get()
             .then(function (doc) {
             res.send(doc.data());
-        })["catch"](function (err) {
+        })
+            .catch(function (err) {
             console.log("Error getting snippet", err);
         });
     });

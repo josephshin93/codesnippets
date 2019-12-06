@@ -1,3 +1,4 @@
+"use strict";
 module.exports = function (message, team, content) {
     return "\n    <html>\n        <body>\n            <div>\n                <p>Hi " + (team.charAt(0).toUpperCase() + team.slice(1)) + " Team,</p>\n                " + (content !== null
         ? "<p>" + content + "</p><br>"

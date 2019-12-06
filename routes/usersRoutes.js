@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 module.exports = function (app, firebase) {
     // Get list of users in database
     // Usage #1: Populate user names in filter dropdown
@@ -18,7 +18,8 @@ module.exports = function (app, firebase) {
             .get()
             .then(function (snapshot) {
             res.send(snapshot.docs.map(function (doc) { return doc.data(); }));
-        })["catch"](function (err) {
+        })
+            .catch(function (err) {
             console.log("Error getting users.", err);
         });
     });

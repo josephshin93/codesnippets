@@ -1,10 +1,13 @@
 import axios from "axios";
+import Fuse from 'fuse.js';
 import {
   Team,
+  Snippet,
   FETCH_USER,
   FETCH_USERS,
   FETCH_SNIPPETS,
   FETCH_SNIPPET,
+  SEARCH_SNIPPETS,
   FETCH_COMMENTS,
   AUTHORIZE_USER,
   FETCH_TEAMS,
@@ -45,13 +48,44 @@ export const fetchUsers = (value: any) => async (dispatch: any) => {
   dispatch({ type: FETCH_USERS, payload: res.data });
 };
 
+// declare fuse search object
+interface FuseOptions {
+  shouldSort: boolean;
+  tokenize: boolean;
+  keys: Array<string>;
+}
+const fuseOpts: FuseOptions = {
+  shouldSort: true,
+  tokenize: true,
+  keys: [
+    'title',
+    'content',
+    'description',
+    'ownerName', 
+  ],
+};
+let fuse: Fuse<Snippet, FuseOptions> | null = null;
+
 // Get a list of snippets based on filter values
 export const fetchSnippets = (values: any) => async (dispatch: any) => {
   //console.log("Action: fetchSnippets");
   const res = await axios.get("api/snippets", {
     params: { ...values }
   });
+
+  // initialize or re-initialize fuse search
+  fuse = new Fuse(res.data, fuseOpts);
+
   dispatch({ type: FETCH_SNIPPETS, payload: res.data });
+};
+
+export const searchSnippetList = (searchText: string) => (
+  dispatch: Dispatch<AnyAction>
+) => {
+  if (fuse) {
+    const results = fuse.search(searchText);
+    dispatch({ type: SEARCH_SNIPPETS, payload: results });
+  }
 };
 
 // Get a single snippet based on ID

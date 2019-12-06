@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 // actions
 exports.FETCH_USER = "fetch_user";
 exports.FETCH_USERS = "fetch_users";
