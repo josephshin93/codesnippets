@@ -1,3 +1,4 @@
+"use strict";
 module.exports = function (message, team, snippets, content) {
     // TODO Remove after testing
     // snippets = [];
