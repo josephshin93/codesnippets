@@ -5,12 +5,6 @@ import {
 } from '../types';
 
 const initialState = {
-  all: {
-    name: 'All',
-    members: {},
-    roles: {},
-    subscriptions: [],
-  },
   personal: {
     name: 'Personal',
     members: {},

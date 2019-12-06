@@ -10,9 +10,8 @@ class Emailer extends helper.Mail {
       this.from_email = new helper.Email('tibbsm@oregonstate.edu');
       this.subject = subject;
       this.recipients = this.formatEmails(recipients);
-      // TODO REMOVE BODY? IS THIS NECESSARY?
-      // this.body = new helper.Content('text/html', body);
-      // this.addContent(this.body);
+      this.body = new helper.Content('text/html', body);
+      this.addContent(this.body);
       this.addRecipients();
     }
 
