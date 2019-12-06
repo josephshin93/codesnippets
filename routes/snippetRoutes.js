@@ -3,23 +3,31 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var moment = require("moment");
 module.exports = function (app, firebase) {
     app.post("/api/add_snippet", function (req, res) {
-        console.log("post /api/add_snippet");
-        // console.log(req.body);
-        var _a = req.body, content = _a.content, description = _a.description, ownerID = _a.ownerID, ownerName = _a.ownerName, status = _a.status, team = _a.team, title = _a.title;
-        var snippet = {
-            title: title,
-            content: content,
-            description: description,
-            ownerID: ownerID,
-            ownerName: ownerName,
-            status: status,
-            team: team,
-            week: moment().format("W"),
-            timeCreated: new Date(),
-            totalComments: 0,
-            totalLikes: 0
-        };
-        firebase.collection("snippets").add(snippet);
+        // Add snippet only if they're the user
+        var user = req.user;
+        if (!user) {
+            res.send({});
+        }
+        else {
+            // Make snippet object
+            var snippet = {
+                title: req.body.title,
+                description: req.body.description,
+                status: req.body.status,
+                team: req.body.team,
+                content: req.body.content,
+                ownerId: user.googleId,
+                ownerFirstName: user.firstName,
+                ownerLastName: user.lastName,
+                ownerPicture: user.picture,
+                week: moment().format("W"),
+                timeCreated: new Date(),
+                totalComments: 0,
+                totalLikes: 0
+            };
+            // Add snippet to database
+            firebase.collection("snippets").add(snippet);
+        }
     });
     app.get("/api/snippets", function (req, res) {
         console.log("Route: GET /api/snippets");
@@ -30,7 +38,7 @@ module.exports = function (app, firebase) {
         var weekSelected = req.query.weekSelected || moment().format('W');
         // Append filters for user and/or week
         if (userSelected) {
-            console.log(userSelected);
+            console.log("user selected: ", userSelected);
             query = query.where("ownerID", "==", userSelected);
         }
         query = query.where('week', '==', weekSelected);
@@ -65,6 +73,23 @@ module.exports = function (app, firebase) {
         })
             .catch(function (error) {
             console.error('Error getting snippets of week \'' + weekSelected + '\'', error);
+        });
+    });
+    // Get single snippet
+    app.get("/api/snippet", function (req, res) {
+        console.log("Route: GET api/snippet");
+        // Setup query variables
+        var query = firebase.collection("snippets");
+        var snippetID = req.query.id;
+        // Retrieve snippet from database
+        query
+            .doc(snippetID)
+            .get()
+            .then(function (doc) {
+            res.send(doc.data());
+        })
+            .catch(function (err) {
+            console.log("Error getting snippet", err);
         });
     });
 };

@@ -16,7 +16,7 @@ const AddSnippetForm = (props: FormProps) => {
       title: "",
       description: "",
       content: "",
-      status: "open",
+      status: "Open",
       team: ""
     },
     validationSchema: Yup.object({
@@ -110,9 +110,9 @@ const AddSnippetForm = (props: FormProps) => {
               className="browser-default"
               {...formik.getFieldProps("status")}
             >
-              <option value="open">Open</option>
-              <option value="block">Block</option>
-              <option value="done">Done</option>
+              <option value="Open">Open</option>
+              <option value="Block">Block</option>
+              <option value="Done">Done</option>
             </select>
             {formik.touched.status && formik.errors.status ? (
               <div>{formik.errors.status}</div>

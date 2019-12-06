@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   State,
   User,
@@ -6,33 +6,18 @@ import {
   Teams,
   FormTeam,
   FormTeamMember,
-  Subscription,
-} from '../../store/types';
-import { History } from 'history';
-import { match } from 'react-router';
-import { connect } from 'react-redux';
-import {
-  addTeam,
-  editTeam,
-  fetchUser,
-} from '../../store/actions';
-import { 
-  Formik, 
-  Form, 
-  Field, 
-  ErrorMessage, 
-  FieldArray, 
-} from 'formik';
-import DropdownSearch from './DropdownSearch';
-import * as Yup from 'yup';
-import {
-  formToTeam,
-  teamToForm,
-} from '../../lib/lib';
-import Axios from 'axios';
-const TrieSearch = require('trie-search');
-
-
+  Subscription
+} from "../../store/types";
+import { History } from "history";
+import { match } from "react-router";
+import { connect } from "react-redux";
+import { addTeam, editTeam, fetchUser } from "../../store/actions";
+import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
+import DropdownSearch from "./DropdownSearch";
+import * as Yup from "yup";
+import { formToTeam, teamToForm } from "../../lib/lib";
+import Axios from "axios";
+const TrieSearch = require("trie-search");
 
 interface TeamFormProps {
   addTeam: (team: Team, next?: () => void) => void;
@@ -56,51 +41,50 @@ interface TeamFormMatchParams {
 
 const teamFormValidationSchema = Yup.object({
   name: Yup.string()
-    .max(25, 'Must be 25 characters or less')
-    .required('Team name is required'),
+    .max(25, "Must be 25 characters or less")
+    .required("Team name is required"),
   members: Yup.array()
-    .of(Yup.object({
-      userId: Yup.string(),
-      memberName: Yup.string()
-        .max(45, 'Must be 45 characters or less'),
-      role: Yup.string()
-        .matches(
-          // /(admin|member|pending)/, 
+    .of(
+      Yup.object({
+        userId: Yup.string(),
+        memberName: Yup.string().max(45, "Must be 45 characters or less"),
+        role: Yup.string().matches(
+          // /(admin|member|pending)/,
           // 'Must be \'admin\' or \'member\' or \'pending\''
-          /(admin|member)/, 
-          'Must be \'admin\' or \'member\''
+          /(admin|member)/,
+          "Must be 'admin' or 'member'"
         )
-    }))
-    .required('A team must have at least one member')
-    .min(1, 'A team must have at least one member')
-    .test('has-admin', 'A team must have at least one admin', function (value) {
+      })
+    )
+    .required("A team must have at least one member")
+    .min(1, "A team must have at least one member")
+    .test("has-admin", "A team must have at least one admin", function(value) {
       let adminExists = false;
       value.forEach((member: FormTeamMember) => {
-        if (member.role === 'admin') adminExists = true;
+        if (member.role === "admin") adminExists = true;
       });
       return adminExists;
     }),
-  subscriptions: Yup.array()
-    .of(Yup.object({
+  subscriptions: Yup.array().of(
+    Yup.object({
       title: Yup.string()
-        .max(25, 'Must be 25 characters or less')
-        .required('Subscription title is required'),
-      type: Yup.string()
-        .matches(
-          /(reminder|digest)/,
-          'Must be \'reminder\' or \'digest\''
-        ),
+        .max(25, "Must be 25 characters or less")
+        .required("Subscription title is required"),
+      type: Yup.string().matches(
+        /(reminder|digest)/,
+        "Must be 'reminder' or 'digest'"
+      ),
       issueTime: Yup.number()
         .min(100)
         .max(2359)
-        .required('Issue time is required'),
+        .required("Issue time is required"),
       issueDay: Yup.number()
         .min(0)
         .max(6)
-        .required('Issue day is required'),
-      content: Yup.string()
-        .max(100, 'Must be 100 characters or less')
-    })),
+        .required("Issue day is required"),
+      content: Yup.string().max(100, "Must be 100 characters or less")
+    })
+  )
 });
 
 // FIXME: should we make the member name of team members unedit-able?
@@ -111,15 +95,15 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
     super(props);
 
     // initialize state data
-    let targetTeamId: string = '';
+    let targetTeamId: string = "";
     let targetTeam: Team = {
-      name: '',
+      name: "",
       members: {},
       roles: {},
-      subscriptions: [],
+      subscriptions: []
     };
     let users: Array<User> = [];
-    
+
     // set targetTeamId and targetTeam if corresponding data is available
     const matchParams: TeamFormMatchParams = props.match.params;
     if (matchParams.teamId) {
@@ -133,16 +117,16 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
     // add in current user as an admin by default
     // FIXME: redirect back to the home page if this.props.user is null?
     if (this.props.user) {
-      targetTeam.members[this.props.user.id] = 
-        this.props.user.firstName + ' ' + this.props.user.lastName;
-      targetTeam.roles[this.props.user.id] = 'admin';
+      targetTeam.members[this.props.user.id] =
+        this.props.user.firstName + " " + this.props.user.lastName;
+      targetTeam.roles[this.props.user.id] = "admin";
     }
 
     // set the state
     this.state = {
       targetTeamId,
       targetTeam,
-      users, 
+      users
     };
 
     // bind functions
@@ -155,30 +139,29 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
     this._isMounted = true;
 
     // get all the users for adding members
-    let usersDataRes = await Axios.get('/api/all_users');
+    let usersDataRes = await Axios.get("/api/all_users");
     let users = usersDataRes ? usersDataRes.data : [];
-    console.log('get /api/all_users', usersDataRes);
+    console.log("get /api/all_users", usersDataRes);
 
     // get target team if it is required (empty name means empty target Team)
     let targetTeamDataRes = null;
     if (
-      this.state.targetTeamId !== '' && 
-      (this.state.targetTeam === null || this.state.targetTeam.name === '')
+      this.state.targetTeamId !== "" &&
+      (this.state.targetTeam === null || this.state.targetTeam.name === "")
     ) {
-      targetTeamDataRes = await Axios.get(
-        '/api/team', 
-        { params: { targetTeamId: this.state.targetTeamId } }
-      );
-      console.log('get /api/team', this.state.targetTeamId, targetTeamDataRes);
+      targetTeamDataRes = await Axios.get("/api/team", {
+        params: { targetTeamId: this.state.targetTeamId }
+      });
+      console.log("get /api/team", this.state.targetTeamId, targetTeamDataRes);
     }
-    let targetTeam = targetTeamDataRes ? 
-      targetTeamDataRes.data : 
-      this.state.targetTeam;
+    let targetTeam = targetTeamDataRes
+      ? targetTeamDataRes.data
+      : this.state.targetTeam;
 
     if (this._isMounted) {
       this.setState({
         users,
-        targetTeam,
+        targetTeam
       });
     }
   }
@@ -209,26 +192,22 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
     if (newUser) {
       arrayHelpers.push({
         userId: newUser.id,
-        memberName: newUser.firstName + ' ' + newUser.lastName,
-        role: 'member',
+        memberName: newUser.firstName + " " + newUser.lastName,
+        role: "member"
       });
     }
   }
 
   renderTeamNameInput(name: string, label: string) {
     return (
-      <div className='row'>
-        <div className='input-field col s12'>
+      <div className="row">
+        <div className="input-field col s12">
           <label htmlFor={name}>{label}</label>
-          <Field 
-            name={name} 
-            type='text' 
-            placeholder='Enter team name'
-          />
-          <ErrorMessage 
-            className='red-text text-darken-2' 
-            name={name} 
-            component='span' 
+          <Field name={name} type="text" placeholder="Enter team name" />
+          <ErrorMessage
+            className="red-text text-darken-2"
+            name={name}
+            component="span"
           />
         </div>
       </div>
@@ -238,9 +217,9 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
   renderMembers(members: Array<FormTeamMember>, arrayHelpers: any) {
     if (members.length === 0) {
       return (
-        <div className='row'>
-          <div className='col s6'>
-            <p className='grey-text text-lighten-2'>
+        <div className="row">
+          <div className="col s6">
+            <p className="grey-text text-lighten-2">
               <em>Team has no members.</em>
             </p>
           </div>
@@ -248,39 +227,39 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
       );
     } else {
       return members.map((member: FormTeamMember, index: number) => (
-        <div className='row' key={index}>
-          <div className='col s7'>
-            <Field 
+        <div className="row" key={index}>
+          <div className="col s7">
+            <Field
               name={`members[${index}].memberName`}
-              type='text'
-              placeholder='Team member name'
+              type="text"
+              placeholder="Team member name"
             />
-            <ErrorMessage 
-              className='red-text text-darken-2' 
-              name={`members[${index}].memberName`} 
+            <ErrorMessage
+              className="red-text text-darken-2"
+              name={`members[${index}].memberName`}
             />
           </div>
 
-          <div className='col s3'>
-            <Field 
-              name={`members[${index}].role`} 
-              as='select'
-              className='browser-default'
+          <div className="col s3">
+            <Field
+              name={`members[${index}].role`}
+              as="select"
+              className="browser-default"
             >
-              <option value='admin'>admin</option>
-              <option value='member'>member</option>
+              <option value="admin">admin</option>
+              <option value="member">member</option>
               {/* <option value='pending'>pending</option> */}
             </Field>
-            <ErrorMessage 
-              className='red-text text-darken-2'
-              name={`members[${index}].role`} 
+            <ErrorMessage
+              className="red-text text-darken-2"
+              name={`members[${index}].role`}
             />
           </div>
 
-          <div className='col s1 offset-s1'>
-            <button 
-              className='waves-effect waves-light btn-floating red darken-1'
-              onClick={(e) => {
+          <div className="col s1 offset-s1">
+            <button
+              className="waves-effect waves-light btn-floating red darken-1"
+              onClick={e => {
                 e.preventDefault();
 
                 // remove specific team member in the local state
@@ -297,7 +276,7 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
                 arrayHelpers.remove(index, 1);
               }}
             >
-              <i className='material-icons'>clear</i>
+              <i className="material-icons">clear</i>
               {/* Remove */}
             </button>
           </div>
@@ -307,34 +286,33 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
   }
 
   renderMembersInput(members: Array<FormTeamMember>) {
-    let ts = new TrieSearch('email');
+    let ts = new TrieSearch("email");
     ts.addAll(this.state.users);
 
     return (
-      <div className='row'>
-        <div className='col s12'>
-          <label htmlFor={'members'}>Members</label>
-          <FieldArray 
-            name={'members'} 
-            render={(arrayHelpers) => (
+      <div className="row">
+        <div className="col s12">
+          <label htmlFor={"members"}>Members</label>
+          <FieldArray
+            name={"members"}
+            render={arrayHelpers => (
               <div>
                 {this.renderMembers(members, arrayHelpers)}
-                <ErrorMessage 
-                  className='red-text text-darken-2' 
-                  name='members'
-                  component='span'
+                <ErrorMessage
+                  className="red-text text-darken-2"
+                  name="members"
+                  component="span"
                 />
-                <div className='row'>
-                  <div className='col s8'>
-                    <p style={{color: '#26a69a', fontWeight: 'bolder'}}>
+                <div className="row">
+                  <div className="col s8">
+                    <p style={{ color: "#26a69a", fontWeight: "bolder" }}>
                       ADD MEMBERS
                     </p>
-                    <DropdownSearch 
-                      search={ts} 
-                      onAct={
-                        (userId: string) => 
-                          this.addMember(userId, arrayHelpers)
-                      } 
+                    <DropdownSearch
+                      search={ts}
+                      onAct={(userId: string) =>
+                        this.addMember(userId, arrayHelpers)
+                      }
                     />
                   </div>
                 </div>
@@ -349,9 +327,9 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
   renderSubs(subscriptions: Array<Subscription>, arrayHelpers: any) {
     if (subscriptions.length === 0) {
       return (
-        <div className='row'>
-          <div className='col s6'>
-            <p className='grey-text text-lighten-2'>
+        <div className="row">
+          <div className="col s6">
+            <p className="grey-text text-lighten-2">
               <em>Team has no subscriptions.</em>
             </p>
           </div>
@@ -359,117 +337,115 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
       );
     } else {
       return subscriptions.map((sub: Subscription, index: number) => (
-        <div className='row' key={index}>
-          <div className='col s12'>
-            <div className='row'>
-              <div className='col s4'>
-                <Field 
-                  name={`subscriptions[${index}].title`} 
-                  type='text' 
-                  placeholder='Enter subscription title'
+        <div className="row" key={index}>
+          <div className="col s12">
+            <div className="row">
+              <div className="col s4">
+                <Field
+                  name={`subscriptions[${index}].title`}
+                  type="text"
+                  placeholder="Enter subscription title"
                 />
-                <ErrorMessage 
-                  className='red-text text-darken-2'
-                  name={`subscriptions[${index}].title`} 
-                  component='span'
+                <ErrorMessage
+                  className="red-text text-darken-2"
+                  name={`subscriptions[${index}].title`}
+                  component="span"
                 />
               </div>
-              <div className='col s2'>
-                <Field 
-                  name={`subscriptions[${index}].type`} 
-                  as='select'
-                  className='browser-default'
+              <div className="col s2">
+                <Field
+                  name={`subscriptions[${index}].type`}
+                  as="select"
+                  className="browser-default"
                 >
-                  <option value='digest'>Digest</option>
-                  <option value='reminder'>Reminder</option>
+                  <option value="digest">Digest</option>
+                  <option value="reminder">Reminder</option>
                 </Field>
-                <ErrorMessage 
-                  className='red-text text-darken-2'
-                  name={`subscriptions[${index}].type`} 
+                <ErrorMessage
+                  className="red-text text-darken-2"
+                  name={`subscriptions[${index}].type`}
                 />
               </div>
-              <div className='col s2'>
-                <Field 
-                  name={`subscriptions[${index}].issueTime`} 
-                  as='select' 
-                  className='browser-default'
+              <div className="col s2">
+                <Field
+                  name={`subscriptions[${index}].issueTime`}
+                  as="select"
+                  className="browser-default"
                 >
-                  <option value='500'>5:00 AM</option>
-                  <option value='600'>6:00 AM</option>
-                  <option value='700'>7:00 AM</option>                  
-                  <option value='800'>8:00 AM</option>
-                  <option value='900'>9:00 AM</option>
-                  <option value='1000'>10:00 AM</option>                  
-                  <option value='1100'>11:00 AM</option>
-                  <option value='1200'>12:00 PM</option>
-                  <option value='1300'>1:00 PM</option>                  
-                  <option value='1400'>2:00 PM</option>
-                  <option value='1500'>3:00 PM</option>
-                  <option value='1600'>4:00 PM</option>                  
-                  <option value='1700'>5:00 PM</option>
-                  <option value='1800'>6:00 PM</option>
-                  <option value='1900'>7:00 PM</option>                  
-                  <option value='2000'>8:00 PM</option>                  
-                  <option value='2100'>9:00 PM</option>                  
-                  <option value='2200'>10:00 PM</option>                  
-                  <option value='2300'>11:00 PM</option>                   
+                  <option value="500">5:00 AM</option>
+                  <option value="600">6:00 AM</option>
+                  <option value="700">7:00 AM</option>
+                  <option value="800">8:00 AM</option>
+                  <option value="900">9:00 AM</option>
+                  <option value="1000">10:00 AM</option>
+                  <option value="1100">11:00 AM</option>
+                  <option value="1200">12:00 PM</option>
+                  <option value="1300">1:00 PM</option>
+                  <option value="1400">2:00 PM</option>
+                  <option value="1500">3:00 PM</option>
+                  <option value="1600">4:00 PM</option>
+                  <option value="1700">5:00 PM</option>
+                  <option value="1800">6:00 PM</option>
+                  <option value="1900">7:00 PM</option>
+                  <option value="2000">8:00 PM</option>
+                  <option value="2100">9:00 PM</option>
+                  <option value="2200">10:00 PM</option>
+                  <option value="2300">11:00 PM</option>
                 </Field>
                 <ErrorMessage name={`subscriptions[${index}].issueTime`} />
               </div>
-              <div className='col s2'>
-                <Field 
-                  name={`subscriptions[${index}].issueDay`} 
-                  as='select' 
-                  className='browser-default'
+              <div className="col s2">
+                <Field
+                  name={`subscriptions[${index}].issueDay`}
+                  as="select"
+                  className="browser-default"
                 >
-                  <option value='0'>Sunday</option>
-                  <option value='1'>Monday</option>
-                  <option value='2'>Tuesday</option>
-                  <option value='3'>Wednesday</option>
-                  <option value='4'>Thursday</option>
-                  <option value='5'>Friday</option>
-                  <option value='6'>Saturday</option>
+                  <option value="0">Sunday</option>
+                  <option value="1">Monday</option>
+                  <option value="2">Tuesday</option>
+                  <option value="3">Wednesday</option>
+                  <option value="4">Thursday</option>
+                  <option value="5">Friday</option>
+                  <option value="6">Saturday</option>
                 </Field>
                 <ErrorMessage name={`subscriptions[${index}].issueDay`} />
               </div>
-              <div className='col s1 offset-s1'>
-                  <button 
-                    className='waves-effect waves-light btn-floating red darken-1'
-                    onClick={(e) => {
-                      e.preventDefault();
-                      
-                      // let newTeam = this.state.targetTeam;
-                      // newTeam.subscriptions.splice(index, 1);
+              <div className="col s1 offset-s1">
+                <button
+                  className="waves-effect waves-light btn-floating red darken-1"
+                  onClick={e => {
+                    e.preventDefault();
 
-                      // this.setState({
-                      //   targetTeam: newTeam,
-                      // });
+                    // let newTeam = this.state.targetTeam;
+                    // newTeam.subscriptions.splice(index, 1);
 
-                      arrayHelpers.remove(index);
-                    }}
-                  >
-                    <i className='material-icons'>clear</i>
-                  </button>
+                    // this.setState({
+                    //   targetTeam: newTeam,
+                    // });
+
+                    arrayHelpers.remove(index);
+                  }}
+                >
+                  <i className="material-icons">clear</i>
+                </button>
               </div>
             </div>
 
-
-            <div className='row'>
-              <div className='input-field col s10'>
-                <Field 
-                  className='materialize-textarea'
-                  name={`subscriptions[${index}].content`} 
-                  as='textarea' 
-                  placeholder='Enter subscription content'
+            <div className="row">
+              <div className="input-field col s10">
+                <Field
+                  className="materialize-textarea"
+                  name={`subscriptions[${index}].content`}
+                  as="textarea"
+                  placeholder="Enter subscription content"
                 />
-                <ErrorMessage 
-                  className='red-text text-darken-2'
-                  name={`subscriptions[${index}].content`} 
+                <ErrorMessage
+                  className="red-text text-darken-2"
+                  name={`subscriptions[${index}].content`}
                 />
               </div>
             </div>
           </div>
-          
         </div>
       ));
     }
@@ -477,27 +453,27 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
 
   renderSubsInput(subscriptions: Array<Subscription>) {
     return (
-      <div className='row'>
-        <div className='col s12'>
-          <label htmlFor='subscriptions'>Subscriptions</label>
-          <FieldArray 
-            name='subscriptions'
-            render={(arrayHelpers) => (
+      <div className="row">
+        <div className="col s12">
+          <label htmlFor="subscriptions">Subscriptions</label>
+          <FieldArray
+            name="subscriptions"
+            render={arrayHelpers => (
               <div>
                 {this.renderSubs(subscriptions, arrayHelpers)}
-                <div className='row'>
-                  <div className='col s6'>
-                    <button 
-                      className='btn-small waves-effect waves-light'
-                      onClick={(e) => {
+                <div className="row">
+                  <div className="col s6">
+                    <button
+                      className="btn-small waves-effect waves-light"
+                      onClick={e => {
                         e.preventDefault();
-                        
+
                         const defaultSub: Subscription = {
-                          title: '',
+                          title: "",
                           issueDay: 1,
                           issueTime: 700,
-                          content: '',
-                          type: 'digest',
+                          content: "",
+                          type: "digest"
                         };
                         // let newTeam = this.state.targetTeam;
                         // newTeam.subscriptions.push(defaultSub);
@@ -525,14 +501,11 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
     // console.log('<TeamForm /> rendering', this.state, this.props);
 
     return (
-      <div className='container'>
-        <div className='row'>
-          <div className='col s12'>
+      <div className="container">
+        <div className="row">
+          <div className="col s12">
             <h2>
-              {this.state.targetTeamId === '' ? 
-                'New Team' : 
-                'Team Settings'
-              }
+              {this.state.targetTeamId === "" ? "New Team" : "Team Settings"}
             </h2>
           </div>
         </div>
@@ -544,50 +517,48 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
             // console.log('submitting team form');
             // console.log(values);
 
-            if (this.state.targetTeamId === '') {
+            if (this.state.targetTeamId === "") {
               /**
-               * add new team and set it as the selected team, then refresh 
+               * add new team and set it as the selected team, then refresh
                * user data to ensure accurate list of teams will be displayed
                */
               this.props.addTeam(formToTeam(values), () => {
                 actions.setSubmitting(false);
                 this.props.fetchUser();
-                this.props.history.push('/dashboard');
+                this.props.history.push("/dashboard");
               });
             } else {
               this.props.editTeam(
-                formToTeam(values), 
-                this.state.targetTeamId || '', 
+                formToTeam(values),
+                this.state.targetTeamId || "",
                 () => {
                   actions.setSubmitting(false);
                   this.props.fetchUser();
-                  this.props.history.push('/dashboard');
+                  this.props.history.push("/dashboard");
                 }
               );
             }
-            
           }}
         >
           {({ values, handleSubmit }) => {
             // console.log(values);
             return (
-            <Form onSubmit={handleSubmit}>
-              {this.renderTeamNameInput('name', 'Team Name')}
-              <div style={{width:'100%', marginTop:'4rem'}}></div>
-              {this.renderMembersInput(values.members)}
-              <div style={{width:'100%', marginTop:'4rem'}}></div>
-              {this.renderSubsInput(values.subscriptions)}
-              <div style={{width:'100%', marginTop:'4rem'}}></div>
-              <button 
-                className='waves-effect waves-light btn-large blue'
-                type='submit'
-              >
-                {this.state.targetTeamId === '' ? 
-                  'Create Team' : 
-                  'Confirm Edit'
-                }
-              </button>
-            </Form>
+              <Form onSubmit={handleSubmit}>
+                {this.renderTeamNameInput("name", "Team Name")}
+                <div style={{ width: "100%", marginTop: "4rem" }}></div>
+                {this.renderMembersInput(values.members)}
+                <div style={{ width: "100%", marginTop: "4rem" }}></div>
+                {this.renderSubsInput(values.subscriptions)}
+                <div style={{ width: "100%", marginTop: "4rem" }}></div>
+                <button
+                  className="waves-effect waves-light btn-large blue"
+                  type="submit"
+                >
+                  {this.state.targetTeamId === ""
+                    ? "Create Team"
+                    : "Confirm Edit"}
+                </button>
+              </Form>
             );
           }}
         </Formik>
@@ -595,7 +566,6 @@ class TeamForm extends Component<TeamFormProps, TeamFormState> {
     );
   }
 }
-
 
 const mapStateToProps = ({ user, teams }: State) => {
   return { user, teams };
@@ -605,7 +575,7 @@ const mapDispatchToProps = () => {
   return {
     editTeam,
     addTeam,
-    fetchUser,
+    fetchUser
   };
 };
 

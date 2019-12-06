@@ -15,6 +15,7 @@ import {
   isEmpty,
 } from '../../lib/lib';
 import FilterSnippetForm from './filterSnippetForm';
+import SnippetSingle from './SnippetSingle';
 
 
 
@@ -33,9 +34,8 @@ interface SnippetListState {
   searchText: string;
 }
 
-
 class SnippetList extends Component<SnippetListProps, SnippetListState> {
-  
+
   constructor(props: SnippetListProps) {
     super(props);
 
@@ -54,6 +54,7 @@ class SnippetList extends Component<SnippetListProps, SnippetListState> {
         teamSelected: team,
         weekSelected: week
       });
+
       await this.props.fetchUsers(team);
     }
   }
@@ -72,14 +73,18 @@ class SnippetList extends Component<SnippetListProps, SnippetListState> {
             type='text' 
             placeholder='Search within current list of snippets' 
             value={this.state.searchText}
-            onChange={(e) => {
+            onChange={e => {
               e.preventDefault();
               this.setState({
-                searchText: e.target.value,
+                searchText: e.target.value
               });
-            }} 
+            }}
           />
-          <input className='col s2 push-s1 btn waves-effect waves-light' type='submit' value='Search' />
+          <input
+            className="col s2 push-s1 btn waves-effect waves-light"
+            type="submit"
+            value="Search"
+          />
         </form>
       </div>
     );
@@ -87,33 +92,9 @@ class SnippetList extends Component<SnippetListProps, SnippetListState> {
 
   renderSnippets() {
     if (this.props.snippets && this.props.snippets.length > 0) {
-      return this.props.snippets.map( (snippet: any) => {
-        return (
-          <li key={snippet.title} className="collection-item">
-            <div>
-              <h5 className="title">{snippet.title}</h5>
-              <p>
-                <b>Description:</b> {snippet.description} <br />
-                <b>Content:</b> {snippet.content} <br />
-                <b>OwnerID:</b> {snippet.ownerID} <br />
-                <b>OwnerName:</b> {snippet.ownerName} <br />
-                <b>OwnerPic:</b> {snippet.ownerPic} <br />
-                <b>Status:</b> {snippet.status} <br />
-                <b>Team: </b>
-                {snippet.team} <br />
-                <b>Date:</b>{" "}
-                {new Date(
-                  snippet.timeCreated._seconds * 1000
-                ).toLocaleDateString()}{" "}
-                <br />
-                <b>Week:</b> {snippet.week} <br />
-                <b>TotalComments:</b> {snippet.totalComments} <br />
-                <b>TotalLikes:</b> {snippet.totalLikes} <br />
-              </p>
-            </div>
-          </li>
-        );
-      });
+      return this.props.snippets.map((snippet: any) => (
+        <SnippetSingle key={snippet.id} snippet={snippet} />
+      ));
     }
 
     return (
@@ -123,10 +104,7 @@ class SnippetList extends Component<SnippetListProps, SnippetListState> {
     );
   }
 
-
   render() {
-    // console.log("snippet list props", this.props);
-
     return (
       <ul className="collection with-header">
         <li className="collection-header lighten-5 blue">
@@ -139,9 +117,7 @@ class SnippetList extends Component<SnippetListProps, SnippetListState> {
             Add Snippet
           </Link>
         </li>
-        <li className='collection-header'>
-          {this.renderSearch()}
-        </li>
+        <li className="collection-header">{this.renderSearch()}</li>
         <FilterSnippetForm />
         {this.renderSnippets()}
       </ul>

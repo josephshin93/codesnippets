@@ -1,5 +1,5 @@
-import { User, TeamMemberRoles, Teams, Subscription, Snippet } from "./types";
-
+"use strict";
+exports.__esModule = true;
 /*
 export const users: Array<User> = [
   {
@@ -45,17 +45,15 @@ export const subscriptions: Array<Subscription> = [
     title: "Reminder",
     issueTime: 1500,
     issueDay: 5,
-    content: 'This is a reminder',
-    type: 'reminder',
+    content: "This is a reminder"
   },
   {
     title: "Digest",
     issueTime: 700,
     issueDay: 1,
-    content: 'This is a weekly digest',
-    type: 'digest',
-  },
-]
+    content: "This is a weekly digest"
+  }
+];
 
 let roles1: TeamMemberRoles = {};
 roles1[users[0].id] = "admin";
@@ -65,33 +63,18 @@ roles2[users[2].id] = "admin";
 roles2[users[3].id] = "member";
 
 export const teams: Teams = {
-  '0': {
-      // id: '0',
-      name: 'Alpha Team',
-      members: {
-        '0': 'Joseph Shin',
-      },
-      roles: roles1,
-      subscriptions: [
-        subscriptions[0],
-        subscriptions[1],
-      ],
+  "0": {
+    id: "0",
+    name: "Alpha Team",
+    members: {
+      "0": "Joseph Shin"
+    },
+    roles: roles1,
+    subscriptions: [subscriptions[0], subscriptions[1]]
   },
-  '1': {
-      // id: '1',
-      name: 'Beta Team',
-      members: {
-        '0': 'Joseph Shin',
-      },
-      roles: roles1,
-      subscriptions: [
-        subscriptions[0],
-        subscriptions[1],
-      ],
-  },
-  '2': {
-    // id: '2',
-    name: 'Avengers',
+  "1": {
+    id: "1",
+    name: "Beta Team",
     members: {
       "0": "Joseph Shin"
     },
