@@ -10,6 +10,11 @@ interface CommentListProps {
   fetchComments: (snippetId: string) => void;
   user: User | null;
   comments: Array<Comment> | null;
+  selectedComment: string;
+}
+
+interface CommentListState {
+  comments: Array<Comment>;
 }
 
 interface PassedProps {
@@ -23,10 +28,46 @@ interface IMapDispatchToProps {
 
 type AllProps = CommentListProps & PassedProps & IMapDispatchToProps;
 
-class CommentList extends Component<AllProps> {
-  componentDidMount() {
+class CommentList extends Component<AllProps, CommentListState> {
+  constructor(props: AllProps) {
+    super(props);
+
+    this.state = {
+      comments: props.comments ? props.comments : []
+    };
+  }
+
+  async componentDidMount() {
     if (this.props.user && !isEmpty(this.props.user) && this.props.snippetId) {
-      this.props.fetchComments(this.props.snippetId);
+      await this.props.fetchComments(this.props.snippetId);
+
+      if (this.props.comments) {
+        this.setState({
+          comments: this.props.comments
+        });
+      }
+    }
+  }
+
+  // Update comment state from form
+  updateCommentState(content: string, time: Date) {
+    const newCommentId = this.props.selectedComment;
+    const user = this.props.user;
+    //console.log("newCommenId after update is ", this.props.selectedComment);
+    //console.log(time);
+    if (newCommentId && user) {
+      const comment: Comment = {
+        id: newCommentId,
+        googleId: user.googleId,
+        userPicture: user.picture,
+        userFirstName: user.firstName,
+        comment: content,
+        snippetId: this.props.snippetId,
+        timeCreated: time
+      };
+      this.setState({
+        comments: [...this.state.comments, comment]
+      });
     }
   }
 
@@ -47,9 +88,11 @@ class CommentList extends Component<AllProps> {
           className="material-icons"
           onClick={() => {
             this.props.deleteComment(this.props.snippetId, commentId);
-            setTimeout(() => {
-              this.props.fetchComments(this.props.snippetId);
-            }, 1000);
+            this.setState({
+              comments: this.state.comments.filter(
+                comment => comment.id !== commentId
+              )
+            });
           }}
         >
           clear
@@ -61,17 +104,19 @@ class CommentList extends Component<AllProps> {
 
   // Render time
   renderTime(document: any) {
-    if (document && document.timeCreated) {
+    if (document && document.timeCreated._seconds) {
       const secs = new Date(document.timeCreated._seconds * 1000);
       return moment(secs).format("lll");
+    } else {
+      return moment(document.timeCreated).format("lll");
     }
   }
 
   renderComments() {
     const user = this.props.user;
     if (user === null) return;
-    if (this.props.comments && this.props.comments.length > 0) {
-      return this.props.comments.map((comment: any) => (
+    if (this.state.comments && this.state.comments.length > 0) {
+      return this.state.comments.map((comment: any) => (
         <ul
           style={{
             whiteSpace: "pre-wrap"
@@ -116,6 +161,8 @@ class CommentList extends Component<AllProps> {
           snippetId={this.props.snippetId}
           addComment={this.props.addComment}
           fetchComments={this.props.fetchComments}
+          selectedComment={this.props.selectedComment}
+          updateCommentState={this.updateCommentState.bind(this)}
         />
       </div>
     );
@@ -125,7 +172,8 @@ class CommentList extends Component<AllProps> {
 const mapStateToProps = (state: State, passedProps: PassedProps) => {
   return {
     user: state.user,
-    comments: state.comments
+    comments: state.comments,
+    selectedComment: state.selectedComment
   };
 };
 

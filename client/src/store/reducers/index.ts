@@ -5,6 +5,7 @@ import snippetReducer from "./snippetReducer";
 import teamsReducer from "./teamsReducer";
 import selectedTeamReducer from "./selectedTeamReducer";
 import selectedWeekReducer from "./selectedWeekReducer";
+import selectedCommentReducer from "./selectedCommentReducer";
 import commentReducer from "./commentReducer";
 
 export default combineReducers({
@@ -14,5 +15,6 @@ export default combineReducers({
   comments: commentReducer,
   teams: teamsReducer,
   selectedTeam: selectedTeamReducer,
-  selectedWeek: selectedWeekReducer
+  selectedWeek: selectedWeekReducer,
+  selectedComment: selectedCommentReducer
 });

@@ -9,3 +9,4 @@ exports.AUTHORIZE_USER = "authorize_user";
 exports.FETCH_TEAMS = "fetch_teams";
 exports.SELECT_TEAM = "select_team";
 exports.SELECT_WEEK = "select_week";
+exports.SELECT_COMMENT = "select_comment";

@@ -10,6 +10,7 @@ import {
   FETCH_TEAMS,
   SELECT_TEAM,
   SELECT_WEEK,
+  SELECT_COMMENT,
   ADD_TEAM,
   EDIT_TEAM
 } from "../types";
@@ -87,14 +88,15 @@ export const addComment = (values: any) => async (dispatch: any) => {
       values.snippetId
   );
   const res = await axios.post("/api/add_comment", values);
-  dispatch({ type: FETCH_COMMENTS, payload: res.data });
+  //dispatch({ type: FETCH_COMMENTS, payload: res.data });
+  dispatch(selectComment(res.data.newCommentId));
 };
 
 // Delete a comment with comment ID
 export const deleteComment = (snipId: string, comId: string) => async (
   dispatch: any
 ) => {
-  //console.log("Action: deleteComment from " + snipId + "/" + comId);
+  console.log("Action: deleteComment from " + snipId + " / " + comId);
   const res = await axios.delete("/api/delete_comment", {
     params: { snippetId: snipId, commentId: comId }
   });
@@ -115,6 +117,11 @@ export const selectTeam = (teamId: string) => {
 
 export const selectWeek = (week: any) => {
   return { type: SELECT_WEEK, payload: week };
+};
+
+export const selectComment = (commentId: string) => {
+  console.log("Action: selected comment is ", commentId);
+  return { type: SELECT_COMMENT, payload: commentId };
 };
 
 // FIXME: add team actions aren't being used correctly

@@ -42,7 +42,7 @@ module.exports = function (app, firebase) {
             var snippetId = req.body.snippetId;
             var thisComment = {
                 comment: req.body.comment,
-                timeCreated: new Date(),
+                timeCreated: new Date(req.body.timeCreated),
                 googleId: user.googleId,
                 userPicture: user.picture,
                 userFirstName: user.firstName,
@@ -54,6 +54,7 @@ module.exports = function (app, firebase) {
                 .add(thisComment)
                 .then(function (docRef) {
                 console.log("Added comment", docRef.id);
+                res.send({ newCommentId: docRef.id });
             })["catch"](function (err) {
                 console.log("Error adding comment", err);
             });

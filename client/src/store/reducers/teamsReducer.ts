@@ -1,17 +1,13 @@
-import {
-  FETCH_TEAMS,
-  ADD_TEAM,
-  EDIT_TEAM,
-} from '../types';
+import { FETCH_TEAMS, ADD_TEAM, EDIT_TEAM } from "../types";
 
 const initialState = {
   personal: {
-    name: 'Personal',
+    name: "Personal",
     members: {},
     roles: {},
-    subscriptions: [],
-  },
-}
+    subscriptions: []
+  }
+};
 
 // TODO: type action
 // FIXME: add team and edit team actions aren't being used correctly
@@ -20,7 +16,7 @@ const teamsReducer = (state = initialState, action: any) => {
     case FETCH_TEAMS:
       return {
         ...state,
-        ...action.payload,
+        ...action.payload
       };
     case ADD_TEAM:
       return state;

@@ -8,6 +8,8 @@ interface PassedProps {
   snippetId: string;
   addComment: (values: any) => void;
   fetchComments: (snippetId: string) => void;
+  selectedComment: string | null;
+  updateCommentState: (content: string, time: Date) => void;
 }
 
 interface InsideProps {
@@ -28,16 +30,17 @@ const AddCommentForm = (props: AllProps, prop: InsideProps) => {
         .required("Required")
     }),
     onSubmit: (values, actions) => {
+      let time = new Date();
+
       props.addComment({
         comment: values.comment,
-        snippetId: props.snippetId
+        snippetId: props.snippetId,
+        timeCreated: time
       });
+
+      setTimeout(props.updateCommentState, 500, values.comment, time);
       actions.setSubmitting(false);
       actions.resetForm({});
-
-      setTimeout(() => {
-        props.fetchComments(props.snippetId);
-      }, 1000);
     }
   });
 
