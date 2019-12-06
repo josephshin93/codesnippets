@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
-import { User, Teams, Team } from "../types";
+import { User, Teams, Team, UserTeam } from "../types";
 import { firestore } from "firebase-admin";
+import { WriteBatch } from "@google-cloud/firestore";
+import { reach } from "yup";
 const scheduler = require("../services/scheduler");
 
 // TODO: add types to queries
@@ -17,6 +19,7 @@ module.exports = (app: any, firebase: any) => {
       roles: req.body.roles,
       subscriptions: req.body.subscriptions
     };
+    // console.log('edited team', editedTeam);
 
     const user = <User>req.user;
     // an empty response is sent if the user id does not exist
@@ -24,21 +27,68 @@ module.exports = (app: any, firebase: any) => {
       res.send({});
     }
 
-    // console.log('edited team', editedTeam);
+    // query current team in order to generate member diff data
+    firebase.collection('teams').doc(req.body.teamId).get()
+    .then((doc: any) => {
+      const oldTeam = doc.data();
+      const newUserTeam: UserTeam = { 
+        teamId: req.body.teamId, 
+        teamName: editedTeam.name 
+      };
+      const oldUserTeam: UserTeam = { 
+        teamId: req.body.teamId, 
+        teamName: oldTeam.name 
+      };
 
-    firebase
-      .collection("teams")
-      .doc(req.body.teamId)
-      .set(editedTeam)
-      .then((docRef: any) => {
-        // console.log('team edit done');
+      // find members that have been added and members that have been removed
+      const newMembers: Array<string> = Object.keys(editedTeam.members).filter(
+        (userId: string) => !Object.keys(oldTeam.members).includes(userId)
+      );
+      const removedMembers: Array<string> = Object.keys(oldTeam.members).filter(
+        (userId: string) => !Object.keys(editedTeam.members).includes(userId)
+      );
 
-        // FIXME: what do i send back?
+      // create batch query for user edits and also team edit
+      const batch: WriteBatch = firebase.batch();
+      removedMembers.forEach((userId: string) => {
+        batch.update(
+          firebase.collection('users').doc(userId),
+          {
+            teams: firestore.FieldValue.arrayRemove(oldUserTeam)
+          }
+        );
+      });
+      newMembers.forEach((userId: string) => {
+        batch.update(
+          firebase.collection('users').doc(userId),
+          {
+            teams: firestore.FieldValue.arrayUnion(newUserTeam)
+          }
+        );
+      });
+      batch.set(
+        firebase.collection('teams').doc(req.body.teamId),
+        editedTeam
+      );
+
+      // perform batch of queries
+      batch.commit()
+      .then(() => {
         res.send({});
       })
       .catch((error: any) => {
-        console.error("Error editing team document", error);
+        console.error(
+          'Error updating users affected by new team', 
+          'and/or setting edited team',
+          error
+        );
       });
+      
+
+    })
+    .catch((error: any) => {
+      console.error('Error getting prior-to-edit team', error);
+    });
 
     scheduler.scheduleSubscriptions(firebase, editedTeam);
   });
@@ -71,29 +121,34 @@ module.exports = (app: any, firebase: any) => {
 
     // console.log('new team', newTeam);
 
-    firebase
-      .collection("teams")
-      .add(newTeam)
-      .then((docRef: any) => {
-        // console.log('added doc', docRef.id);
+    firebase.collection("teams").add(newTeam).then((docRef: any) => {
+      // console.log('added doc', docRef.id);
 
-        // add new team to user's teams
-        firebase
-          .collection("users")
-          .doc(user.id)
-          .update({
-            teams: firestore.FieldValue.arrayUnion(docRef.id)
-          })
-          .then(() => {
-            res.send({ newTeamId: docRef.id });
-          })
-          .catch((error: any) => {
-            console.error("Error updating user's team array", error);
-          });
+      // add new team to all users in the team
+      const batch: WriteBatch = firebase.batch();
+      Object.keys(newTeam.members).forEach((userId: string) => {
+        batch.update(
+          firebase.collection('users').doc(userId),
+          {
+            teams: firestore.FieldValue.arrayUnion({
+              teamId: docRef.id, 
+              teamName: newTeam.name 
+            })
+          }
+        );
+      });
+      batch.commit()
+      .then(() => {
+        res.send({ newTeamId: docRef.id });
       })
       .catch((error: any) => {
-        console.error("Error adding team document", error);
+        console.error('Error updating users affected by new team', error);
       });
+      
+    })
+    .catch((error: any) => {
+      console.error("Error adding team document", error);
+    });
 
     // Schedule team's subscriptions
     scheduler.scheduleSubscriptions(firebase, newTeam);
@@ -126,8 +181,9 @@ module.exports = (app: any, firebase: any) => {
              *   duplicate team ids will result in duplicate results
              *   non-existent team ids will result in a null object
              */
-            const teamRefs = currentUser.teams.map((teamId: string) => {
-              return firebase.collection("teams").doc(teamId);
+            // TODO: type team param
+            const teamRefs = currentUser.teams.map((team: UserTeam) => {
+              return firebase.collection('teams').doc(team.teamId);
             });
 
             // query all user's teams

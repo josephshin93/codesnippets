@@ -15,7 +15,8 @@ import {
   SELECT_WEEK,
   SELECT_COMMENT,
   ADD_TEAM,
-  EDIT_TEAM
+  EDIT_TEAM,
+  UserTeam
 } from "../types";
 import { Dispatch, AnyAction } from "redux";
 
@@ -139,7 +140,7 @@ export const deleteComment = (snipId: string, comId: string) => async (
   dispatch({ type: FETCH_COMMENTS, payload: res.data });
 };
 
-export const fetchTeams = (teamIds?: Array<string>) => async (
+export const fetchTeams = (teamIds?: Array<UserTeam>) => async (
   dispatch: Dispatch<AnyAction>
 ) => {
   console.log("get api/teams");

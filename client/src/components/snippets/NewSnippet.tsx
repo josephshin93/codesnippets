@@ -15,12 +15,11 @@ class NewSnippet extends Component<Props> {
   createListItems() {
     if (this.props.user && this.props.user.teams) {
       let teams = this.props.user.teams;
-      return Object.keys(teams).map(keyString => {
-        // Follow User interface property
-        let k = Number(keyString);
+      return teams.map((team, index) => {
+        console.log(team, index);
         return (
-          <option key={k} value={teams[k]}>
-            {teams[k]}
+          <option key={index} value={team.teamId}>
+            {team.teamName}
           </option>
         );
       });

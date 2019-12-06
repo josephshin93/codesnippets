@@ -1,4 +1,10 @@
 // interfaces
+
+export interface UserTeam {
+  teamId: string;
+  teamName: string;
+}
+
 export interface User {
   id: string;
   email: string;
@@ -7,7 +13,7 @@ export interface User {
   picture: string;
   lastName: string;
   // / FIX: Plan to use Cloud Functions to add Personal team field on new user, then replace with <[teams: number]: string>
-  teams?: Array<string>;
+  teams?: Array<UserTeam>;
 }
 
 export interface Users {
@@ -19,7 +25,7 @@ export interface Snippet {
   title: string;
   content: string;
   description: string;
-  ownerId: string;
+  ownerID: string;
   ownerFirstName: string;
   ownerLastName: string;
   ownerPicture: string;
