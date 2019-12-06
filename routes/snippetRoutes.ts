@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import { User, Snippet } from "../types";
+import { firestore } from "firebase-admin";
 var moment = require("moment");
 
 module.exports = (app: any, firebase: any) => {
@@ -39,34 +41,72 @@ module.exports = (app: any, firebase: any) => {
     let query = firebase.collection("snippets");
     let teamSelected = req.query.teamSelected || null;
     let userSelected = req.query.userSelected || null;
-    let weekSelected = req.query.weekSelected || null;
+    let weekSelected = req.query.weekSelected || moment().format('W');
 
-    // Append filters for team, user, and/or week
-    // Otherwise, query all snippets for current week
-    if (teamSelected) {
-      console.log(teamSelected);
-      query = query.where("team", "==", teamSelected);
-    }
+    // Append filters for user and/or week
     if (userSelected) {
       console.log(userSelected);
       query = query.where("ownerID", "==", userSelected);
     }
-    if (weekSelected) {
-      console.log(weekSelected);
-      query = query.where("week", "==", weekSelected);
-    } else {
-      console.log("default week: " + moment().format("W"));
-      query = query.where("week", "==", moment().format("W"));
-    }
+    query = query.where('week', '==', weekSelected);
 
-    // Retrieve snippets from database
-    query
-      .get()
-      .then((snapshot: any) => {
-        res.send(snapshot.docs.map((doc: any) => doc.data()));
-      })
-      .catch((err: any) => {
-        console.log("Error getting snippets.", err);
-      });
+
+    // FIXME: should probably use an HTTP error code
+    if (!req.user) res.send({});
+    const user = <User>req.user;
+
+    // query for snippets
+    console.log(
+      'Route: GET /api/snippets', '->',
+      'querying for snippets of week', 
+      weekSelected, 
+      ' and owner' , 
+      userSelected
+    );
+    query.get()
+    .then((snapshot: any) => {
+      let snippets = snapshot.docs.map((doc: any) => doc.data());
+      // console.log(snippets);
+      
+      if (!teamSelected || teamSelected === '') {
+
+        // query for current user in order to get the list of teams
+        console.log(
+          'Route: GET /api/snippets', '->','querying for user', user.id
+        );
+        firebase.collection('users').doc(user.id).get()
+        .then((doc: any) => {
+          const userTeams = doc.data().teams;
+          // console.log(doc.data());
+
+          // send snippets only from teams that the user is a part of
+          res.send(snippets.filter(
+            (snippet: Snippet) => userTeams.includes(snippet.team)
+          ));
+
+        })
+        .catch((error: any) => {
+          console.error(
+            'Error getting user ' + user.id + ' teams in getting snippet list',
+            error
+          );
+        });
+        
+      } else {
+        
+        // send snippets only from selected team
+        res.send(snippets.filter(
+          (snippet: Snippet) => snippet.team == teamSelected
+        ));
+
+      }
+    
+    })
+    .catch((error: any) => {
+      console.error(
+        'Error getting snippets of week \'' + weekSelected + '\'',
+        error
+      );
+    });
   });
 };
