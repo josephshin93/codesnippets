@@ -1,9 +1,12 @@
 import axios from "axios";
+import Fuse from 'fuse.js';
 import {
   Team,
+  Snippet,
   FETCH_USER,
   FETCH_USERS,
   FETCH_SNIPPETS,
+  SEARCH_SNIPPETS,
   AUTHORIZE_USER,
   FETCH_TEAMS,
   SELECT_TEAM,
@@ -50,6 +53,24 @@ export const fetchUsers = (value: any) => async (dispatch: any) => {
   dispatch({ type: FETCH_USERS, payload: res.data });
 };
 
+// declare fuse search object
+interface FuseOptions {
+  shouldSort: boolean;
+  tokenize: boolean;
+  keys: Array<string>;
+}
+const fuseOpts: FuseOptions = {
+  shouldSort: true,
+  tokenize: true,
+  keys: [
+    'title',
+    'content',
+    'description',
+    'ownerName', 
+  ],
+};
+let fuse: Fuse<Snippet, FuseOptions> | null = null;
+
 /**
  * TODO:
  *   implement this function to get snippets from a specific team, if no team
@@ -60,7 +81,20 @@ export const fetchSnippets = (values: any) => async (dispatch: any) => {
   const res = await axios.get("api/snippets", {
     params: { ...values }
   });
+
+  // initialize or re-initialize fuse search
+  fuse = new Fuse(res.data, fuseOpts);
+
   dispatch({ type: FETCH_SNIPPETS, payload: res.data });
+};
+
+export const searchSnippetList = (searchText: string) => (
+  dispatch: Dispatch<AnyAction>
+) => {
+  if (fuse) {
+    const results = fuse.search(searchText);
+    dispatch({ type: SEARCH_SNIPPETS, payload: results });
+  }
 };
 
 export const addSnippet = (values: any) => async (dispatch: any) => {
@@ -68,6 +102,7 @@ export const addSnippet = (values: any) => async (dispatch: any) => {
   const res = await axios.post("api/add_snippet", values);
   dispatch({ type: FETCH_SNIPPETS, payload: res.data });
 };
+
 
 export const fetchTeams = (teamIds?: Array<string>) => async (
   dispatch: Dispatch<AnyAction>
