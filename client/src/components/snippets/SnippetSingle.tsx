@@ -1,12 +1,16 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { fetchSnippet } from "../../store/actions";
+import { fetchSnippet, likeSnippet, dislikeSnippet } from "../../store/actions";
 import { State, User, Snippet } from "../../store/types";
 import moment from "moment";
 
 interface Props {
   fetchSnippet: (snippetID: string) => void;
+  likeSnippet: (snippetId: string) => void;
+  dislikeSnippet: (snippetId: string) => void;
+  updateSnippetLikes: (snippetId: string) => void;
+  updateSnippetDislikes: (snippetId: string) => void;
 
   user: User | null;
 }
@@ -23,6 +27,52 @@ class SnippetSingle extends Component<AllProps> {
     if (document && document.timeCreated) {
       const secs = new Date(document.timeCreated._seconds * 1000);
       return moment(secs).format("lll");
+    }
+  }
+
+  // Render Like button
+  renderLikeButton(snippet: Snippet) {
+    if (snippet) {
+      return (
+        <button
+          style={{
+            padding: "0",
+            border: "none",
+            background: "none",
+            color:
+              this.props.user &&
+              (typeof snippet.likes === "undefined" ||
+                !snippet.likes.includes(this.props.user.googleId))
+                ? "black"
+                : "red"
+          }}
+          type="button"
+          className="material-icons"
+          onClick={e => {
+            e.preventDefault();
+            // Increment
+            if (
+              this.props.user &&
+              (typeof snippet.likes === "undefined" ||
+                !snippet.likes.includes(this.props.user.googleId))
+            ) {
+              console.log("Increment");
+              this.props.likeSnippet(snippet.id);
+              // TODO: Add update state
+              this.props.updateSnippetLikes(snippet.id);
+            } else {
+              // Decrement
+              console.log("Decrement");
+              this.props.dislikeSnippet(snippet.id);
+              // TODO: Add update state
+              // 1. Get key and pass it to function
+              this.props.updateSnippetDislikes(snippet.id);
+            }
+          }}
+        >
+          thumb_up
+        </button>
+      );
     }
   }
 
@@ -62,7 +112,7 @@ class SnippetSingle extends Component<AllProps> {
             </span>
           </span>
           <br />
-          <b>Team:</b> {snippet.team ? snippet.team.teamName : 'Personal'}
+          <b>Team:</b> {snippet.team ? snippet.team.teamName : "Personal"}
           <div className="truncate">
             <b>Description:</b> {snippet.description} <br />
           </div>
@@ -76,6 +126,7 @@ class SnippetSingle extends Component<AllProps> {
           <span>{snippet.totalComments} &nbsp; &nbsp; </span>
           <i className="tiny material-icons">thumb_up</i> {snippet.totalLikes}{" "}
           <br />
+          {this.renderLikeButton(snippet)}
         </div>
       </li>
     );
@@ -90,7 +141,9 @@ const mapStatetoProps = (state: State, passedProps: PassedProps) => {
 
 const mapDispatchToProps = () => {
   return {
-    fetchSnippet
+    fetchSnippet,
+    likeSnippet,
+    dislikeSnippet
   };
 };
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import Fuse from 'fuse.js';
+import Fuse from "fuse.js";
 import {
   Team,
   Snippet,
@@ -8,6 +8,8 @@ import {
   FETCH_SNIPPETS,
   FETCH_SNIPPET,
   SEARCH_SNIPPETS,
+  LIKE_SNIPPET,
+  DISLIKE_SNIPPET,
   FETCH_COMMENTS,
   AUTHORIZE_USER,
   FETCH_TEAMS,
@@ -58,12 +60,7 @@ interface FuseOptions {
 const fuseOpts: FuseOptions = {
   shouldSort: true,
   tokenize: true,
-  keys: [
-    'title',
-    'content',
-    'description',
-    'ownerName', 
-  ],
+  keys: ["title", "content", "description", "ownerName"]
 };
 let fuse: Fuse<Snippet, FuseOptions> | null = null;
 
@@ -74,7 +71,7 @@ export const fetchSnippets = (values: any) => async (dispatch: any) => {
     params: { ...values }
   });
 
-  console.log('fetched snippets', res.data);
+  console.log("fetched snippets", res.data);
 
   // initialize or re-initialize fuse search
   fuse = new Fuse(res.data, fuseOpts);
@@ -98,6 +95,22 @@ export const fetchSnippet = (snippetID: string) => async (dispatch: any) => {
     params: { id: snippetID }
   });
   dispatch({ type: FETCH_SNIPPET, payload: res.data });
+};
+
+export const likeSnippet = (snippetId: string) => async (dispatch: any) => {
+  console.log("Action: likeSnippet with id: ", snippetId);
+  const res = await axios.put("/api/like_snippet", {
+    id: snippetId
+  });
+  dispatch({ type: LIKE_SNIPPET, payload: res.data });
+};
+
+export const dislikeSnippet = (snippetId: string) => async (dispatch: any) => {
+  console.log("Action: dislikeSnippet with id: ", snippetId);
+  const res = await axios.put("/api/dislike_snippet", {
+    id: snippetId
+  });
+  dispatch({ type: DISLIKE_SNIPPET, payload: res.data });
 };
 
 // Get a list of comments based on snippet ID

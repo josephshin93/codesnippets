@@ -13,7 +13,7 @@ module.exports = (app: any, firebase: any) => {
     // Handle filter
     if (teamSelected && teamSelected !== "all") {
       console.log("Team selected is " + teamSelected);
-      query = query.where("teams", "array-contains", teamSelected);
+      query = query.where("teams", "array-contains", { teamId: teamSelected });
     }
 
     // Retrieve users
