@@ -83,13 +83,19 @@ module.exports = (app: any, firebase: any) => {
           // send snippets only from teams that the user is a part of
           res.send(snippets.filter(
             (snippet: Snippet) => {
-              if (snippets.team) {
-                return userTeams.includes(snippet.team.teamId);
+
+              let teamSnip: boolean = false;
+              let personalSnip: boolean = false;
+
+              if (snippet.team) {
+                teamSnip = userTeams.includes(snippet.team.teamId);
               } else if (snippet.ownerID === user.googleId) {
-                return true;
-              } else {
-                return false;
+                personalSnip = true;
               }
+              // console.log('the snippet', snippet);
+              // console.log('team snip?', teamSnip, 'personal snip?', personalSnip);
+
+              return teamSnip || personalSnip;
             }
           ));
 

@@ -76,15 +76,18 @@ module.exports = function (app, firebase) {
                     // console.log(doc.data());
                     // send snippets only from teams that the user is a part of
                     res.send(snippets.filter(function (snippet) {
-                        if (snippets.team) {
-                            return userTeams.includes(snippet.team.teamId);
+                        var teamSnip = false;
+                        var personalSnip = false;
+                        if (snippet.team) {
+                            console.log('user teams', userTeams, 'snippet team', snippet.team.teamId);
+                            teamSnip = userTeams.includes(snippet.team.teamId);
                         }
                         else if (snippet.ownerID === user.googleId) {
-                            return true;
+                            personalSnip = true;
                         }
-                        else {
-                            return false;
-                        }
+                        // console.log('the snippet', snippet);
+                        console.log('team snip?', teamSnip, 'personal snip?', personalSnip);
+                        return teamSnip || personalSnip;
                     }));
                 })
                     .catch(function (error) {
