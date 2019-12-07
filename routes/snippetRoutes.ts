@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { User, Snippet } from "../types";
+import { User, Snippet, UserTeam } from "../types";
 var moment = require("moment");
 
 module.exports = (app: any, firebase: any) => {
@@ -10,11 +10,10 @@ module.exports = (app: any, firebase: any) => {
       res.send({});
     } else {
       // Make snippet object
-      const snippet = {
+      let snippet: any = {
         title: req.body.title,
         description: req.body.description,
         status: req.body.status,
-        team: req.body.team,
         content: req.body.content,
         ownerID: user.googleId,
         ownerFirstName: user.firstName,
@@ -25,6 +24,7 @@ module.exports = (app: any, firebase: any) => {
         totalComments: 0,
         totalLikes: 0
       };
+      if (req.body.team) snippet.team = req.body.team;
 
       // Add snippet to database
       firebase.collection("snippets").add(snippet);
@@ -55,10 +55,9 @@ module.exports = (app: any, firebase: any) => {
     // query for snippets
     console.log(
       'Route: GET /api/snippets', '->',
-      'querying for snippets of week', 
-      weekSelected, 
-      ' and owner' , 
-      userSelected
+      'querying for snippets of week', weekSelected, 
+      'and owner', userSelected,
+      'and team', teamSelected
     );
     query.get()
     .then((snapshot: any) => {
@@ -75,13 +74,17 @@ module.exports = (app: any, firebase: any) => {
         );
         firebase.collection('users').doc(user.id).get()
         .then((doc: any) => {
-          const userTeams = doc.data().teams;
+          let userTeams = doc.data().teams.map(
+            (team: UserTeam) => team.teamId
+          );
           userTeams.push('');
           // console.log(doc.data());
 
           // send snippets only from teams that the user is a part of
           res.send(snippets.filter(
-            (snippet: Snippet) => userTeams.includes(snippet.team)
+            (snippet: Snippet) => {
+              return !snippet.team || userTeams.includes(snippet.team.teamId)
+            }
           ));
 
         })
@@ -100,8 +103,7 @@ module.exports = (app: any, firebase: any) => {
          */
         const personalSnippets = snippets.filter((snippet: Snippet) => {
           // console.log(snippet.title, snippet.ownerID, snippet.team);
-          return snippet.ownerID === user.googleId && 
-            (!snippet.team || snippet.team === '');
+          return snippet.ownerID === user.googleId && !snippet.team;
         });
         // console.log('personal snippets', personalSnippets);
         res.send(personalSnippets);
@@ -110,7 +112,9 @@ module.exports = (app: any, firebase: any) => {
         
         // send snippets only from selected team
         res.send(snippets.filter(
-          (snippet: Snippet) => snippet.team == teamSelected
+          (snippet: Snippet) => {
+            return snippet.team && snippet.team.teamId == teamSelected
+          }
         ));
 
       }

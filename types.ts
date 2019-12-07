@@ -30,7 +30,7 @@ export interface Snippet {
   ownerLastName: string;
   ownerPicture: string;
   status: string;
-  team: string;
+  team: UserTeam;
   week: string;
   timeCreated: Date;
   totalComments: number;

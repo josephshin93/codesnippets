@@ -44,44 +44,61 @@ module.exports = (app: any, firebase: any) => {
       const newMembers: Array<string> = Object.keys(editedTeam.members).filter(
         (userId: string) => !Object.keys(oldTeam.members).includes(userId)
       );
+      const sameMembers: Array<string> = Object.keys(editedTeam.members).filter(
+        (userId: string) => !newMembers.includes(userId)
+      );
       const removedMembers: Array<string> = Object.keys(oldTeam.members).filter(
         (userId: string) => !Object.keys(editedTeam.members).includes(userId)
       );
 
-      // create batch query for user edits and also team edit
-      const batch: WriteBatch = firebase.batch();
-      removedMembers.forEach((userId: string) => {
-        batch.update(
+      // create two batch queries for user edits and also team edit
+      /**
+       * create two batch queries for user edits
+       *   the first is removal of teams from users' team lists
+       *   the second is the addition of teams from users' team lists
+       */
+      const removeBatch: WriteBatch = firebase.batch();
+      (removedMembers.concat(sameMembers)).forEach((userId: string) => {
+        removeBatch.update(
           firebase.collection('users').doc(userId),
           {
             teams: firestore.FieldValue.arrayRemove(oldUserTeam)
           }
         );
       });
-      newMembers.forEach((userId: string) => {
-        batch.update(
+
+      const addBatch: WriteBatch = firebase.batch();
+      (newMembers.concat(sameMembers)).forEach((userId: string) => {
+        addBatch.update(
           firebase.collection('users').doc(userId),
           {
             teams: firestore.FieldValue.arrayUnion(newUserTeam)
           }
         );
       });
-      batch.set(
-        firebase.collection('teams').doc(req.body.teamId),
-        editedTeam
-      );
 
-      // perform batch of queries
-      batch.commit()
+      /**
+       * execute queries in the following order:
+       *   removal queries, then add queries, then finally the team edit query
+       */
+      removeBatch.commit()
       .then(() => {
-        res.send({});
+        addBatch.commit()
+        .then(() => {
+          firebase.collection('teams').doc(req.body.teamId).update(editedTeam).
+          then((docRef: any) => {
+            res.send({});
+          })
+          .catch((error: any) => {
+            console.error('Error editting team document', error);
+          });
+        })
+        .catch((error: any) => {
+          console.error('Error adding teams to users\' team lists', error);
+        });
       })
       .catch((error: any) => {
-        console.error(
-          'Error updating users affected by new team', 
-          'and/or setting edited team',
-          error
-        );
+        console.error('Error removing teams to users\' team lists', error);
       });
       
 

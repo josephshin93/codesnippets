@@ -62,7 +62,7 @@ class SnippetSingle extends Component<AllProps> {
             </span>
           </span>
           <br />
-          <b>Team:</b> {snippet.team}
+          <b>Team:</b> {snippet.team ? snippet.team.teamName : 'Personal'}
           <div className="truncate">
             <b>Description:</b> {snippet.description} <br />
           </div>
