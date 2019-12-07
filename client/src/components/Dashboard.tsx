@@ -47,9 +47,6 @@ class Dashboard extends Component<DashboardProps> {
                     <p>
                       Email: <b>{this.props.user.email}</b>
                     </p>
-                    <p>
-                      Google ID: <b>{this.props.user.googleId}</b>
-                    </p>
                   </div>
                 </div>
               </div>
