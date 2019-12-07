@@ -1,4 +1,3 @@
-"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -13,11 +12,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -57,7 +55,7 @@ var Emailer = /** @class */ (function (_super) {
         var subject = _a.subject, recipients = _a.recipients;
         var _this = _super.call(this) || this;
         _this.sendGridApi = sendgrid(key.sendGridKey);
-        _this.from_email = new helper.Email('tibbsm@oregonstate.edu');
+        _this.from_email = new helper.Email('bobadevteam+noreply@gmail.com');
         _this.subject = subject;
         _this.recipients = _this.formatEmails(recipients);
         _this.body = new helper.Content('text/html', body);
