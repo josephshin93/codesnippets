@@ -18,7 +18,7 @@ const AddSnippetForm = (props: FormProps) => {
       description: "",
       content: "",
       status: "Open",
-      team: -1
+      team: -2
     },
     validationSchema: Yup.object({
       title: Yup.string()
@@ -132,7 +132,8 @@ const AddSnippetForm = (props: FormProps) => {
               value=""
               {...formik.getFieldProps("team")}
             >
-              <option value={-1}>Select team</option>
+              <option value={-2}>Select team</option>
+              <option value={-1}>Personal</option>
               {props.teams.map((team, index) => (
                 <option key={index} value={index}>
                   {team.teamName}
