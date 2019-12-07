@@ -76,7 +76,15 @@ module.exports = function (app, firebase) {
                     // console.log(doc.data());
                     // send snippets only from teams that the user is a part of
                     res.send(snippets.filter(function (snippet) {
-                        return !snippet.team || userTeams.includes(snippet.team.teamId);
+                        if (snippets.team) {
+                            return userTeams.includes(snippet.team.teamId);
+                        }
+                        else if (snippet.ownerID === user.googleId) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
                     }));
                 })
                     .catch(function (error) {
