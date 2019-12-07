@@ -1,4 +1,5 @@
-// Template for keys.js
+// Template for dev.js
+// Copy this file using `cp keys_template.js dev.js`
 module.exports = {
     // Google Service Account
     googleClientID: '',
@@ -18,4 +19,7 @@ module.exports = {
 
     // Cookie Session
     cookieKey: '',
+
+    // Send Grid
+    sendGridKey: '',
 }
