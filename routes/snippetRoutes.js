@@ -25,9 +25,8 @@ module.exports = function (app, firebase) {
                 title: req.body.title,
                 description: req.body.description,
                 status: req.body.status,
-                team: req.body.team,
                 content: req.body.content,
-                ownerId: user.googleId,
+                ownerID: user.googleId,
                 ownerFirstName: user.firstName,
                 ownerLastName: user.lastName,
                 ownerPicture: user.picture,
@@ -36,6 +35,8 @@ module.exports = function (app, firebase) {
                 totalComments: 0,
                 totalLikes: 0
             };
+            if (req.body.team)
+                snippet.team = req.body.team;
             // Add snippet to database
             firebase.collection("snippets").add(snippet);
         }
@@ -58,7 +59,7 @@ module.exports = function (app, firebase) {
             res.send({});
         var user = req.user;
         // query for snippets
-        console.log('Route: GET /api/snippets', '->', 'querying for snippets of week', weekSelected, ' and owner', userSelected);
+        console.log('Route: GET /api/snippets', '->', 'querying for snippets of week', weekSelected, 'and owner', userSelected, 'and team', teamSelected);
         query.get()
             .then(function (snapshot) {
             var snippets = snapshot.docs.map(function (doc) {
@@ -70,23 +71,35 @@ module.exports = function (app, firebase) {
                 console.log('Route: GET /api/snippets', '->', 'querying for user', user.id);
                 firebase.collection('users').doc(user.id).get()
                     .then(function (doc) {
-                    var currentUser = doc.data();
-                    console.log('current user', currentUser);
-                    if (currentUser.teams) {
-                        // send snippets only from teams that the user is a part of
-                        res.send(snippets.filter(function (snippet) { return currentUser.teams.includes(snippet.team); }));
-                    }
-                    else {
-                        res.send(snippets.filter(function (snippet) { return !snippet.team; }));
-                    }
+                    var userTeams = doc.data().teams.map(function (team) { return team.teamId; });
+                    userTeams.push('');
+                    // console.log(doc.data());
+                    // send snippets only from teams that the user is a part of
+                    res.send(snippets.filter(function (snippet) {
+                        return !snippet.team || userTeams.includes(snippet.team.teamId);
+                    }));
                 })
                     .catch(function (error) {
                     console.error('Error getting user ' + user.id + ' teams in getting snippet list', error);
                 });
             }
+            else if (teamSelected === 'personal') {
+                /**
+                 * send snippets that current user created but does not belong to team
+                 *   this is the current definition of personal snippets
+                 */
+                var personalSnippets = snippets.filter(function (snippet) {
+                    // console.log(snippet.title, snippet.ownerID, snippet.team);
+                    return snippet.ownerID === user.googleId && !snippet.team;
+                });
+                // console.log('personal snippets', personalSnippets);
+                res.send(personalSnippets);
+            }
             else {
                 // send snippets only from selected team
-                res.send(snippets.filter(function (snippet) { return snippet.team == teamSelected; }));
+                res.send(snippets.filter(function (snippet) {
+                    return snippet.team && snippet.team.teamId == teamSelected;
+                }));
             }
         })
             .catch(function (error) {

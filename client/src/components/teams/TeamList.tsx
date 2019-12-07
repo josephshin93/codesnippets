@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { State, Teams, User } from "../../store/types";
+import { State, Teams, User, UserTeam } from "../../store/types";
 import { fetchTeams, selectTeam } from "../../store/actions";
 import { isEmpty } from "../../lib/lib";
 
 interface TeamListProps {
-  fetchTeams: (teamIds?: Array<string>) => void;
+  fetchTeams: (teams?: Array<UserTeam>) => void;
   selectTeam: (teamId: string) => void;
 
   user: User | null;

@@ -1,10 +1,11 @@
 import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { UserTeam } from "../../store/types";
 
 interface FormProps {
   // TODO: Typescript format
-  teams: any;
+  teams: Array<UserTeam>;
   user: any;
   addSnippet(values: any): any;
 }
@@ -17,7 +18,7 @@ const AddSnippetForm = (props: FormProps) => {
       description: "",
       content: "",
       status: "Open",
-      team: ""
+      team: -1
     },
     validationSchema: Yup.object({
       title: Yup.string()
@@ -30,19 +31,22 @@ const AddSnippetForm = (props: FormProps) => {
         .max(4000, "Must be 4000 characters or less")
         .required("Required"),
       status: Yup.string(),
-      team: Yup.string().required("Must choose team")
+      team: Yup.number(),
     }),
     onSubmit: (values, actions) => {
       setTimeout(() => {
-        props.addSnippet({
+
+        let newSnippet: any = {
           title: values.title,
           description: values.description,
           content: values.content,
           status: values.status,
-          team: values.team,
           ownerID: props.user.googleId,
           ownerName: props.user.firstName + " " + props.user.lastName
-        });
+        };
+        if (values.team >= 0) newSnippet.team = props.teams[values.team];
+        props.addSnippet(newSnippet);
+
         // FIX logic
         actions.setSubmitting(false);
         actions.resetForm({});
@@ -128,8 +132,12 @@ const AddSnippetForm = (props: FormProps) => {
               value=""
               {...formik.getFieldProps("team")}
             >
-              <option value="">Select team</option>
-              {props.teams}
+              <option value={-1}>Select team</option>
+              {props.teams.map((team, index) => (
+                <option key={index} value={index}>
+                  {team.teamName}
+                </option>
+              ))}
             </select>
             {formik.touched.team && formik.errors.team ? (
               <div>

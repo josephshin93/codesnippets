@@ -26,23 +26,72 @@ module.exports = function (app, firebase) {
             roles: req.body.roles,
             subscriptions: req.body.subscriptions
         };
+        // console.log('edited team', editedTeam);
         var user = req.user;
         // an empty response is sent if the user id does not exist
         if (!user.id) {
             res.send({});
         }
-        // console.log('edited team', editedTeam);
-        firebase
-            .collection("teams")
-            .doc(req.body.teamId)
-            .set(editedTeam)
-            .then(function (docRef) {
-            // console.log('team edit done');
-            // FIXME: what do i send back?
-            res.send({});
+        // query current team in order to generate member diff data
+        firebase.collection('teams').doc(req.body.teamId).get()
+            .then(function (doc) {
+            var oldTeam = doc.data();
+            var newUserTeam = {
+                teamId: req.body.teamId,
+                teamName: editedTeam.name
+            };
+            var oldUserTeam = {
+                teamId: req.body.teamId,
+                teamName: oldTeam.name
+            };
+            // find members that have been added and members that have been removed
+            var newMembers = Object.keys(editedTeam.members).filter(function (userId) { return !Object.keys(oldTeam.members).includes(userId); });
+            var sameMembers = Object.keys(editedTeam.members).filter(function (userId) { return !newMembers.includes(userId); });
+            var removedMembers = Object.keys(oldTeam.members).filter(function (userId) { return !Object.keys(editedTeam.members).includes(userId); });
+            // create two batch queries for user edits and also team edit
+            /**
+             * create two batch queries for user edits
+             *   the first is removal of teams from users' team lists
+             *   the second is the addition of teams from users' team lists
+             */
+            var removeBatch = firebase.batch();
+            (removedMembers.concat(sameMembers)).forEach(function (userId) {
+                removeBatch.update(firebase.collection('users').doc(userId), {
+                    teams: firebase_admin_1.firestore.FieldValue.arrayRemove(oldUserTeam)
+                });
+            });
+            var addBatch = firebase.batch();
+            (newMembers.concat(sameMembers)).forEach(function (userId) {
+                addBatch.update(firebase.collection('users').doc(userId), {
+                    teams: firebase_admin_1.firestore.FieldValue.arrayUnion(newUserTeam)
+                });
+            });
+            /**
+             * execute queries in the following order:
+             *   removal queries, then add queries, then finally the team edit query
+             */
+            removeBatch.commit()
+                .then(function () {
+                addBatch.commit()
+                    .then(function () {
+                    firebase.collection('teams').doc(req.body.teamId).update(editedTeam).
+                        then(function (docRef) {
+                        res.send({});
+                    })
+                        .catch(function (error) {
+                        console.error('Error editting team document', error);
+                    });
+                })
+                    .catch(function (error) {
+                    console.error('Error adding teams to users\' team lists', error);
+                });
+            })
+                .catch(function (error) {
+                console.error('Error removing teams to users\' team lists', error);
+            });
         })
             .catch(function (error) {
-            console.error("Error editing team document", error);
+            console.error('Error getting prior-to-edit team', error);
         });
         scheduler.scheduleSubscriptions(firebase, editedTeam);
     });
@@ -69,23 +118,24 @@ module.exports = function (app, firebase) {
             newTeam.roles[user.id] = "admin";
         }
         // console.log('new team', newTeam);
-        firebase
-            .collection("teams")
-            .add(newTeam)
-            .then(function (docRef) {
+        firebase.collection("teams").add(newTeam).then(function (docRef) {
             // console.log('added doc', docRef.id);
-            // add new team to user's teams
-            firebase
-                .collection("users")
-                .doc(user.id)
-                .update({
-                teams: firebase_admin_1.firestore.FieldValue.arrayUnion(docRef.id)
-            })
+            // add new team to all users in the team
+            var batch = firebase.batch();
+            Object.keys(newTeam.members).forEach(function (userId) {
+                batch.update(firebase.collection('users').doc(userId), {
+                    teams: firebase_admin_1.firestore.FieldValue.arrayUnion({
+                        teamId: docRef.id,
+                        teamName: newTeam.name
+                    })
+                });
+            });
+            batch.commit()
                 .then(function () {
                 res.send({ newTeamId: docRef.id });
             })
                 .catch(function (error) {
-                console.error("Error updating user's team array", error);
+                console.error('Error updating users affected by new team', error);
             });
         })
             .catch(function (error) {
@@ -122,8 +172,9 @@ module.exports = function (app, firebase) {
                      *   duplicate team ids will result in duplicate results
                      *   non-existent team ids will result in a null object
                      */
-                    var teamRefs = currentUser.teams.map(function (teamId) {
-                        return firebase.collection("teams").doc(teamId);
+                    // TODO: type team param
+                    var teamRefs = currentUser.teams.map(function (team) {
+                        return firebase.collection('teams').doc(team.teamId);
                     });
                     // query all user's teams
                     firebase
