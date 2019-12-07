@@ -75,13 +75,18 @@ module.exports = (app: any, firebase: any) => {
         );
         firebase.collection('users').doc(user.id).get()
         .then((doc: any) => {
-          const userTeams = doc.data().teams;
-          // console.log(doc.data());
-
-          // send snippets only from teams that the user is a part of
-          res.send(snippets.filter(
-            (snippet: Snippet) => userTeams.includes(snippet.team)
-          ));
+          const currentUser = doc.data();
+          console.log('current user', currentUser);
+          if (currentUser.teams) {
+            // send snippets only from teams that the user is a part of
+            res.send(snippets.filter(
+              (snippet: Snippet) => currentUser.teams.includes(snippet.team)
+            ));
+          } else {
+            res.send(snippets.filter(
+              (snippet: Snippet) => !snippet.team
+            ));
+          }
 
         })
         .catch((error: any) => {

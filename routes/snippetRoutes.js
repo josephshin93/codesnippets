@@ -70,10 +70,15 @@ module.exports = function (app, firebase) {
                 console.log('Route: GET /api/snippets', '->', 'querying for user', user.id);
                 firebase.collection('users').doc(user.id).get()
                     .then(function (doc) {
-                    var userTeams = doc.data().teams;
-                    // console.log(doc.data());
-                    // send snippets only from teams that the user is a part of
-                    res.send(snippets.filter(function (snippet) { return userTeams.includes(snippet.team); }));
+                    var currentUser = doc.data();
+                    console.log('current user', currentUser);
+                    if (currentUser.teams) {
+                        // send snippets only from teams that the user is a part of
+                        res.send(snippets.filter(function (snippet) { return currentUser.teams.includes(snippet.team); }));
+                    }
+                    else {
+                        res.send(snippets.filter(function (snippet) { return !snippet.team; }));
+                    }
                 })
                     .catch(function (error) {
                     console.error('Error getting user ' + user.id + ' teams in getting snippet list', error);
