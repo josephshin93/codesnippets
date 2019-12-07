@@ -72,9 +72,9 @@ class SnippetSingle extends Component<AllProps> {
           <b>Status:</b> {snippet.status} <br />
           <b>Week:</b> {snippet.week} <br />
           <span> </span>
-          <i className="tiny material-icons offset-s1">textsms</i> {}
+          {/* <i className="tiny material-icons offset-s1">textsms</i> {}
           <span>{snippet.totalComments} &nbsp; &nbsp; </span>
-          <i className="tiny material-icons">thumb_up</i> {snippet.totalLikes}{" "}
+          <i className="tiny material-icons">thumb_up</i> {snippet.totalLikes}{" "} */}
           <br />
         </div>
       </li>
