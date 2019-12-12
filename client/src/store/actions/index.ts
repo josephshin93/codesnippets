@@ -1,5 +1,5 @@
 import axios from "axios";
-import Fuse from 'fuse.js';
+import Fuse from "fuse.js";
 import {
   Team,
   Snippet,
@@ -8,6 +8,8 @@ import {
   FETCH_SNIPPETS,
   FETCH_SNIPPET,
   SEARCH_SNIPPETS,
+  LIKE_SNIPPET,
+  DISLIKE_SNIPPET,
   FETCH_COMMENTS,
   AUTHORIZE_USER,
   FETCH_TEAMS,
@@ -58,12 +60,7 @@ interface FuseOptions {
 const fuseOpts: FuseOptions = {
   shouldSort: true,
   tokenize: true,
-  keys: [
-    'title',
-    'content',
-    'description',
-    'ownerName', 
-  ],
+  keys: ["title", "content", "description", "ownerName"]
 };
 let fuse: Fuse<Snippet, FuseOptions> | null = null;
 
@@ -74,7 +71,7 @@ export const fetchSnippets = (values: any) => async (dispatch: any) => {
     params: { ...values }
   });
 
-  console.log('fetched snippets', res.data);
+  console.log("fetched snippets", res.data);
 
   // initialize or re-initialize fuse search
   fuse = new Fuse(res.data, fuseOpts);
@@ -189,4 +186,34 @@ export const editTeam = (
   dispatch({ type: EDIT_TEAM, payload: res.data });
 
   if (next) next();
+};
+
+export const dislikeSnippet = (
+  snippetId: string,
+  index: Number,
+  googleId: string
+) => async (dispatch: any) => {
+  //console.log("Action: dislikeSnippet with id: ", snippetId);
+  axios.put("/api/dislike_snippet", {
+    id: snippetId
+  });
+  dispatch({ type: DISLIKE_SNIPPET, snippetId, index, userId: googleId });
+};
+
+export const likeSnippet = (
+  id: string,
+  index: Number,
+  form: string,
+  googleId: string
+) => async (dispatch: any) => {
+  axios.put("/api/like_snippet", {
+    id
+  });
+  dispatch({
+    type: LIKE_SNIPPET,
+    userId: googleId,
+    snippetId: id,
+    index,
+    form
+  });
 };

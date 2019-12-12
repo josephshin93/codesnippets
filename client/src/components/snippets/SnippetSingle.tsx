@@ -13,6 +13,8 @@ interface Props {
 
 interface PassedProps {
   snippet: Snippet;
+  updateSnippetLikes: (snippetId: string) => void;
+  updateSnippetDislikes: (snippetId: string) => void;
 }
 
 // https://stackoverflow.com/questions/56963211/how-to-correctly-use-connect-in-react-redux-with-typescript
@@ -23,6 +25,46 @@ class SnippetSingle extends Component<AllProps> {
     if (document && document.timeCreated) {
       const secs = new Date(document.timeCreated._seconds * 1000);
       return moment(secs).format("lll");
+    }
+  }
+
+  // Render Like button
+  renderLikeButton(snippet: Snippet) {
+    if (snippet && this.props.user) {
+      return (
+        <button
+          style={{
+            padding: "0",
+            border: "none",
+            background: "none",
+            color:
+              this.props.user &&
+              (typeof snippet.likes === "undefined" ||
+                !snippet.likes.includes(this.props.user.googleId))
+                ? "black"
+                : "red"
+          }}
+          type="button"
+          onClick={e => {
+            e.preventDefault();
+            if (
+              this.props.user &&
+              (typeof snippet.likes === "undefined" ||
+                !snippet.likes.includes(this.props.user.googleId))
+            ) {
+              // Increment
+              this.props.updateSnippetLikes(snippet.id);
+            } else {
+              // Decrement
+              this.props.updateSnippetDislikes(snippet.id);
+            }
+          }}
+        >
+          <i className="material-icons" style={{ fontSize: "18px" }}>
+            thumb_up
+          </i>
+        </button>
+      );
     }
   }
 
@@ -62,7 +104,7 @@ class SnippetSingle extends Component<AllProps> {
             </span>
           </span>
           <br />
-          <b>Team:</b> {snippet.team ? snippet.team.teamName : 'Personal'}
+          <b>Team:</b> {snippet.team ? snippet.team.teamName : "Personal"}
           <div className="truncate">
             <b>Description:</b> {snippet.description} <br />
           </div>
@@ -71,11 +113,11 @@ class SnippetSingle extends Component<AllProps> {
           </div>
           <b>Status:</b> {snippet.status} <br />
           <b>Week:</b> {snippet.week} <br />
-          <span> </span>
           {/* <i className="tiny material-icons offset-s1">textsms</i> {}
           <span>{snippet.totalComments} &nbsp; &nbsp; </span>
           <i className="tiny material-icons">thumb_up</i> {snippet.totalLikes}{" "} */}
           <br />
+          {this.renderLikeButton(snippet)} {snippet.totalLikes}
         </div>
       </li>
     );

@@ -10,8 +10,9 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var moment = require("moment");
+var FieldValue = require("firebase-admin").firestore.FieldValue;
 module.exports = function (app, firebase) {
     app.post("/api/add_snippet", function (req, res) {
         // Add snippet only if they're the user
@@ -47,54 +48,60 @@ module.exports = function (app, firebase) {
         var query = firebase.collection("snippets");
         var teamSelected = req.query.teamSelected || null;
         var userSelected = req.query.userSelected || null;
-        var weekSelected = req.query.weekSelected || moment().format('W');
+        var weekSelected = req.query.weekSelected || moment().format("W");
         // Append filters for user and/or week
         if (userSelected) {
             console.log("user selected: ", userSelected);
             query = query.where("ownerID", "==", userSelected);
         }
-        query = query.where('week', '==', weekSelected);
+        query = query.where("week", "==", weekSelected);
         // FIXME: should probably use an HTTP error code
         if (!req.user)
             res.send({});
         var user = req.user;
         // query for snippets
-        console.log('Route: GET /api/snippets', '->', 'querying for snippets of week', weekSelected, 'and owner', userSelected, 'and team', teamSelected);
-        query.get()
+        console.log("Route: GET /api/snippets", "->", "querying for snippets of week", weekSelected, "and owner", userSelected, "and team", teamSelected);
+        query
+            .get()
             .then(function (snapshot) {
             var snippets = snapshot.docs.map(function (doc) {
                 return __assign(__assign({}, doc.data()), { id: doc.id });
             });
             // console.log(snippets);
-            if (!teamSelected || teamSelected === '') {
+            if (!teamSelected || teamSelected === "") {
                 // query for current user in order to get the list of teams
-                console.log('Route: GET /api/snippets', '->', 'querying for user', user.id);
-                firebase.collection('users').doc(user.id).get()
+                console.log("Route: GET /api/snippets", "->", "querying for user", user.id);
+                firebase
+                    .collection("users")
+                    .doc(user.id)
+                    .get()
                     .then(function (doc) {
-                    var userTeams = doc.data().teams.map(function (team) { return team.teamId; });
-                    userTeams.push('');
+                    var userTeams = doc
+                        .data()
+                        .teams.map(function (team) { return team.teamId; });
+                    userTeams.push("");
                     // console.log(doc.data());
                     // send snippets only from teams that the user is a part of
                     res.send(snippets.filter(function (snippet) {
                         var teamSnip = false;
                         var personalSnip = false;
                         if (snippet.team) {
-                            console.log('user teams', userTeams, 'snippet team', snippet.team.teamId);
                             teamSnip = userTeams.includes(snippet.team.teamId);
                         }
                         else if (snippet.ownerID === user.googleId) {
                             personalSnip = true;
                         }
                         // console.log('the snippet', snippet);
-                        console.log('team snip?', teamSnip, 'personal snip?', personalSnip);
+                        // console.log('team snip?', teamSnip, 'personal snip?', personalSnip);
                         return teamSnip || personalSnip;
                     }));
-                })
-                    .catch(function (error) {
-                    console.error('Error getting user ' + user.id + ' teams in getting snippet list', error);
+                })["catch"](function (error) {
+                    console.error("Error getting user " +
+                        user.id +
+                        " teams in getting snippet list", error);
                 });
             }
-            else if (teamSelected === 'personal') {
+            else if (teamSelected === "personal") {
                 /**
                  * send snippets that current user created but does not belong to team
                  *   this is the current definition of personal snippets
@@ -112,9 +119,8 @@ module.exports = function (app, firebase) {
                     return snippet.team && snippet.team.teamId == teamSelected;
                 }));
             }
-        })
-            .catch(function (error) {
-            console.error('Error getting snippets of week \'' + weekSelected + '\'', error);
+        })["catch"](function (error) {
+            console.error("Error getting snippets of week '" + weekSelected + "'", error);
         });
     });
     // Get single snippet
@@ -129,9 +135,65 @@ module.exports = function (app, firebase) {
             .get()
             .then(function (doc) {
             res.send(doc.data());
-        })
-            .catch(function (err) {
+        })["catch"](function (err) {
             console.log("Error getting snippet", err);
         });
+    });
+    // Like a snippet
+    app.put("/api/like_snippet", function (req, res) {
+        // Like snippet only if they're the user
+        var user = req.user;
+        // https://stackoverflow.com/questions/47091940/fieldvalue-undefined-when-using-functions-and-firestore
+        var increment = FieldValue.increment(1);
+        if (!user) {
+            res.send({});
+        }
+        else {
+            // Reference the snippets
+            var query_1 = firebase.collection("snippets").doc(req.body.id);
+            var snippetId = req.body.id;
+            //console.log("Route snippet id ", snippetId, "and user is ", user);
+            // Update the count
+            query_1.update({ totalLikes: increment }).then(function (doc) {
+                var googleId = user.googleId;
+                //console.log("User's google id before we update: ", googleId);
+                // Add the user to likes array
+                query_1
+                    .update({ likes: FieldValue.arrayUnion(user.googleId) })
+                    .then(function () {
+                    res.send(googleId);
+                })["catch"](function (err) {
+                    console.error("Error updating likes", err);
+                });
+            });
+        }
+    });
+    // Dislike a snippet
+    app.put("/api/dislike_snippet", function (req, res) {
+        // Like snippet only if they're the user
+        var user = req.user;
+        // https://stackoverflow.com/questions/47091940/fieldvalue-undefined-when-using-functions-and-firestore
+        var decrement = FieldValue.increment(-1);
+        if (!user) {
+            res.send({});
+        }
+        else {
+            // Reference the snippets
+            var query_2 = firebase.collection("snippets").doc(req.body.id);
+            var snippetId = req.body.id;
+            //console.log("Route snippet id ", snippetId);
+            // Update the count
+            query_2.update({ totalLikes: decrement }).then(function (doc) {
+                //console.log("User's google id before we update: ",user.googleId)
+                // Remove the user from likes array
+                query_2
+                    .update({ likes: FieldValue.arrayRemove(user.googleId) })
+                    .then(function () {
+                    res.send(user.googleId);
+                })["catch"](function (err) {
+                    console.error("Error updating dislikes", err);
+                });
+            });
+        }
     });
 };
