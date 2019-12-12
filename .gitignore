@@ -8,5 +8,12 @@
 dev.js
 service-account.json
 
+# compiled javascript files
+# if specific javascript files need to be included then do so at the bottom 
+# of this sub-list (ex. !includedFile.js)
+*.js
+routes/*.js
+services/**/*.js
+
 # misc
 private/
