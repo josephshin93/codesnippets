@@ -1,28 +1,29 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import {
-  fetchSnippets, 
-  searchSnippetList, 
+  fetchSnippets,
+  searchSnippetList,
   fetchUsers,
-} from '../../store/actions';
-import {
-  State,
-  User,
-  Snippet,
-} from '../../store/types';
-import {
-  isEmpty,
-} from '../../lib/lib';
-import FilterSnippetForm from './filterSnippetForm';
-import SnippetSingle from './SnippetSingle';
-
-
+  likeSnippet,
+  dislikeSnippet
+} from "../../store/actions";
+import { State, User, Snippet } from "../../store/types";
+import { isEmpty } from "../../lib/lib";
+import FilterSnippetForm from "./filterSnippetForm";
+import SnippetSingle from "./SnippetSingle";
 
 interface SnippetListProps {
   fetchSnippets: (filters?: any) => void;
   fetchUsers: (selectedTeam: any) => void;
   searchSnippetList: (searchText: any) => void;
+  dislikeSnippet: (snippetId: string, index: Number, googleId: string) => void;
+  likeSnippet: (
+    id: string,
+    index: Number,
+    form: string,
+    googleId: string
+  ) => void;
 
   snippets: Array<Snippet> | null;
   user: User | null;
@@ -35,12 +36,11 @@ interface SnippetListState {
 }
 
 class SnippetList extends Component<SnippetListProps, SnippetListState> {
-
   constructor(props: SnippetListProps) {
     super(props);
 
     this.state = {
-      searchText: '',
+      searchText: ""
     };
   }
 
@@ -61,17 +61,19 @@ class SnippetList extends Component<SnippetListProps, SnippetListState> {
 
   renderSearch() {
     return (
-      <div className='row'>
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          if (this.state.searchText.length > 0) {
-            this.props.searchSnippetList(this.state.searchText);
-          }
-        }}>
-          <input 
-            className='col s9' 
-            type='text' 
-            placeholder='Search within current list of snippets' 
+      <div className="row">
+        <form
+          onSubmit={e => {
+            e.preventDefault();
+            if (this.state.searchText.length > 0) {
+              this.props.searchSnippetList(this.state.searchText);
+            }
+          }}
+        >
+          <input
+            className="col s9"
+            type="text"
+            placeholder="Search within current list of snippets"
             value={this.state.searchText}
             onChange={e => {
               e.preventDefault();
@@ -93,7 +95,12 @@ class SnippetList extends Component<SnippetListProps, SnippetListState> {
   renderSnippets() {
     if (this.props.snippets && this.props.snippets.length > 0) {
       return this.props.snippets.map((snippet: any) => (
-        <SnippetSingle key={snippet.id} snippet={snippet} />
+        <SnippetSingle
+          key={snippet.id}
+          snippet={snippet}
+          updateSnippetLikes={this.updateSnippetLikes.bind(this)}
+          updateSnippetDislikes={this.updateSnippetDislikes.bind(this)}
+        />
       ));
     }
 
@@ -102,6 +109,44 @@ class SnippetList extends Component<SnippetListProps, SnippetListState> {
         <h5>No snippets to display.</h5>
       </li>
     );
+  }
+
+  // Like snippet
+  updateSnippetLikes(snippetId: string) {
+    const snippets = this.props.snippets;
+
+    if (snippets && this.props.user) {
+      // Find snippet index in state
+      const i = snippets.findIndex(snip => snip.id === snippetId);
+      const googleId = this.props.user.googleId;
+      // Verify how to add user to array of 'likes'
+      if (
+        typeof snippets[i].likes !== "undefined" &&
+        snippets[i].likes.length > 0
+      ) {
+        // Call action
+        this.props.likeSnippet(snippetId, i, "push", googleId);
+      } else {
+        this.props.likeSnippet(snippetId, i, "first", googleId);
+      }
+    }
+  }
+
+  // Dislike snippet
+  updateSnippetDislikes(snippetId: string) {
+    const snippets = this.props.snippets;
+
+    if (snippets && this.props.user) {
+      // Find snippet index in state
+      const i = snippets.findIndex(snip => snip.id === snippetId);
+      const googleId = this.props.user.googleId;
+      const likes = snippets[i].likes;
+      //console.log("Likes array in client ", likes);
+      // Verify 'likes' field exists
+      if (typeof likes !== "undefined" && likes.length > 0) {
+        this.props.dislikeSnippet(snippetId, i, googleId);
+      }
+    }
   }
 
   render() {
@@ -134,10 +179,10 @@ function mapStateToProps({
   return { snippets, user, selectedTeam, selectedWeek };
 }
 
-export default connect(mapStateToProps, { 
-  fetchSnippets, 
-  searchSnippetList, 
-  fetchUsers 
-})(
-  SnippetList
-);
+export default connect(mapStateToProps, {
+  fetchSnippets,
+  searchSnippetList,
+  fetchUsers,
+  likeSnippet,
+  dislikeSnippet
+})(SnippetList);

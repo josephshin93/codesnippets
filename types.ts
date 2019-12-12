@@ -35,6 +35,7 @@ export interface Snippet {
   timeCreated: Date;
   totalComments: number;
   totalLikes: number;
+  likes: Array<string>;
 }
 
 export interface Subscription {
@@ -101,17 +102,19 @@ export interface State {
 }
 
 // actions
-export const FETCH_USER = 'fetch_user';
-export const FETCH_USERS = 'fetch_users';
-export const FETCH_SNIPPETS = 'fetch_snippets';
-export const FETCH_SNIPPET = 'fetch_snippet';
-export const SEARCH_SNIPPETS = 'search_snippets';
-export const FETCH_COMMENTS = 'fetch_comments';
-export const ADD_COMMENT = 'add_comment';
-export const AUTHORIZE_USER = 'authorize_user';
-export const FETCH_TEAMS = 'fetch_teams';
-export const SELECT_TEAM = 'select_team';
-export const SELECT_WEEK = 'select_week';
-export const SELECT_COMMENT = 'select_comment';
-export const ADD_TEAM = 'add_team';
-export const EDIT_TEAM = 'edit_team';
+export const FETCH_USER = "fetch_user";
+export const FETCH_USERS = "fetch_users";
+export const FETCH_SNIPPETS = "fetch_snippets";
+export const FETCH_SNIPPET = "fetch_snippet";
+export const SEARCH_SNIPPETS = "search_snippets";
+export const LIKE_SNIPPET = "like_snippet";
+export const DISLIKE_SNIPPET = "dislike_snippet";
+export const FETCH_COMMENTS = "fetch_comments";
+export const ADD_COMMENT = "add_comment";
+export const AUTHORIZE_USER = "authorize_user";
+export const FETCH_TEAMS = "fetch_teams";
+export const SELECT_TEAM = "select_team";
+export const SELECT_WEEK = "select_week";
+export const SELECT_COMMENT = "select_comment";
+export const ADD_TEAM = "add_team";
+export const EDIT_TEAM = "edit_team";
