@@ -59,7 +59,7 @@ async function scheduleEmail(team: Team, subscription: Subscription, firebase: a
     
   // Set scheduler details
   var rule = new cron.RecurrenceRule();
-  rule.dayOfWeek = [parseInt(issueDay)];
+  rule.dayOfWeek = [issueDay];
   rule.hour = parseInt(issueTime.toString().slice(0,-2));
 
   // FOR TESTING
@@ -110,7 +110,7 @@ async function scheduleEmail(team: Team, subscription: Subscription, firebase: a
   });
 
   const week = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  console.log(`Scheduled ${jobName} at ${issueTime} on ${week[parseInt(issueDay)]}`);
+  console.log(`Scheduled ${jobName} at ${issueTime} on ${week[issueDay]}`);
 }
 
 async function getTeamSnippets(firebase: any, team: Team) {
