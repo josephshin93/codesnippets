@@ -26,7 +26,7 @@ module.exports = (message: string, team: string, snippets: any, content: string)
                     : `<b style="font-size: 18px;">Snippets</b>`
                 }
                 ${  // Map out the snippets if any were made
-                    snippets.map( (snippet) => {
+                    snippets.map( (snippet: any) => {
                         return `<p><b>
                                 <span style="color:blue !important">${snippet.title}</span> || 
                                 ${snippet.desc} || 
